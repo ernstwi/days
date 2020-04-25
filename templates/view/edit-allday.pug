@@ -1,0 +1,13 @@
+extends ../abstract/post-without-time
+
+block back
+    a(href=`/${year}/${month}/${day}`) ←
+
+block content
+    form(id='post-edit' action=`/${year}/${month}/${day}?edited` method='post')
+        - let post = fs.readFileSync(`content/${year}/${month}/${day}/allday.md`).toString()
+        - post = post.substring(0, post.length - 1)
+        textarea(id='post-edit' name='message')!= post
+
+block action
+    input(type='submit' form='post-edit')

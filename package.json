@@ -1,0 +1,15 @@
+{
+  "name": "@ernstwi/days",
+  "version": "1.0.0",
+  "description": "Journaling tool",
+  "author": "Ernst Widerberg <ernstwi@kth.se>",
+  "license": "MIT",
+  "repository": "github:ernstwi/days",
+  "bin": "./index.js",
+  "dependencies": {
+    "dateformat": "^3.0.3",
+    "markdown-it": "^10.0.0",
+    "pug": "^2.0.4",
+    "serve-static": "^1.14.1"
+  }
+}
