@@ -3,6 +3,7 @@
 global.__basedir = __dirname;
 global.__binname = process.argv[1].match(/[^\/]*$/)[0];
 
+let cp = require('child_process');
 let fs = require('fs');
 let dateFormat = require('dateformat');
 let { Server } = require('./src/server.js');
@@ -48,7 +49,7 @@ switch (process.argv[2]) {
         fs.mkdirSync(dir, { recursive: true });
         fs.writeFileSync(file, '');
 
-        console.log(file);
+        cp.spawn(process.env.EDITOR, [file], { stdio: 'inherit' });
         return;
     case 'server':
         let port = 3004;
