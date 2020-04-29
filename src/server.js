@@ -1,4 +1,3 @@
-require('ext');
 let cp = require('child_process');
 let fs = require('fs');
 let http = require('http');
@@ -11,6 +10,20 @@ let md = require('markdown-it')({
     html: true,
     breaks: true
 });
+
+if (!Number.prototype.zeropad) {
+    Number.prototype.zeropad = function(width) {
+        let res = this.toString();
+        return res.length >= width ? res :
+            new Array(width - res.length + 1).join('0') + res;
+    }
+}
+
+if (!Array.prototype.last) {
+    Array.prototype.last = function() {
+        return this[this.length - 1];
+    }
+}
 
 class Server {
     #server;
