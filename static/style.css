@@ -7,7 +7,7 @@ body {
     color: #fff;
     background-color: #4a525a;
 
-    width: 750px;
+    width: 650px;
     margin-left: auto;
     margin-right: auto;
     margin-top: 50px;
@@ -67,7 +67,6 @@ img, video {
 
 .month-index.vertical {
     float: left;
-    width: 114px;
 }
 
 .month-index ul {
