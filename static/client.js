@@ -12,3 +12,7 @@ Array.from(document.getElementsByTagName('video')).forEach(v => {
     v.setAttribute('loop', '');
     v.setAttribute('onclick', 'toggleMuted(this)');
 });
+
+Array.from(document.getElementsByTagName('audio')).forEach(v => {
+    v.setAttribute('controls', '');
+});
