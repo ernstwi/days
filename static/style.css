@@ -54,6 +54,7 @@ img, video {
 .month-index.horizontal {
     display: flex;
     width: 100%;
+    overflow: scroll;
 }
 
 .month-index.horizontal div {
