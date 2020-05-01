@@ -8,16 +8,22 @@ let fs = require('fs');
 let dateFormat = require('dateformat');
 let { Server } = require('./src/server.js');
 
-function error(stream) {
-    stream.write(`Usage:
+function usage(stdout) {
+    let msg = `Usage:
   ${__binname} new [--no-edit] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
-  ${__binname} server [--port <number>]`);
-    process.exit(stream == process.stderr ? 1 : 0);
+  ${__binname} server [--port <number>]`;
+
+    if (stdout) {
+        console.log(msg);
+        process.exit(0);
+    } else {
+        console.error(msg);
+        process.exit(1);
+    }
 }
 
 if (process.argv.length < 3 || process.argv[2] == '--help') {
-    let stream = process.argv.length < 3 ?  process.stderr : process.stdout;
-    error(stream);
+    usage(process.argv[2] == '--help');
 }
 
 switch (process.argv[2]) {
@@ -34,16 +40,16 @@ switch (process.argv[2]) {
 
             if (/\d{4}/.test(process.argv[i])) {
                 if (i+2 >= process.argv.length)
-                    error(process.stderr);
+                    usage(false);
                 while (i < process.argv.length) {
                     args.date.push(process.argv[i++]);
                 }
                 continue;
             }
-            error(process.stderr);
+            usage(false);
         }
         if (args.date.length > 6)
-            error(process.stderr);
+            usage(false);
         if (args.date.length >= 2)
             args.date[1]--; // Month
 
@@ -61,7 +67,7 @@ switch (process.argv[2]) {
             `${dir}/${dateFormat(date, 'UTC:HH-MM-ss".md"')}`;
 
         if (fs.existsSync(file)) {
-            process.stderr.write(`${__binname}: \x1b[31mError\x1b[0m: ${file} already exists.`);
+            console.error(`${__binname}: \x1b[31mError\x1b[0m: ${file} already exists.`);
             process.exit(1);
         }
 

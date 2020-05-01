@@ -30,7 +30,7 @@ class Server {
 
     constructor() {
         if (!fs.existsSync('content')) {
-            process.stderr.write(`${__binname}: \x1b[31mError\x1b[0m: No content.`);
+            console.error(`${__binname}: \x1b[31mError\x1b[0m: No content.`);
             process.exit(1);
         }
 
@@ -202,7 +202,7 @@ class Server {
 
     run(port) {
         this.#server.on('error', err => {
-            process.stderr.write(`${__binname}: \x1b[31mError\x1b[0m: Port ${port} is already in use.`);
+            console.error(`${__binname}: \x1b[31mError\x1b[0m: Port ${port} is already in use.`);
             process.exit(1);
         });
 
