@@ -43,8 +43,6 @@ $ days new [--no-edit] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
 - Without `--no-edit`, the post opens in `$EDITOR`.
 - With `--no-edit`, the filename is printed to stdout.
 
----
-
 ```
 $ days server [--port <number>]
 ```
