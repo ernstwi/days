@@ -7,11 +7,13 @@ let cp = require('child_process');
 let fs = require('fs');
 let dateFormat = require('dateformat');
 let { Server } = require('./src/server.js');
+let merge = require('./src/merge.js');
 
 function usage(stdout) {
     let msg = `Usage:
   ${__binname} new [--no-edit] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
-  ${__binname} server [--port <number>]`;
+  ${__binname} server [--port <number>]
+  ${__binname} merge <path>`;
 
     if (stdout) {
         console.log(msg);
@@ -84,5 +86,10 @@ switch (process.argv[2]) {
         if (process.argv.length == 5 && process.argv[3] == '--port')
             port = process.argv[4];
         new Server().run(port);
+        return;
+    case 'merge':
+        if (process.argv.length < 4)
+            usage(false);
+        merge(process.argv[3]);
         return;
 }
