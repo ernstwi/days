@@ -41,7 +41,6 @@ class Server {
         let pugMonthView = pug.compileFile(`${__basedir}/templates/view/month.pug`);
         let pugPostView  = pug.compileFile(`${__basedir}/templates/view/post.pug`);
         let pugPostEdit  = pug.compileFile(`${__basedir}/templates/view/edit.pug`);
-        let pugPostViewAllday  = pug.compileFile(`${__basedir}/templates/view/post-allday.pug`);
         let pugPostEditAllday  = pug.compileFile(`${__basedir}/templates/view/edit-allday.pug`);
 
         let firstYear  = parseInt(fs.readdirSync('content').filter(f => /\d{4}/.test(f))[0]);
@@ -97,9 +96,9 @@ class Server {
 
             {
                 // Post view
-                let match = url.match(/(\d{4})\/(\d{2})\/(\d{2})\/(\d{2})\/(\d{2})\/(\d{2})$/);
+                let match = url.match(/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?$/);
                 if (match != null) {
-                    let [_, year, month, day, hour, minute, second] = match;
+                    let [_, year, month, day, __, hour, minute, second] = match;
                     res.end(pugPostView(Object.assign(Object.create(pugVars), {
                         monthIndexLayout: 'vertical',
                         year: year,
@@ -108,21 +107,6 @@ class Server {
                         hour: hour,
                         minute: minute,
                         second: second
-                    })));
-                    return;
-                }
-            }
-
-            {
-                // Post view (all day)
-                let match = url.match(/(\d{4})\/(\d{2})\/(\d{2})$/);
-                if (match != null) {
-                    let [_, year, month, day] = match;
-                    res.end(pugPostViewAllday(Object.assign(Object.create(pugVars), {
-                        monthIndexLayout: 'vertical',
-                        year: year,
-                        month: month,
-                        day: day
                     })));
                     return;
                 }

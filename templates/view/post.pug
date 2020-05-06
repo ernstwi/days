@@ -1,3 +1,15 @@
+-
+    let file, date, edit;
+    if (hour === undefined) {
+        file = `content/${year}/${month}/${day}/allday.md`;
+        date = new Date(Date.UTC(year, month-1, day));
+        edit = `/${year}/${month}/${day}/edit`;
+    } else {
+        file = `content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`;
+        date = new Date(Date.UTC(year, month-1, day, hour, minute));
+        edit = `/${year}/${month}/${day}/${hour}/${minute}/${second}/edit`;
+    }
+
 html
     head
         title= title
@@ -25,12 +37,11 @@ html
                     a(href=`/${year}/${month}`) ←
                 span= dateFormat(new Date(Date.UTC(year, month-1, day)), 'UTC:dddd, mmmm d yyyy')
             .post
-                .post-content!= md.render(fs.readFileSync(`content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`).toString())
+                .post-content!= md.render(fs.readFileSync(file).toString())
                 .post-info
-                    - let date = new Date(Date.UTC(year, month-1, day, hour, minute))
                     span= dateFormat(date, 'UTC:ddd').toLowerCase()
                     span= dateFormat(date, 'UTC:dd/mm')
                     span= dateFormat(date, 'UTC:yyyy')
                     span= dateFormat(date, 'UTC:HH:MM')
-                    a(href=`/${year}/${month}/${day}/${hour}/${minute}/${second}/edit`) edit
+                    a(href=edit) edit
             #footer
