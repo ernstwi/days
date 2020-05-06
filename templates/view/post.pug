@@ -1,10 +1,36 @@
-extends ../abstract/post-with-time
-
-block back
-    a(href=`/${year}/${month}`) ←
-
-block content
-    .post-content!= md.render(fs.readFileSync(`content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`).toString())
-
-block action
-    a(href=`/${year}/${month}/${day}/${hour}/${minute}/${second}/edit`) edit
+html
+    head
+        title= title
+        meta(charset='utf-8')
+        link(rel='stylesheet' href='/static/style.css')
+        script(defer src='/static/client.js')
+    body
+        #banner
+            a(href='/')= title
+        div(class=['month-index', monthIndexLayout])
+            - let y = firstYear;
+            - let m = firstMonth;
+            while (y <= lastYear)
+                div
+                    p= y
+                    ul
+                        while ((y != lastYear && m <= 12) || m <= lastMonth)
+                            li
+                                a(href=`/${y}/${m.zeropad(2)}`)= dateFormat(new Date(Date.UTC(y, m - 1)), 'UTC:mmmm')
+                            - m++;
+                - y++; m = 1;
+        #content
+            .header
+                span.back
+                    a(href=`/${year}/${month}`) ←
+                span= dateFormat(new Date(Date.UTC(year, month-1, day)), 'UTC:dddd, mmmm d yyyy')
+            .post
+                .post-content!= md.render(fs.readFileSync(`content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`).toString())
+                .post-info
+                    - let date = new Date(Date.UTC(year, month-1, day, hour, minute))
+                    span= dateFormat(date, 'UTC:ddd').toLowerCase()
+                    span= dateFormat(date, 'UTC:dd/mm')
+                    span= dateFormat(date, 'UTC:yyyy')
+                    span= dateFormat(date, 'UTC:HH:MM')
+                    a(href=`/${year}/${month}/${day}/${hour}/${minute}/${second}/edit`) edit
+            #footer

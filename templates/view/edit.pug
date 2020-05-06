@@ -1,13 +1,39 @@
-extends ../abstract/post-with-time
-
-block back
-    a(href=`/${year}/${month}/${day}/${hour}/${minute}/${second}`) ←
-
-block content
-    form(id='post-edit' action=`/${year}/${month}/${day}/${hour}/${minute}/${second}?edited` method='post')
-        - let post = fs.readFileSync(`content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`).toString()
-        - post = post.substring(0, post.length - 1)
-        textarea(id='post-edit' name='message')!= post
-
-block action
-    input(type='submit' form='post-edit' value='Done')
+html
+    head
+        title= title
+        meta(charset='utf-8')
+        link(rel='stylesheet' href='/static/style.css')
+        script(defer src='/static/client.js')
+    body
+        #banner
+            a(href='/')= title
+        div(class=['month-index', monthIndexLayout])
+            - let y = firstYear;
+            - let m = firstMonth;
+            while (y <= lastYear)
+                div
+                    p= y
+                    ul
+                        while ((y != lastYear && m <= 12) || m <= lastMonth)
+                            li
+                                a(href=`/${y}/${m.zeropad(2)}`)= dateFormat(new Date(Date.UTC(y, m - 1)), 'UTC:mmmm')
+                            - m++;
+                - y++; m = 1;
+        #content
+            .header
+                span.back
+                    a(href=`/${year}/${month}/${day}/${hour}/${minute}/${second}`) ←
+                span= dateFormat(new Date(Date.UTC(year, month-1, day)), 'UTC:dddd, mmmm d yyyy')
+            .post
+                form(id='post-edit' action=`/${year}/${month}/${day}/${hour}/${minute}/${second}?edited` method='post')
+                    - let post = fs.readFileSync(`content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`).toString()
+                    - post = post.substring(0, post.length - 1)
+                    textarea(id='post-edit' name='message')!= post
+                .post-info
+                    - let date = new Date(Date.UTC(year, month-1, day, hour, minute))
+                    span= dateFormat(date, 'UTC:ddd').toLowerCase()
+                    span= dateFormat(date, 'UTC:dd/mm')
+                    span= dateFormat(date, 'UTC:yyyy')
+                    span= dateFormat(date, 'UTC:HH:MM')
+                    input(type='submit' form='post-edit' value='Done')
+            #footer
