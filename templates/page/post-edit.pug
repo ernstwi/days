@@ -4,10 +4,12 @@
         back = `/${year}/${month}/${day}`;
         file = `content/${year}/${month}/${day}/allday.md`;
         date = new Date(Date.UTC(year, month-1, day));
+        time = 'all day';
     } else {
         back = `/${year}/${month}/${day}/${hour}/${minute}/${second}`;
         file = `content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`;
         date = new Date(Date.UTC(year, month-1, day, hour, minute));
+        time = dateFormat(date, 'UTC:HH:MM');
     }
 
 html
@@ -20,7 +22,7 @@ html
             .header
                 span.back
                     a(href=back) ←
-                span= dateFormat(new Date(Date.UTC(year, month-1, day)), 'UTC:dddd, mmmm d yyyy')
+                span= dateFormat(date, 'UTC:dddd, mmmm d yyyy')
             .post
                 form(id='post-edit' action=`${back}?edited` method='post')
                     - let post = fs.readFileSync(file).toString()
@@ -30,6 +32,6 @@ html
                     span= dateFormat(date, 'UTC:ddd').toLowerCase()
                     span= dateFormat(date, 'UTC:dd/mm')
                     span= dateFormat(date, 'UTC:yyyy')
-                    span= dateFormat(date, 'UTC:HH:MM')
+                    span= time
                     input(type='submit' form='post-edit' value='Done')
             #footer
