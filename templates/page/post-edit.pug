@@ -1,0 +1,37 @@
+-
+    let back, file, date, edit;
+    if (hour === undefined) {
+        back = `/${year}/${month}/${day}`;
+        file = `content/${year}/${month}/${day}/allday.md`;
+        date = new Date(Date.UTC(year, month-1, day));
+        time = 'all day';
+    } else {
+        back = `/${year}/${month}/${day}/${hour}/${minute}/${second}`;
+        file = `content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`;
+        date = new Date(Date.UTC(year, month-1, day, hour, minute));
+        time = dateFormat(date, 'UTC:HH:MM');
+    }
+
+html
+    include ../include/head
+    body
+        #banner
+            a(href='/')= title
+        include ../include/month-index
+        #content
+            .header
+                span.back
+                    a(href=back) ←
+                span= dateFormat(date, 'UTC:dddd, mmmm d yyyy')
+            .post
+                form(id='post-edit' action=`${back}?edited` method='post')
+                    - let post = fs.readFileSync(file).toString()
+                    - post = post.substring(0, post.length - 1)
+                    textarea(id='post-edit' name='message')!= post
+                .post-info
+                    span= dateFormat(date, 'UTC:ddd').toLowerCase()
+                    span= dateFormat(date, 'UTC:dd/mm')
+                    span= dateFormat(date, 'UTC:yyyy')
+                    span= time
+                    input(type='submit' form='post-edit' value='Done')
+            #footer

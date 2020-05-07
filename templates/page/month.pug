@@ -1,0 +1,49 @@
+html
+    include ../include/head
+    body
+        #banner
+            a(href='/')= title
+        include ../include/month-index
+        #content
+            - let pathMonth = ['content', year, month].join('/');
+            if (!fs.existsSync(pathMonth))
+                #no-posts-container
+                    #no-posts= `No posts this ${dateFormat(new Date(Date.UTC(year, month-1)), "UTC:mmmm")}.`
+            else
+                - let days = fs.readdirSync(pathMonth).filter(f => /\d{2}/.test(f));
+                each day in days
+                    .header= dateFormat(new Date(Date.UTC(year, month-1, day)), 'UTC:dddd, mmmm d yyyy')
+                    - let pathDay = [pathMonth, day].join('/');
+                    if fs.existsSync([pathDay, 'allday.md'].join('/'))
+                        .post
+                            .post-content!= md.render(fs.readFileSync(`content/${year}/${month}/${day}/allday.md`).toString())
+                            .post-info
+                                - let date = new Date(Date.UTC(year, month-1, day))
+                                span= dateFormat(date, 'UTC:ddd').toLowerCase()
+                                span= dateFormat(date, 'UTC:dd/mm')
+                                span= dateFormat(date, 'UTC:yyyy')
+                                span all day
+                                a(href=`/${year}/${month}/${day}`) view
+                    - let posts = fs.readdirSync(pathDay).filter(f => /\d{2}-\d{2}-\d{2}\.md/.test(f));
+                    each post, i in posts
+                        - let [_, hour, minute, second] = post.match(/(\d{2})-(\d{2})-(\d{2}).md$/);
+                        .post
+                            .post-content!= md.render(fs.readFileSync(`content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`).toString())
+                            .post-info
+                                - let date = new Date(Date.UTC(year, month-1, day, hour, minute))
+                                span= dateFormat(date, 'UTC:ddd').toLowerCase()
+                                span= dateFormat(date, 'UTC:dd/mm')
+                                span= dateFormat(date, 'UTC:yyyy')
+                                span= dateFormat(date, 'UTC:HH:MM')
+                                a(href=`/${year}/${month}/${day}/${hour}/${minute}/${second}`) view
+                #footer
+                    #navArrows
+                        - month = parseInt(month); year = parseInt(year);
+                        div
+                            if (year > firstYear || month > firstMonth)
+                                a(href=month == 1 ? `/${year-1}/12` : `/${year}/${(month-1).zeropad(2)}`) ←
+                        div
+                            span ⬥
+                        div
+                            if (year < lastYear || month < lastMonth)
+                                a(href=month == 12 ? `/${year+1}/01` : `/${year}/${(month+1).zeropad(2)}`) →

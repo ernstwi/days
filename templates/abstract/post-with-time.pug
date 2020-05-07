@@ -1,7 +1,0 @@
-extends post
-
-block date
-    - let date = new Date(Date.UTC(year, month-1, day, hour, minute))
-
-block time
-    span= dateFormat(date, 'UTC:HH:MM')
