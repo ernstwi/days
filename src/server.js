@@ -37,10 +37,10 @@ class Server {
         let root = serveStatic(__basedir);
         let assets = serveStatic('assets');
 
-        let pugStartView = pug.compileFile(`${__basedir}/templates/view/start.pug`);
-        let pugMonthView = pug.compileFile(`${__basedir}/templates/view/month.pug`);
-        let pugPostView  = pug.compileFile(`${__basedir}/templates/view/post.pug`);
-        let pugPostEdit  = pug.compileFile(`${__basedir}/templates/view/edit.pug`);
+        let pugStart    = pug.compileFile(`${__basedir}/templates/start.pug`);
+        let pugMonth    = pug.compileFile(`${__basedir}/templates/month.pug`);
+        let pugPostView = pug.compileFile(`${__basedir}/templates/post-view.pug`);
+        let pugPostEdit = pug.compileFile(`${__basedir}/templates/post-edit.pug`);
 
         let firstYear  = parseInt(fs.readdirSync('content').filter(f => /\d{4}/.test(f))[0]);
         let firstMonth = parseInt(fs.readdirSync(`content/${firstYear}`).filter(f => /\d{2}/.test(f))[0]);
@@ -73,7 +73,7 @@ class Server {
 
             // Home
             if (url == '/') {
-                res.end(pugStartView(Object.assign(Object.create(pugVars), {
+                res.end(pugStart(Object.assign(Object.create(pugVars), {
                     monthIndexLayout: 'horizontal'
                 })));
                 return;
@@ -84,7 +84,7 @@ class Server {
                 let match = url.match(/^\/(\d{4})\/(\d{2})$/);
                 if (match != null) {
                     let [_, year, month] = match;
-                    res.end(pugMonthView(Object.assign(Object.create(pugVars), {
+                    res.end(pugMonth(Object.assign(Object.create(pugVars), {
                         monthIndexLayout: 'vertical',
                         year: year,
                         month: month
