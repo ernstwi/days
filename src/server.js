@@ -41,7 +41,6 @@ class Server {
         let pugMonthView = pug.compileFile(`${__basedir}/templates/view/month.pug`);
         let pugPostView  = pug.compileFile(`${__basedir}/templates/view/post.pug`);
         let pugPostEdit  = pug.compileFile(`${__basedir}/templates/view/edit.pug`);
-        let pugPostEditAllday  = pug.compileFile(`${__basedir}/templates/view/edit-allday.pug`);
 
         let firstYear  = parseInt(fs.readdirSync('content').filter(f => /\d{4}/.test(f))[0]);
         let firstMonth = parseInt(fs.readdirSync(`content/${firstYear}`).filter(f => /\d{2}/.test(f))[0]);
@@ -114,9 +113,9 @@ class Server {
 
             {
                 // Edit view
-                let match = url.match(/(\d{4})\/(\d{2})\/(\d{2})\/(\d{2})\/(\d{2})\/(\d{2})\/edit$/);
+                let match = url.match(/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?\/edit$/);
                 if (match != null) {
-                    let [_, year, month, day, hour, minute, second] = match;
+                    let [_, year, month, day, __, hour, minute, second] = match;
                     res.end(pugPostEdit(Object.assign(Object.create(pugVars), {
                         monthIndexLayout: 'vertical',
                         year: year,
@@ -131,48 +130,21 @@ class Server {
             }
 
             {
-                // Edit view (all day)
-                let match = url.match(/(\d{4})\/(\d{2})\/(\d{2})\/edit$/);
-                if (match != null) {
-                    let [_, year, month, day] = match;
-                    res.end(pugPostEditAllday(Object.assign(Object.create(pugVars), {
-                        monthIndexLayout: 'vertical',
-                        year: year,
-                        month: month,
-                        day: day,
-                    })));
-                    return;
-                }
-            }
-
-            {
                 // Edit submitted
-                let match = url.match(/(\d{4})\/(\d{2})\/(\d{2})\/(\d{2})\/(\d{2})\/(\d{2})\?edited$/);
+                let match = url.match(/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?\?edited$/);
                 if (match != null) {
-                    let [_, year, month, day, hour, minute, second] = match;
+                    let [_, year, month, day, __, hour, minute, second] = match;
                     let chunks = [];
                     req.on('data', chunk => chunks.push(chunk));
                     req.on('end', () => {
                         let data = qs.parse(Buffer.concat(chunks).toString()).message.replace(/\r/g, '') + '\n';
-                        fs.writeFileSync(`content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`, data);
-                        res.writeHead(301, {Location: `/${year}/${month}/${day}/${hour}/${minute}/${second}`});
-                        res.end();
-                    })
-                    return;
-                }
-            }
-
-            {
-                // Edit submitted (all day)
-                let match = url.match(/(\d{4})\/(\d{2})\/(\d{2})\?edited$/);
-                if (match != null) {
-                    let [_, year, month, day] = match;
-                    let chunks = [];
-                    req.on('data', chunk => chunks.push(chunk));
-                    req.on('end', () => {
-                        let data = qs.parse(Buffer.concat(chunks).toString()).message.replace(/\r/g, '') + '\n';
-                        fs.writeFileSync(`content/${year}/${month}/${day}/allday.md`, data);
-                        res.writeHead(301, {Location: `/${year}/${month}/${day}`});
+                        if (hour === undefined) {
+                            fs.writeFileSync(`content/${year}/${month}/${day}/allday.md`, data);
+                            res.writeHead(301, {Location: `/${year}/${month}/${day}`});
+                        } else {
+                            fs.writeFileSync(`content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`, data);
+                            res.writeHead(301, {Location: `/${year}/${month}/${day}/${hour}/${minute}/${second}`});
+                        }
                         res.end();
                     })
                     return;

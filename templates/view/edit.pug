@@ -1,3 +1,15 @@
+-
+    let back, file, date, edit;
+    if (hour === undefined) {
+        back = `/${year}/${month}/${day}`;
+        file = `content/${year}/${month}/${day}/allday.md`;
+        date = new Date(Date.UTC(year, month-1, day));
+    } else {
+        back = `/${year}/${month}/${day}/${hour}/${minute}/${second}`;
+        file = `content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`;
+        date = new Date(Date.UTC(year, month-1, day, hour, minute));
+    }
+
 html
     head
         title= title
@@ -22,15 +34,14 @@ html
         #content
             .header
                 span.back
-                    a(href=`/${year}/${month}/${day}/${hour}/${minute}/${second}`) ←
+                    a(href=back) ←
                 span= dateFormat(new Date(Date.UTC(year, month-1, day)), 'UTC:dddd, mmmm d yyyy')
             .post
-                form(id='post-edit' action=`/${year}/${month}/${day}/${hour}/${minute}/${second}?edited` method='post')
-                    - let post = fs.readFileSync(`content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`).toString()
+                form(id='post-edit' action=`${back}?edited` method='post')
+                    - let post = fs.readFileSync(file).toString()
                     - post = post.substring(0, post.length - 1)
                     textarea(id='post-edit' name='message')!= post
                 .post-info
-                    - let date = new Date(Date.UTC(year, month-1, day, hour, minute))
                     span= dateFormat(date, 'UTC:ddd').toLowerCase()
                     span= dateFormat(date, 'UTC:dd/mm')
                     span= dateFormat(date, 'UTC:yyyy')
