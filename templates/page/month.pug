@@ -1,24 +1,9 @@
 html
-    head
-        title= title
-        meta(charset='utf-8')
-        link(rel='stylesheet' href='/static/style.css')
-        script(defer src='/static/client.js')
+    include ../include/head
     body
         #banner
             a(href='/')= title
-        div(class=['month-index', monthIndexLayout])
-            - let y = firstYear;
-            - let m = firstMonth;
-            while (y <= lastYear)
-                div
-                    p= y
-                    ul
-                        while ((y != lastYear && m <= 12) || m <= lastMonth)
-                            li
-                                a(href=`/${y}/${m.zeropad(2)}`)= dateFormat(new Date(Date.UTC(y, m - 1)), 'UTC:mmmm')
-                            - m++;
-                - y++; m = 1;
+        include ../include/month-index
         #content
             - let pathMonth = ['content', year, month].join('/');
             if (!fs.existsSync(pathMonth))
