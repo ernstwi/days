@@ -1,0 +1,21 @@
+-
+    let file, date, time;
+    if (hour === undefined) {
+        file = `content/${year}/${month}/${day}/allday.md`;
+        date = new Date(Date.UTC(year, month-1, day));
+        time = 'all day';
+    } else {
+        file = `content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`;
+        date = new Date(Date.UTC(year, month-1, day, hour, minute));
+        time = dateFormat(date, 'UTC:HH:MM');
+    }
+
+.post
+    .post-content
+        block content
+    .post-info
+        span= dateFormat(date, 'UTC:ddd').toLowerCase()
+        span= dateFormat(date, 'UTC:dd/mm')
+        span= dateFormat(date, 'UTC:yyyy')
+        span= time
+        block action

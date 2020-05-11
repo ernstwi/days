@@ -1,0 +1,13 @@
+html
+    include ../head
+    body
+        #banner
+            a(href='/')= title
+        include ../month-index
+        #content
+            .header
+                span.back
+                    a(href=`/${year}/${month}`) ←
+                span= dateFormat(new Date(Date.UTC(year, month-1, day)), 'UTC:dddd, mmmm d yyyy')
+            include post
+            #footer

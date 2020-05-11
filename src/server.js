@@ -37,10 +37,10 @@ class Server {
         let root = serveStatic(__basedir);
         let assets = serveStatic('assets');
 
-        let pugStart    = pug.compileFile(`${__basedir}/templates/page/start.pug`);
-        let pugMonth    = pug.compileFile(`${__basedir}/templates/page/month.pug`);
-        let pugPostView = pug.compileFile(`${__basedir}/templates/page/post-view.pug`);
-        let pugPostEdit = pug.compileFile(`${__basedir}/templates/page/post-edit.pug`);
+        let pugStart    = pug.compileFile(`${__basedir}/templates/start.pug`);
+        let pugMonth    = pug.compileFile(`${__basedir}/templates/month/main.pug`);
+        let pugPostView = pug.compileFile(`${__basedir}/templates/post-view/main.pug`);
+        let pugPostEdit = pug.compileFile(`${__basedir}/templates/post-edit/main.pug`);
 
         let firstYear  = parseInt(fs.readdirSync('content').filter(f => /\d{4}/.test(f))[0]);
         let firstMonth = parseInt(fs.readdirSync(`content/${firstYear}`).filter(f => /\d{2}/.test(f))[0]);

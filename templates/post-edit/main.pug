@@ -1,0 +1,18 @@
+-
+    let back = (hour === undefined ?
+        `/${year}/${month}/${day}` :
+        `/${year}/${month}/${day}/${hour}/${minute}/${second}`);
+
+html
+    include ../head
+    body
+        #banner
+            a(href='/')= title
+        include ../month-index
+        #content
+            .header
+                span.back
+                    a(href=back) ←
+                span= dateFormat(new Date(Date.UTC(year, month-1, day)), 'UTC:dddd, mmmm d yyyy')
+            include post
+            #footer

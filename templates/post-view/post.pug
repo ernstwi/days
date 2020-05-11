@@ -1,0 +1,9 @@
+extends ../post
+
+block content
+    .post-content!= md.render(fs.readFileSync(file).toString())
+
+block action
+    a(href = (hour === undefined ?
+        `/${year}/${month}/${day}/edit` :
+        `/${year}/${month}/${day}/${hour}/${minute}/${second}/edit`)) edit
