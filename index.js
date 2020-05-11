@@ -3,6 +3,7 @@
 global.__basedir = __dirname;
 global.__binname = process.argv[1].match(/[^\/]*$/)[0];
 
+let assert = require('assert');
 let cp = require('child_process');
 let fs = require('fs');
 let dateFormat = require('dateformat');
@@ -76,10 +77,21 @@ switch (process.argv[2]) {
         fs.mkdirSync(dir, { recursive: true });
         fs.writeFileSync(file, '');
 
-        if (args.noEdit)
+        if (args.noEdit) {
             console.log(file);
-        else
-            cp.spawn(process.env.EDITOR, [file], { stdio: 'inherit' });
+            return;
+        }
+
+        let editor = process.env.EDITOR;
+        if (editor == undefined || editor == '')
+            editor = 'vi';
+
+        cp.spawn(editor, [file], { stdio: 'inherit' }).on('error', err => {
+            assert(err.code == 'ENOENT');
+            console.error(`${__binname}: \x1b[31mError\x1b[0m: Could not start editor.`);
+            process.exit(1);
+        });
+
         return;
     case 'server':
         let port = 3004;
