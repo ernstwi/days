@@ -47,21 +47,20 @@ class Server {
         let lastYear   = parseInt(fs.readdirSync('content').filter(f => /\d{4}/.test(f)).last());
         let lastMonth  = parseInt(fs.readdirSync(`content/${lastYear}`).filter(f => /\d{2}/.test(f)).last());
 
-        let title = 'Journal';
         let config = null;
         try {
             config = JSON.parse(fs.readFileSync('config.json'));
         } catch(err) {}
 
         if (config != null && config.title != undefined) {
-            title = config.title;
+            __title = config.title;
         }
 
         let pugVars = {
             fs: fs,
             dateFormat: dateFormat,
             md: md,
-            title: title,
+            title: __title,
             firstYear: firstYear,
             firstMonth: firstMonth,
             lastYear: lastYear,

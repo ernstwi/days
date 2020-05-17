@@ -2,6 +2,7 @@
 
 global.__basedir = __dirname;
 global.__binname = process.argv[1].match(/[^\/]*$/)[0];
+global.__title = 'Journal';
 
 let assert = require('assert');
 let cp = require('child_process');
