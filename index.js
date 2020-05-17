@@ -32,6 +32,9 @@ if (process.argv.length < 3 || process.argv[2] == '--help') {
 }
 
 switch (process.argv[2]) {
+    case '--version':
+        console.log(`${__binname} ${require('./package.json').version}`);
+        return;
     case 'new':
         let args = {
             'noEdit': false,
