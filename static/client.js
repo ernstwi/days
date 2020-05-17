@@ -1,3 +1,8 @@
+function fav(elem, id) {
+    elem.classList.toggle('active');
+    fetch(`${id}?favorite`);
+}
+
 function toggleMuted(elem) {
     if (elem.muted) {
         elem.muted = false;

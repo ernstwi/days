@@ -1,13 +1,15 @@
 -
-    let file, date, time;
+    let file, date, time, id;
     if (hour === undefined) {
         file = `content/${year}/${month}/${day}/allday.md`;
         date = new Date(Date.UTC(year, month-1, day));
         time = 'all day';
+        id = `/${year}/${month}/${day}`;
     } else {
         file = `content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`;
         date = new Date(Date.UTC(year, month-1, day, hour, minute));
         time = dateFormat(date, 'UTC:HH:MM');
+        id = `/${year}/${month}/${day}/${hour}/${minute}/${second}`;
     }
 
 .post
@@ -19,3 +21,8 @@
         span= dateFormat(date, 'UTC:yyyy')
         span= time
         block action
+        span(
+            class = favorites.has(id) ?
+                ['fav', 'active'] :
+                ['fav']
+            onclick = `fav(this, '${id}')`) ★

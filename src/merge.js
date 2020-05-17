@@ -26,6 +26,8 @@ function tree(dir) {
 
 function merge(root) {
     root = root.replace(/\/+$/, '');
+    if (fs.existsSync(`${root}/.fav`))
+        console.error(`${__binname}: \x1b[33mNote\x1b[0m: ${root}/.fav not merged.`);
 
     for (let src of tree(root)) {
         let dst = {

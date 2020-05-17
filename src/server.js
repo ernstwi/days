@@ -1,3 +1,4 @@
+let assert = require('assert');
 let cp = require('child_process');
 let fs = require('fs');
 let http = require('http');
@@ -25,6 +26,19 @@ if (!Array.prototype.last) {
     }
 }
 
+if (!String.prototype.lines) {
+    String.prototype.lines = function() {
+        let res = this.split('\n');
+
+        // Trailing newline
+        if (res[res.length-1] == '') {
+            res.splice(-1, 1);
+        }
+
+        return res;
+    }
+}
+
 class Server {
     #server;
 
@@ -37,10 +51,11 @@ class Server {
         let root = serveStatic(__basedir);
         let assets = serveStatic('assets');
 
-        let pugStart    = pug.compileFile(`${__basedir}/templates/start.pug`);
-        let pugMonth    = pug.compileFile(`${__basedir}/templates/month/main.pug`);
-        let pugPostView = pug.compileFile(`${__basedir}/templates/post-view/main.pug`);
-        let pugPostEdit = pug.compileFile(`${__basedir}/templates/post-edit/main.pug`);
+        let pugStart     = pug.compileFile(`${__basedir}/templates/start.pug`);
+        let pugMonth     = pug.compileFile(`${__basedir}/templates/month/main.pug`);
+        let pugFavorites = pug.compileFile(`${__basedir}/templates/favorites.pug`);
+        let pugPostView  = pug.compileFile(`${__basedir}/templates/post-view/main.pug`);
+        let pugPostEdit  = pug.compileFile(`${__basedir}/templates/post-edit/main.pug`);
 
         let firstYear  = parseInt(fs.readdirSync('content').filter(f => /\d{4}/.test(f))[0]);
         let firstMonth = parseInt(fs.readdirSync(`content/${firstYear}`).filter(f => /\d{2}/.test(f))[0]);
@@ -56,11 +71,19 @@ class Server {
             __title = config.title;
         }
 
+        let favorites;
+        try {
+            favorites = new Set(fs.readFileSync(__favoritesFile).toString().lines());
+        } catch(err) {
+            favorites = new Set();
+        }
+
         let pugVars = {
             fs: fs,
             dateFormat: dateFormat,
             md: md,
             title: __title,
+            favorites: favorites,
             firstYear: firstYear,
             firstMonth: firstMonth,
             lastYear: lastYear,
@@ -87,6 +110,17 @@ class Server {
                         monthIndexLayout: 'vertical',
                         year: year,
                         month: month
+                    })));
+                    return;
+                }
+            }
+
+            {
+                // Favorites view
+                let match = url.match(/^\/favorites$/);
+                if (match != null) {
+                    res.end(pugFavorites(Object.assign(Object.create(pugVars), {
+                        monthIndexLayout: 'vertical'
                     })));
                     return;
                 }
@@ -146,6 +180,25 @@ class Server {
                         }
                         res.end();
                     })
+                    return;
+                }
+            }
+
+            {
+                // Favorite submitted
+                let match = url.match(/^(\/\d{4}\/\d{2}\/\d{2}(\/\d{2}\/\d{2}\/\d{2})?)\?favorite$/);
+                if (match != null) {
+                    res.end();
+                    let id = match[1];
+                    if (favorites.has(id))
+                        favorites.delete(id);
+                    else
+                        favorites.add(id);
+
+                    if (favorites.size == 0)
+                        fs.unlinkSync(__favoritesFile);
+                    else
+                        fs.writeFileSync(__favoritesFile, [...favorites].join('\n'));
                     return;
                 }
             }
