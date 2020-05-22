@@ -14,7 +14,7 @@ let merge = require('./src/merge.js');
 
 function usage(stdout) {
     let msg = `Usage:
-  ${__binname} new [--no-edit] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
+  ${__binname} new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
   ${__binname} server [--port <number>]
   ${__binname} merge <path>`;
 
@@ -38,11 +38,17 @@ switch (process.argv[2]) {
     case 'new':
         let args = {
             'noEdit': false,
+            'allday': false,
             'date': []
         };
         for (let i = 3; i < process.argv.length; i++) {
             if (process.argv[i] == '--no-edit') {
-                args['noEdit'] = true;
+                args.noEdit = true;
+                continue;
+            }
+
+            if (process.argv[i] == '--allday') {
+                args.allday = true;
                 continue;
             }
 
@@ -70,7 +76,8 @@ switch (process.argv[2]) {
         }
 
         let dir = `content/${dateFormat(date, 'UTC:yyyy/mm/dd')}`;
-        let file = (args.date.length == 3) ?
+
+        let file = (args.allday || args.date.length == 3) ?
             `${dir}/allday.md` :
             `${dir}/${dateFormat(date, 'UTC:HH-MM-ss".md"')}`;
 
