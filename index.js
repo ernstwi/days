@@ -11,12 +11,14 @@ let fs = require('fs');
 let dateFormat = require('dateformat');
 let { Server } = require('./src/server.js');
 let merge = require('./src/merge.js');
+let prune = require('./src/prune.js');
 
 function usage(stdout) {
     let msg = `Usage:
   ${__binname} new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
   ${__binname} server [--port <number>]
-  ${__binname} merge <path>`;
+  ${__binname} merge <path>
+  ${__binname} prune`;
 
     if (stdout) {
         console.log(msg);
@@ -115,5 +117,8 @@ switch (process.argv[2]) {
         if (process.argv.length < 4)
             usage(false);
         merge(process.argv[3]);
+        return;
+    case 'prune':
+        prune('content');
         return;
 }
