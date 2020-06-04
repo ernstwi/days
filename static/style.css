@@ -3,7 +3,6 @@
 body {
     font-family: Verdana;
     font-size: 11px;
-    line-height: 1.6em;
     color: #fff;
     background-color: #4a525a;
 
@@ -11,6 +10,10 @@ body {
     margin-left: auto;
     margin-right: auto;
     margin-top: 50px;
+}
+
+.post p {
+    line-height: 1.6em;
 }
 
 a {
