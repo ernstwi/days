@@ -1,7 +1,7 @@
 extends ../post
 
 block content
-    .post-content!= md.render(fs.readFileSync(file).toString())
+    div(class='post-body view')!= md.render(fs.readFileSync(file).toString())
 
 block action
     a(href = (hour === undefined ?

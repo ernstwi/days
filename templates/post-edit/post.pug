@@ -1,10 +1,10 @@
 extends ../post
 
 block content
-    form(id='post-edit' action=`${back}?edited` method='post')
+    form(class='post-body edit' id='main' action=`${back}?edited` method='post')
         - let post = fs.readFileSync(file).toString()
         - post = post.substring(0, post.length - 1)
-        textarea(id='post-edit' name='message')!= post
+        textarea(form='main' name='message')!= post
 
 block action
-    input(type='submit' form='post-edit' value='Done')
+    input(type='submit' form='main' value='Done')

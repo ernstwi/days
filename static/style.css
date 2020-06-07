@@ -28,8 +28,15 @@ a:hover {
     border-color: #606870;
 }
 
-.post-content a {
+.post-body.view a {
     text-decoration: underline;
+}
+
+.post-body.edit textarea {
+    font-family: Courier;
+    width: 100%;
+    height: 25em;
+    resize: none;
 }
 
 img, video {
@@ -179,13 +186,6 @@ img.narrow {
     align-items: center;
     font-style: italic;
     color: #aaa;
-}
-
-#post-edit {
-    font-family: Courier;
-    width: 100%;
-    height: 25em;
-    resize: none;
 }
 
 .fav {
