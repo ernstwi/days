@@ -14,14 +14,32 @@
 
 .post
     block content
-    .post-info
-        span= dateFormat(date, 'UTC:ddd').toLowerCase()
-        span= dateFormat(date, 'UTC:dd/mm')
-        span= dateFormat(date, 'UTC:yyyy')
-        span= time
-        block action
-        span(
-            class = favorites.has(id) ?
-                ['fav', 'active'] :
-                ['fav']
-            onclick = `fav(this, '${id}')`) ★
+    block action
+    .post-footer
+        .post-info
+            span= dateFormat(date, 'UTC:ddd').toLowerCase()
+            span= dateFormat(date, 'UTC:dd/mm')
+            span= dateFormat(date, 'UTC:yyyy')
+            span= time
+            block link
+            span(
+                class = favorites.has(id) ?
+                    ['fav', 'active'] :
+                    ['fav']
+                onclick = `fav(this, '${id}')`) ★
+        block extra
+            hr
+            .post-info
+                - date = fs.statSync(file).birthtime
+                span created:
+                span= dateFormat(date, 'ddd').toLowerCase()
+                span= dateFormat(date, 'dd/mm')
+                span= dateFormat(date, 'yyyy')
+                span= dateFormat(date, 'HH:MM')
+            .post-info
+                - date = fs.statSync(file).mtime
+                span edited:
+                span= dateFormat(date, 'ddd').toLowerCase()
+                span= dateFormat(date, 'dd/mm')
+                span= dateFormat(date, 'yyyy')
+                span= dateFormat(date, 'HH:MM')
