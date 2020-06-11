@@ -40,7 +40,7 @@ $ brew install ernstwi/tap/days
 
 ## Usage
 
-All commands assume that cwd is the journal root.
+All commands assume your current directory is the journal root.
 
 ### `new`
 
@@ -69,6 +69,14 @@ Merge content from another journal.
 
 ```
 $ days merge <path>
+```
+
+### `prune`
+
+Clean up the content directory, removing empty subdirectories.
+
+```
+$ days prune
 ```
 
 ## Configuration
