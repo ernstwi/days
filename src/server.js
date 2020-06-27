@@ -95,9 +95,7 @@ class Server {
 
             // Home
             if (url == '/') {
-                res.end(pugStart(Object.assign(Object.create(pugVars), {
-                    monthIndexLayout: 'horizontal'
-                })));
+                res.end(pugStart(Object.create(pugVars)));
                 return;
             }
 
@@ -107,7 +105,6 @@ class Server {
                 if (match != null) {
                     let [_, year, month] = match;
                     res.end(pugMonth(Object.assign(Object.create(pugVars), {
-                        monthIndexLayout: 'vertical',
                         year: year,
                         month: month
                     })));
@@ -120,7 +117,6 @@ class Server {
                 let match = url.match(/^\/favorites$/);
                 if (match != null) {
                     res.end(pugFavorites(Object.assign(Object.create(pugVars), {
-                        monthIndexLayout: 'vertical'
                     })));
                     return;
                 }
@@ -132,7 +128,6 @@ class Server {
                 if (match != null) {
                     let [_, year, month, day, __, hour, minute, second] = match;
                     res.end(pugPostView(Object.assign(Object.create(pugVars), {
-                        monthIndexLayout: 'vertical',
                         year: year,
                         month: month,
                         day: day,
@@ -150,7 +145,6 @@ class Server {
                 if (match != null) {
                     let [_, year, month, day, __, hour, minute, second] = match;
                     res.end(pugPostEdit(Object.assign(Object.create(pugVars), {
-                        monthIndexLayout: 'vertical',
                         year: year,
                         month: month,
                         day: day,

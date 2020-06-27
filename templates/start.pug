@@ -3,6 +3,20 @@ html
     body
         #banner
             a(href='/')= title
-        include month-index
-        #special-pages
-            a(href='/favorites') Favorites
+        center
+            #start
+                #index
+                    - let y = firstYear;
+                    - let m = 1;
+                    while (y <= lastYear)
+                        .unit
+                            .year= y
+                            .months
+                                while (m <= 12)
+                                    .month
+                                        if ((y == firstYear && m < firstMonth) || (y == lastYear && m > lastMonth))
+                                            =dateFormat(new Date(Date.UTC(y, m - 1)), 'UTC:mmm').toLowerCase()
+                                        else
+                                            a(href=`/${y}/${m.zeropad(2)}`)= dateFormat(new Date(Date.UTC(y, m - 1)), 'UTC:mmm').toLowerCase()
+                                    - m++;
+                        - y++; m = 1;

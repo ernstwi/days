@@ -1,10 +1,40 @@
-/* The style is a copy of daringfireball.net by John Gruber. */
+/* {{{1 Colors */
+
+:root {
+    --text:          #001217;
+    --background:    #ffffff;
+    --link:          #0086f7;
+    --link-hover:    #ff0086;
+    --fav:           #ffd700;
+    --subtle:        #aaaaaa;
+}
+
+/* {{{1 Main sections */
+
+#main {
+    display: flex;
+    justify-content: space-between;
+}
+
+#banner {
+    margin-bottom: 60px;
+}
+
+#content {
+    width: 515px;
+}
+
+#sidebar {
+    width: 9ch;
+}
+
+/* {{{1 General elements */
 
 body {
-    font-family: Verdana;
+    font-family: Monaco, "Ubuntu Mono", "Lucida Console", monospace;
     font-size: 11px;
-    color: #fff;
-    background-color: #4a525a;
+    color: var(--text);
+    background-color: var(--background);
 
     width: 650px;
     margin-left: auto;
@@ -12,38 +42,14 @@ body {
     margin-top: 50px;
 }
 
-.post p {
-    line-height: 1.6em;
-}
-
 a {
     text-decoration: none;
-    color: #ddd;
+    color: var(--link);
 }
 
 a:hover {
-    color: white;
-    text-decoration: none;
-    background-color: #606870;
-    border-color: #606870;
-}
-
-.post-body.view a {
+    color: var(--link-hover);
     text-decoration: underline;
-}
-
-.post-body.edit textarea {
-    font-family: Courier;
-    width: 100%;
-    height: 25em;
-    resize: none;
-}
-
-.post hr {
-    border: 0.5px solid #aaa;
-    margin-left: 0;
-    margin-top: 7px;
-    margin-bottom: 5px;
 }
 
 img, video {
@@ -60,71 +66,131 @@ img.narrow {
     max-height: initial;
 }
 
-#banner {
-    font-size: 50px;
-    font-family: Georgia;
-    font-style: italic;
-    margin-bottom: 100px;
+blockquote {
+    margin-left: 0;
+    padding-left: 1em;
+    border-left: 1px solid black;
 }
 
+figure {
+    border: 1px solid var(--subtle);
+    padding: 1em;
+}
 
-.month-index, #special-pages {
-    font-family: "Gill Sans";
-    font-size: 11px;
-    letter-spacing: 2px;
-    line-height: 1.9em;
-    text-transform: uppercase;
+hr {
+    border: 0.5px solid var(--text);
+}
+
+/* {{{1 Start page */
+
+#start #index {
+    display: inline-block;
+}
+
+#start #index .unit {
+    display: flex;
+    border-bottom: 1px solid var(--subtle);
+    padding: 0.5ch;
+    /* justify-content: space-between; */
+}
+
+#start #index .unit:first-child {
+    border-top: 1px solid var(--subtle);
+}
+
+#start #index .unit .months {
+    display: flex;
+    margin-left: 3ch;
+}
+
+#start #index .unit .months .month {
+    color: var(--subtle);
+    width: 4.5ch;
     text-align: right;
 }
 
-#special-pages {
+/* {{{1 Sidebar */
+
+#sidebar {
+    line-height: 1.6em;
+    text-align: right;
+}
+
+#sidebar #links {
+    margin-top: 2ch;
+    border-top: 1px solid var(--subtle);
+    padding-top: 2ch;
+    margin-bottom: 50px;
+}
+
+#sidebar #index .unit {
+    margin-bottom: 3ch;
+}
+
+#sidebar #index .unit .year {
+    margin-bottom: 0.5ch;
+}
+
+/* {{{1 Post */
+
+.post {
     margin-top: 2em;
-    padding-top: 1em;
-    border-top: 2px dashed #aaa;
 }
 
-.month-index.horizontal {
-    display: flex;
+.post-body.view a {
+    text-decoration: underline;
+}
+
+.post-body.view p {
+    line-height: 1.6em;
+}
+
+.post-body.view p:last-child {
+    margin-bottom: 0.5em;
+}
+
+.post-body.edit textarea {
+    font-family: Monaco, "Ubuntu Mono", "Lucida Console", monospace;
     width: 100%;
-    overflow: scroll;
+    height: 25em;
+    resize: none;
 }
 
-.month-index.horizontal div {
-    margin-left: 2em;
+.post-footer {
+    width: 140px;
 }
 
-.month-index.horizontal div:nth-child(1) {
-    margin-left: 0;
+.post-footer hr {
+    border: 0.5px solid var(--subtle);
 }
 
-.month-index.vertical {
-    float: left;
-}
-
-.month-index ul {
-    list-style: none;
-    margin: 0px;
-    padding: 0px;
-}
-
-.month-index.vertical ul {
-    margin-bottom: 25px;
-}
-
-.month-index p {
-    margin-top: 0;
-}
-
-#content {
-    width: 515px;
+.post-footer input {
     float: right;
 }
 
+.post-footer .info {
+    font-size: 0.7em;
+    color: var(--subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.post-footer .fav {
+    cursor: default;
+    font-size: 1.4em;
+    text-align: center;
+}
+
+.post-footer .fav.active {
+    color: var(--fav);
+}
+
+/* {{{1 Header */
+
 .header {
-    color: #aaa;
-    font-family: "Gill Sans";
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    color: var(--subtle);
+    text-decoration: underline;
     margin-top: 50px;
 }
 
@@ -136,25 +202,10 @@ img.narrow {
     margin-right: 0.7em;
 }
 
-.post {
-    margin-top: 2em;
-}
+/* {{{1 Misc */
 
-.post-info {
-    font-size: 0.7em;
-    color: #aaa;
-    margin-top: 5px;
-    display: flex;
-    justify-content: space-between;
-    height: 1.2em;
-}
-
-.post input {
-    float: right;
-}
-
-.post-footer {
-    width: 140px;
+#banner {
+    font-size: 40px;
 }
 
 #footer {
@@ -177,27 +228,21 @@ img.narrow {
     text-align: center;
 }
 
+#no-posts {
+    width: 250px;
+    height: 50px;
+    border: 1px dashed var(--subtle);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-style: italic;
+    color: var(--subtle);
+}
+
 #no-posts-container {
     display: flex;
     justify-content: center;
     margin-bottom: 10px;
 }
 
-#no-posts {
-    width: 250px;
-    height: 50px;
-    border: 1px dashed #aaa;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-style: italic;
-    color: #aaa;
-}
-
-.fav {
-    cursor: default;
-}
-
-.fav.active {
-    color: gold;
-}
+/* vim: set fdm=marker: */

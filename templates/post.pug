@@ -16,7 +16,7 @@
     block content
     block action
     .post-footer
-        .post-info
+        .info
             span= dateFormat(date, 'UTC:ddd').toLowerCase()
             span= dateFormat(date, 'UTC:dd/mm')
             span= dateFormat(date, 'UTC:yyyy')
@@ -29,16 +29,16 @@
                 onclick = `fav(this, '${id}')`) ★
         block extra
             hr
-            .post-info
+            .info
                 - date = fs.statSync(file).birthtime
                 span created:
                 span= dateFormat(date, 'ddd').toLowerCase()
                 span= dateFormat(date, 'dd/mm')
                 span= dateFormat(date, 'yyyy')
                 span= dateFormat(date, 'HH:MM')
-            .post-info
+            .info
                 - date = fs.statSync(file).mtime
-                span edited:
+                span edited:&nbsp;
                 span= dateFormat(date, 'ddd').toLowerCase()
                 span= dateFormat(date, 'dd/mm')
                 span= dateFormat(date, 'yyyy')
