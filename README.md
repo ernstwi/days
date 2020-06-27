@@ -3,7 +3,7 @@
 This is a tool for keeping a personal journal in the form of a directory of markdown files. There are two main commands: `new` for writing posts, and `server` to browse the journal as a webpage.
 
 <p align='center'>
-    <img src='https://github.com/ernstwi/days/raw/master/screenshot.png' width='434'>
+    <img src='https://github.com/ernstwi/days/raw/master/screenshot.png' width='600'>
 </p>
 
 ## Directory structure
@@ -19,7 +19,7 @@ This is a tool for keeping a personal journal in the form of a directory of mark
 │                                    some later point in time
 ├── assets
 │   └── image.jpeg ................. anything you want to add to a post, eg
-│                                    `![an image](/image.jpg)`
+│                                    `![an image](/image.jpeg)`
 │
 └── config.json .................... optional configuration file
 ```
