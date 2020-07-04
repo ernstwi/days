@@ -66,8 +66,10 @@ $ days server [--port <number>]
 Merge content from another journal.
 
 ```
-$ days merge <path>
+$ days merge [--resolve] <path>
 ```
+
+- With `--resolve`, filename collisions on assets are resolved by renaming.
 
 ### `prune`
 

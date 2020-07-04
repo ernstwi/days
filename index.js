@@ -17,7 +17,7 @@ function usage(stdout) {
     let msg = `Usage:
   ${__binname} new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
   ${__binname} server [--port <number>]
-  ${__binname} merge <path>
+  ${__binname} merge [--resolve] <path>
   ${__binname} prune`;
 
     if (stdout) {
@@ -116,7 +116,13 @@ switch (process.argv[2]) {
     case 'merge':
         if (process.argv.length < 4)
             usage(false);
-        merge(process.argv[3]);
+        if (process.argv[3] == '--resolve') {
+            if (process.argv.length < 5)
+                usage(false);
+            merge(process.argv[4], true);
+        } else {
+            merge(process.argv[3], false);
+        }
         return;
     case 'prune':
         prune('content');
