@@ -12,33 +12,6 @@ let md = require('markdown-it')({
     breaks: true
 });
 
-if (!Number.prototype.zeropad) {
-    Number.prototype.zeropad = function(width) {
-        let res = this.toString();
-        return res.length >= width ? res :
-            new Array(width - res.length + 1).join('0') + res;
-    }
-}
-
-if (!Array.prototype.last) {
-    Array.prototype.last = function() {
-        return this[this.length - 1];
-    }
-}
-
-if (!String.prototype.lines) {
-    String.prototype.lines = function() {
-        let res = this.split('\n');
-
-        // Trailing newline
-        if (res[res.length-1] == '') {
-            res.splice(-1, 1);
-        }
-
-        return res;
-    }
-}
-
 class Server {
     #server;
 
