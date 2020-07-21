@@ -170,4 +170,6 @@ switch (process.argv[2]) {
     case 'prune':
         prune('content');
         return;
+    default:
+        usage(false);
 }
