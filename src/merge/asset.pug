@@ -1,0 +1,15 @@
+- extension = extension.toLowerCase()
+case extension
+    when 'gif'
+    when 'jpeg'
+    when 'jpg'
+    when 'png'
+      img(src=`/${filename}`)
+    when 'amr'
+    when 'mp3'
+        audio(src=`/${filename}`)
+    when 'mov'
+    when 'mp4'
+        video(src=`/${filename}`)
+    default
+        | UNKNOWN FORMAT

@@ -10,7 +10,8 @@ let cp = require('child_process');
 let fs = require('fs');
 let dateFormat = require('dateformat');
 let { Server } = require('./src/server.js');
-let merge = require('./src/merge.js');
+let mergePath = require('./src/merge/path.js');
+let mergeImessage = require('./src/merge/imessage.js');
 let prune = require('./src/prune.js');
 
 if (!Number.prototype.zeropad) {
@@ -44,7 +45,7 @@ function usage(stdout) {
     let msg = `Usage:
   ${__binname} new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
   ${__binname} server [--port <number>]
-  ${__binname} merge [--resolve] <path>
+  ${__binname} merge [--resolve] (<path> | --imessage <ID>)
   ${__binname} prune`;
 
     if (stdout) {
@@ -141,15 +142,26 @@ switch (process.argv[2]) {
         new Server().run(port);
         return;
     case 'merge':
-        if (process.argv.length < 4)
-            usage(false);
-        if (process.argv[3] == '--resolve') {
-            if (process.argv.length < 5)
-                usage(false);
-            merge(process.argv[4], true);
-        } else {
-            merge(process.argv[3], false);
+        let resolve = false, imessage = false, pathOrId;
+        for (i = 3; i < process.argv.length; i++) {
+            switch (process.argv[i]) {
+                case '--resolve':
+                    resolve = true;
+                    break;
+                case '--imessage':
+                    imessage = true;
+                    break;
+                default:
+                    pathOrId = process.argv[i];
+                    break;
+            }
         }
+        if (pathOrId == undefined)
+            usage(false);
+        if (imessage)
+            mergeImessage(pathOrId, resolve);
+        else
+            mergePath(pathOrId, resolve);
         return;
     case 'prune':
         prune('content');
