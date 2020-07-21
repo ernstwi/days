@@ -28,13 +28,13 @@ function mergeAssets(assets, resolve) {
                         substitutions[dstUrl] = newDstUrl;
 
                         fs.copyFileSync(src, newDst, fs.constants.COPYFILE_EXCL);
-                        console.error(`${__binname}: \x1b[35mName collision\x1b[0m: Renaming \x1b[36m/assets${dstUrl}\x1b[0m to \x1b[36m/assets${newDstUrl}\x1b[0m.`);
+                        console.error(`\x1b[35mName collision\x1b[0m: Renaming \x1b[36m/assets${dstUrl}\x1b[0m to \x1b[36m/assets${newDstUrl}\x1b[0m`);
                     }
                     break;
                 } catch(err) {
                     assert(err.code == 'EEXIST');
                     if (!resolve) {
-                        console.error(`${__binname}: \x1b[31mName collision\x1b[0m: \x1b[36m${src}\x1b[0m not merged.`);
+                        console.error(`\x1b[31mName collision\x1b[0m: \x1b[36m${dst}\x1b[0m not merged`);
                         break;
                     } else {
                         suffix++;
@@ -60,7 +60,7 @@ function mergePosts(posts, substitutions) {
             fs.writeFileSync(dst, txt, { flag: 'wx' });
         } catch(err) {
             assert(err.code == 'EEXIST');
-            console.error(`${__binname}: \x1b[31mName collision\x1b[0m: \x1b[36m${dst}\x1b[0m not merged.`);
+            console.error(`\x1b[31mName collision\x1b[0m: \x1b[36m${dst}\x1b[0m not merged`);
         }
     }
 }

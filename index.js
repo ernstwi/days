@@ -112,7 +112,7 @@ switch (process.argv[2]) {
             `${dir}/${dateFormat(date, 'UTC:HH-MM-ss".md"')}`;
 
         if (fs.existsSync(file)) {
-            console.error(`${__binname}: \x1b[31mError\x1b[0m: ${file} already exists.`);
+            console.error(`\x1b[31mError\x1b[0m: \x1b[36m${file}\x1b[0m already exists`);
             process.exit(1);
         }
 
@@ -130,7 +130,7 @@ switch (process.argv[2]) {
 
         cp.spawn(editor, [file], { stdio: 'inherit' }).on('error', err => {
             assert(err.code == 'ENOENT');
-            console.error(`${__binname}: \x1b[31mError\x1b[0m: Could not start editor.`);
+            console.error(`\x1b[31mError\x1b[0m: Could not start editor`);
             process.exit(1);
         });
 
