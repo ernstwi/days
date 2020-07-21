@@ -57,8 +57,12 @@ function usage(stdout) {
     }
 }
 
-if (process.argv.length < 3 || process.argv[2] == '--help') {
-    usage(process.argv[2] == '--help');
+if (process.argv.length < 3) {
+    usage(false);
+}
+
+if (/(--)?help/.test(process.argv[2])) {
+    usage(true);
 }
 
 switch (process.argv[2]) {
