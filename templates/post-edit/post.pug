@@ -1,9 +1,9 @@
 extends ../post
 
 block content
-    form(class='post-body edit' id='main' action=`${back}?edited` method='post')
-        textarea(form='main' name='message')
+    form(class='post-body edit' id='form' action=`${back}?edited` method='post')
+        textarea(form='form' name='message')
             != fs.readFileSync(file).toString().replace(/\n$/, '')
 
 block action
-    input(type='submit' form='main' value='Done')
+    input(type='submit' form='form' value='Done')
