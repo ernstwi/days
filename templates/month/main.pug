@@ -9,11 +9,11 @@ html
                 - let pathMonth = ['content', year, month].join('/');
                 if (!fs.existsSync(pathMonth))
                     #no-posts-container
-                        #no-posts= `No posts this ${dateFormat(new Date(Date.UTC(year, month-1)), "UTC:mmmm")}.`
+                        #no-posts= `No posts this ${dateFormat(new Date(year, month-1), "mmmm")}.`
                 else
                     - let days = fs.readdirSync(pathMonth).filter(f => /^\d{2}$/.test(f));
                     each day in days
-                        .header= dateFormat(new Date(Date.UTC(year, month-1, day)), 'UTC:dddd, mmmm d yyyy')
+                        .header= dateFormat(new Date(year, month-1, day), 'dddd, mmmm d yyyy')
                         - let pathDay = [pathMonth, day].join('/');
                         if fs.existsSync([pathDay, 'allday.md'].join('/'))
                             include post

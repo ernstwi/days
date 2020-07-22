@@ -8,7 +8,7 @@
                 .months
                     while ((y != lastYear && m <= 12) || m <= lastMonth)
                         .month
-                            a(href=`/${y}/${m.zeropad(2)}`)= dateFormat(new Date(Date.UTC(y, m - 1)), 'UTC:mmmm')
+                            a(href=`/${y}/${m.zeropad(2)}`)= dateFormat(new Date(y, m - 1), 'mmmm')
                         - m++;
             - y++; m = 1;
     #links

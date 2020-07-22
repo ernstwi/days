@@ -2,13 +2,13 @@
     let file, date, time, id;
     if (hour === undefined) {
         file = `content/${year}/${month}/${day}/allday.md`;
-        date = new Date(Date.UTC(year, month-1, day));
+        date = new Date(year, month-1, day);
         time = 'all day';
         id = `/${year}/${month}/${day}`;
     } else {
         file = `content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`;
-        date = new Date(Date.UTC(year, month-1, day, hour, minute));
-        time = dateFormat(date, 'UTC:HH:MM');
+        date = new Date(year, month-1, day, hour, minute);
+        time = dateFormat(date, 'HH:MM');
         id = `/${year}/${month}/${day}/${hour}/${minute}/${second}`;
     }
 
@@ -17,9 +17,9 @@
     block action
     .post-footer
         .info
-            span= dateFormat(date, 'UTC:ddd').toLowerCase()
-            span= dateFormat(date, 'UTC:dd/mm')
-            span= dateFormat(date, 'UTC:yyyy')
+            span= dateFormat(date, 'ddd').toLowerCase()
+            span= dateFormat(date, 'dd/mm')
+            span= dateFormat(date, 'yyyy')
             span= time
             block link
             span(

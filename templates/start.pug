@@ -15,8 +15,8 @@ html
                                 while (m <= 12)
                                     .month
                                         if ((y == firstYear && m < firstMonth) || (y == lastYear && m > lastMonth))
-                                            =dateFormat(new Date(Date.UTC(y, m - 1)), 'UTC:mmm').toLowerCase()
+                                            =dateFormat(new Date(y, m - 1), 'mmm').toLowerCase()
                                         else
-                                            a(href=`/${y}/${m.zeropad(2)}`)= dateFormat(new Date(Date.UTC(y, m - 1)), 'UTC:mmm').toLowerCase()
+                                            a(href=`/${y}/${m.zeropad(2)}`)= dateFormat(new Date(y, m - 1), 'mmm').toLowerCase()
                                     - m++;
                         - y++; m = 1;

@@ -104,16 +104,15 @@ switch (process.argv[2]) {
         let date;
         if (args.date.length == 0) {
             date = new Date();
-            date.setUTCHours(date.getHours());
         } else {
-            date = new Date(Date.UTC(...args.date));
+            date = new Date(...args.date);
         }
 
-        let dir = `content/${dateFormat(date, 'UTC:yyyy/mm/dd')}`;
+        let dir = `content/${dateFormat(date, 'yyyy/mm/dd')}`;
 
         let file = (args.allday || args.date.length == 3) ?
             `${dir}/allday.md` :
-            `${dir}/${dateFormat(date, 'UTC:HH-MM-ss".md"')}`;
+            `${dir}/${dateFormat(date, 'HH-MM-ss".md"')}`;
 
         if (fs.existsSync(file)) {
             console.error(`\x1b[31mError\x1b[0m: \x1b[36m${file}\x1b[0m already exists`);

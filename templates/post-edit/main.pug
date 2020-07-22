@@ -14,6 +14,6 @@ html
                 .header
                     span.back
                         a(href=back) ←
-                    span= dateFormat(new Date(Date.UTC(year, month-1, day)), 'UTC:dddd, mmmm d yyyy')
+                    span= dateFormat(new Date(year, month-1, day), 'dddd, mmmm d yyyy')
                 include post
                 #footer
