@@ -1,5 +1,6 @@
 let assert = require('assert');
 let cp = require('child_process');
+let events = require('events');
 let fs = require('fs');
 let http = require('http');
 let qs = require('querystring');
@@ -176,12 +177,11 @@ class Server {
     }
 
     run(port) {
-        this.#server.on('error', err => {
-            console.error(`\x1b[31mError\x1b[0m: Port ${port} is already in use`);
-            process.exit(1);
-        });
+        return events.once(this.#server.listen(port), 'listening');
+    }
 
-        this.#server.listen(port, () => console.log(`Server is listening on http://localhost:${port}`));
+    close() {
+        return this.#server.close();
     }
 }
 

@@ -142,7 +142,12 @@ switch (process.argv[2]) {
         let port = 3004;
         if (process.argv.length == 5 && process.argv[3] == '--port')
             port = process.argv[4];
-        new Server().run(port);
+        new Server().run(port).then(() => {
+                console.log(`Server is listening on http://localhost:${port}`)
+            }).catch(err => {
+                console.error(`\x1b[31mError\x1b[0m: Port ${port} is already in use`);
+                process.exit(1);
+            });
         return;
     case 'merge':
         let resolve = false, imessage = false, pathOrId;
