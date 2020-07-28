@@ -29,7 +29,10 @@ function mergePath(root, resolve) {
         console.error(`\x1b[33mNote\x1b[0m: \x1b[36m/.fav\x1b[0m not merged`);
 
     let assets = readdirRecursive(path.join(root, 'assets')).map(f => [f, f.replace(`${root}/assets/`, '')]);
-    let posts = readdirRecursive(path.join(root, 'content')).map(f => [fs.readFileSync(f).toString(), f.replace(`${root}/content/`, '')]);
+    let posts = readdirRecursive(path.join(root, 'content')).map(f => {
+        let stat = fs.statSync(f);
+        return [fs.readFileSync(f).toString(), f.replace(`${root}/content/`, ''), stat.birthtime, stat.mtime ];
+    });
     merge(posts, assets, resolve);
 }
 

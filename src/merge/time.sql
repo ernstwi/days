@@ -1,6 +1,6 @@
 SELECT
     m.rowid,
-    strftime('%Y/%m/%d/%H-%M-%S.md', datetime(m.date/1000000000 + strftime('%s', '2001-01-01'), 'unixepoch', 'localtime'))
+    m.date/1000000000 + strftime('%s', '2001-01-01')
 FROM
 
 message AS m

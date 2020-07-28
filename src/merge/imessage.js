@@ -6,6 +6,7 @@ let path = require('path');
 let merge = require('./merge');
 let parse = require('csv-parse/lib/sync');
 let pug = require('pug');
+let dateformat = require('dateformat');
 
 let pugAsset = pug.compileFile(`${__dirname}/asset.pug`);
 
@@ -25,9 +26,9 @@ function sqlite(id, file) {
 function mergeImessage(id, resolve) {
     let data = {};
     sqlite(id, 'time.sql').forEach(row => {
-        let [id, dst] = row;
+        let [id, time] = row;
         data[id] = {};
-        data[id].dst = dst;
+        data[id].date = new Date(time*1000);
     });
     sqlite(id, 'text.sql').forEach(row => {
         let [id, text] = row;
@@ -53,7 +54,7 @@ function mergeImessage(id, resolve) {
             value.text = value.assets.map(a => assetStr(a[1])).join('\n')
                 + (value.text == '' ? '' : '\n\n' + value.text);
         }
-        posts.push([value.text, value.dst]);
+        posts.push([value.text, dateformat(value.date, 'yyyy/mm/dd/HH-MM-ss".md"'), value.date, value.date]);
     }
 
     let assets = Object.values(data).filter(v => v.assets != undefined).flatMap(v => v.assets);

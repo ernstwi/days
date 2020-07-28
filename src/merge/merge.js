@@ -47,7 +47,7 @@ function mergeAssets(assets, resolve) {
 }
 
 function mergePosts(posts, substitutions) {
-    for (let [txt, dst] of posts) {
+    for (let [txt, dst, birthtime, mtime ] of posts) {
         dst = path.join('content', dst);
 
         for (let [key, value] of Object.entries(substitutions)) {
@@ -58,6 +58,8 @@ function mergePosts(posts, substitutions) {
 
         try {
             fs.writeFileSync(dst, txt, { flag: 'wx' });
+            fs.utimesSync(dst, new Date(), birthtime);
+            fs.utimesSync(dst, new Date(), mtime);
         } catch(err) {
             assert(err.code == 'EEXIST');
             console.error(`\x1b[31mName collision\x1b[0m: \x1b[36m${dst}\x1b[0m not merged`);
@@ -65,7 +67,7 @@ function mergePosts(posts, substitutions) {
     }
 }
 
-// posts: [ txt, dst ]
+// posts: [ txt, dst, created date, modified date ]
 // assets: [ src, dst ]
 // resolve: bool
 function merge(posts, assets, resolve) {
