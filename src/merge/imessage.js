@@ -36,6 +36,7 @@ function mergeImessage(id, resolve) {
         let [id, text] = row;
         data[id].text = text.replace(/￼/g, '');
             // Remove U+FFFC (object replacement character)
+        data[id].text += '\n';
     });
     sqlite(id, 'asset.sql').forEach(row => {
         let [id, asset] = row;

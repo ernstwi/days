@@ -150,6 +150,8 @@ describe('CLI', function() {
                     let stat = fs.statSync(path.join(dir, post));
                     assert(stat.birthtime.getTime() == postDate.getTime());
                     assert(stat.mtime.getTime() == postDate.getTime());
+                    let text = fs.readFileSync(path.join(dir, post), 'utf8');
+                    assert(text == 'new message\n');
                 });
             });
         });
