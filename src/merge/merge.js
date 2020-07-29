@@ -1,77 +1,76 @@
 let assert = require('assert');
 let fs = require('fs');
 let path = require('path');
+let { NameCollision } = require('../error');
 
-function mergeAssets(assets, resolve) {
-    let substitutions = new Object();
-    for (let [src, dst] of assets) {
-        dst = path.join('assets', dst);
+/**
+ * @param {string} src Source path (full).
+ * @param {string} dst Destination path (relative to 'assets').
+ * @param {boolean} resolve Resolve name collisions.
+ * @returns {string} New {@param dst}, possibly updated to avoid name collision.
+ * @throws {NameCollision} If {@param resolve} is false and {@param dst} exists.
+ */
+function mergeAsset(src, dst, resolve) {
+    // Make the parent directory if it doesn't already exist
+    fs.mkdirSync(path.dirname(path.join('assets', dst)), { recursive: true });
 
-        // Make the parent directory if it doesn't already exist
-        fs.mkdirSync(path.dirname(dst), { recursive: true });
+    {
+        let suffix = -1;
+        while (true) {
+            try {
+                if (suffix == -1) {
+                    fs.copyFileSync(src, path.join('assets', dst), fs.constants.COPYFILE_EXCL);
+                    return dst;
+                } else {
+                    let components = path.parse(dst);
+                    delete components.base;
+                    components.name += `-${suffix}`;
+                    let newDst = path.format(components);
 
-        {
-            let suffix = -1;
-            while (true) {
-                try {
-                    if (suffix == -1) {
-                        fs.copyFileSync(src, dst, fs.constants.COPYFILE_EXCL);
-                    } else {
-                        let components = path.parse(dst);
-                        delete components.base;
-                        components.name += `-${suffix}`;
-                        let newDst = path.format(components);
-
-                        let dstUrl = dst.replace('assets', '')
-                        let newDstUrl = newDst.replace('assets', '');
-
-                        substitutions[dstUrl] = newDstUrl;
-
-                        fs.copyFileSync(src, newDst, fs.constants.COPYFILE_EXCL);
-                        console.error(`\x1b[35mName collision\x1b[0m: Renaming \x1b[36m/assets${dstUrl}\x1b[0m to \x1b[36m/assets${newDstUrl}\x1b[0m`);
-                    }
-                    break;
-                } catch(err) {
-                    assert(err.code == 'EEXIST');
-                    if (!resolve) {
-                        console.error(`\x1b[31mName collision\x1b[0m: \x1b[36m${dst}\x1b[0m not merged`);
-                        break;
-                    } else {
-                        suffix++;
-                    }
+                    fs.copyFileSync(src, path.join('assets', newDst), fs.constants.COPYFILE_EXCL);
+                    return newDst;
+                }
+            } catch(err) {
+                assert(err.code == 'EEXIST');
+                if (!resolve) {
+                    throw new NameCollision(`\x1b[36m${dst}\x1b[0m not merged`);
+                } else {
+                    suffix++;
                 }
             }
         }
     }
-    return substitutions;
 }
 
-function mergePosts(posts, substitutions) {
-    for (let [txt, dst, birthtime, mtime ] of posts) {
-        dst = path.join('content', dst);
+/**
+ * @param {string} text Post body.
+ * @param {string} dst Destination path (relative to 'content').
+ * @param {Date} birthtime Creation date.
+ * @param {Date} mtime Modification date.
+ * @param {Object.<string, string>} substitutions Dictionary of asset name
+ * substitutions (due to name collisions).
+ * @throws {NameCollision} If {@param dst} exists.
+ */
+function mergePost(text, dst, birthtime, mtime, substitutions) {
+    dst = path.join('content', dst);
 
-        for (let [key, value] of Object.entries(substitutions)) {
-            txt = txt.split(key).join(value);
-        }
+    for (let [key, value] of Object.entries(substitutions)) {
+        text = text.split(key).join(value);
+    }
 
-        fs.mkdirSync(path.dirname(dst), { recursive: true });
+    fs.mkdirSync(path.dirname(dst), { recursive: true });
 
-        try {
-            fs.writeFileSync(dst, txt, { flag: 'wx' });
-            fs.utimesSync(dst, new Date(), birthtime);
-            fs.utimesSync(dst, new Date(), mtime);
-        } catch(err) {
-            assert(err.code == 'EEXIST');
-            console.error(`\x1b[31mName collision\x1b[0m: \x1b[36m${dst}\x1b[0m not merged`);
-        }
+    try {
+        fs.writeFileSync(dst, text, { flag: 'wx' });
+        fs.utimesSync(dst, new Date(), birthtime);
+        fs.utimesSync(dst, new Date(), mtime);
+    } catch(err) {
+        assert(err.code == 'EEXIST');
+        throw new NameCollision(`\x1b[36m${dst}\x1b[0m not merged`);
     }
 }
 
-// posts: [ txt, dst, created date, modified date ]
-// assets: [ src, dst ]
-// resolve: bool
-function merge(posts, assets, resolve) {
-    mergePosts(posts, mergeAssets(assets, resolve));
-}
-
-module.exports = merge;
+module.exports = {
+    mergeAsset: mergeAsset,
+    mergePost: mergePost
+};

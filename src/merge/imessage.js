@@ -4,6 +4,7 @@ let fs = require('fs');
 let os = require('os');
 let path = require('path');
 let merge = require('./merge');
+let { NameCollision } = require('../error');
 let parse = require('csv-parse/lib/sync');
 let pug = require('pug');
 let dateformat = require('dateformat');
@@ -24,6 +25,7 @@ function sqlite(id, file) {
 }
 
 function mergeImessage(id, resolve) {
+    // Collect data from Messages database
     let data = {};
     sqlite(id, 'time.sql').forEach(row => {
         let [id, time] = row;
@@ -40,26 +42,52 @@ function mergeImessage(id, resolve) {
         asset = asset.replace(/^~/, os.homedir());
         if (data[id].assets == undefined)
             data[id].assets = [];
-        data[id].assets.push([asset, path.basename(asset)]);
+        data[id].assets.push({
+            src: asset,
+            dst: path.basename(asset)
+        });
     });
 
-    let posts = [];
-    for (let [, value] of Object.entries(data)) {
-
-        // Special case for entries consisting of ' ' with no assets.
-        if (value.text == ' ' && value.assets == undefined)
-            continue;
-
-        if (value.assets != undefined) {
-            value.text = value.assets.map(a => assetStr(a[1])).join('\n')
-                + (value.text == '' ? '' : '\n\n' + value.text);
+    // Add assets to head of post text
+    Object.values(data).forEach(post => {
+        if (post.assets != undefined) {
+            post.text = post.assets.map(a => assetStr(a[1])).join('\n')
+                + (post.text == '' ? '' : '\n\n' + post.text);
         }
-        posts.push([value.text, dateformat(value.date, 'yyyy/mm/dd/HH-MM-ss".md"'), value.date, value.date]);
-    }
+    });
 
-    let assets = Object.values(data).filter(v => v.assets != undefined).flatMap(v => v.assets);
+    // Merge assets
+    let substitutions = {};
+    Object.values(data).filter(p => p.assets != undefined).forEach(post => {
+        post.assets.forEach(asset => {
+            let newDst;
+            try {
+                newDst = merge.mergeAsset(asset.src, asset.dst, resolve);
+            } catch (err) {
+                if (!(err instanceof NameCollision))
+                    throw err;
+                console.error(`Name collision: ${err.message}`);
+            }
+            if (newDst != dst)
+                substitutions[dst] = newDst;
+        });
+    });
 
-    merge(posts, assets, resolve);
+    // Merge posts
+    Object.values(data).forEach(post => {
+        // Special case for entries consisting of ' ' with no assets.
+        if (post.text == ' ' && post.assets == undefined)
+            return;
+
+        post.dst = dateformat(post.date, 'yyyy/mm/dd/HH-MM-ss".md"');
+        try {
+            merge.mergePost(post.text, post.dst, post.date, post.date, substitutions);
+        } catch (err) {
+            if (!(err instanceof NameCollision))
+                throw err;
+            console.error(`Name collision: ${err.message}`);
+        }
+    });
 }
 
 module.exports = mergeImessage;
