@@ -52,7 +52,7 @@ function mergeImessage(id, resolve) {
     // Add assets to head of post text
     Object.values(data).forEach(post => {
         if (post.assets != undefined) {
-            post.text = post.assets.map(a => assetStr(a[1])).join('\n')
+            post.text = post.assets.map(a => assetStr(a.dst)).join('\n')
                 + (post.text == '' ? '' : '\n\n' + post.text);
         }
     });
@@ -69,8 +69,8 @@ function mergeImessage(id, resolve) {
                     throw err;
                 console.error(`Name collision: ${err.message}`);
             }
-            if (newDst != dst)
-                substitutions[dst] = newDst;
+            if (newDst != asset.dst)
+                substitutions[asset.dst] = newDst;
         });
     });
 
