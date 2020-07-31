@@ -66,6 +66,10 @@ img.narrow {
     max-height: initial;
 }
 
+audio {
+    width: 100%;
+}
+
 blockquote {
     margin-left: 0;
     padding-left: 1em;
