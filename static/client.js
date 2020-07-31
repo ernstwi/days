@@ -3,21 +3,17 @@ function fav(elem, id) {
     fetch(`${id}?favorite`);
 }
 
-Array.from(document.getElementsByTagName('video')).forEach(v => {
-    v.muted = true;
-    v.loop = true;
-    v.autoplay = true;
-    v.onclick = function() {
-        if (v.muted) {
-            v.muted = false;
-        } else {
-            v.muted = true;
-        }
+Array.from(document.getElementsByTagName('video')).forEach(e => {
+    e.muted = true;
+    e.loop = true;
+    e.autoplay = true;
+    e.onclick = function() {
+        this.toggleAttribute('muted');
     };
 });
 
-Array.from(document.getElementsByTagName('audio')).forEach(v => {
-    v.controls = true;
+Array.from(document.getElementsByTagName('audio')).forEach(e => {
+    e.controls = true;
 });
 
 Array.from(document.getElementsByTagName('img')).forEach(e => {
