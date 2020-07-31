@@ -19,3 +19,12 @@ Array.from(document.getElementsByTagName('video')).forEach(v => {
 Array.from(document.getElementsByTagName('audio')).forEach(v => {
     v.controls = true;
 });
+
+Array.from(document.getElementsByTagName('img')).forEach(e => {
+    e.onclick = function() {
+        if (this.hasAttribute('style'))
+            this.removeAttribute('style');
+        else
+            this.style.maxHeight = 'none';
+    }
+});
