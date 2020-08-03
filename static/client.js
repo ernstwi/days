@@ -8,7 +8,7 @@ Array.from(document.getElementsByTagName('video')).forEach(e => {
     e.loop = true;
     e.autoplay = true;
     e.onclick = function() {
-        this.toggleAttribute('muted');
+        this.muted = !this.muted;
     };
 });
 
