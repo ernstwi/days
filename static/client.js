@@ -22,5 +22,5 @@ Array.from(document.getElementsByTagName('img')).forEach(e => {
             this.removeAttribute('style');
         else
             this.style.maxHeight = 'none';
-    }
+    };
 });
