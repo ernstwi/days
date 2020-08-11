@@ -82,7 +82,7 @@ class Server {
                 // Month view
                 let match = url.match(/^\/(\d{4})\/(\d{2})$/);
                 if (match != null) {
-                    let [_, year, month] = match;
+                    let [ , year, month] = match;
                     res.end(pugMonth(Object.assign(Object.create(pugVars), {
                         year: year,
                         month: month
@@ -105,7 +105,7 @@ class Server {
                 // Post view
                 let match = url.match(/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?$/);
                 if (match != null) {
-                    let [_, year, month, day, __, hour, minute, second] = match;
+                    let [ , year, month, day, , hour, minute, second] = match;
                     res.end(pugPostView(Object.assign(Object.create(pugVars), {
                         year: year,
                         month: month,
@@ -122,7 +122,7 @@ class Server {
                 // Edit view
                 let match = url.match(/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?\/edit$/);
                 if (match != null) {
-                    let [_, year, month, day, __, hour, minute, second] = match;
+                    let [ , year, month, day, , hour, minute, second] = match;
                     res.end(pugPostEdit(Object.assign(Object.create(pugVars), {
                         year: year,
                         month: month,
@@ -139,7 +139,7 @@ class Server {
                 // Edit submitted
                 let match = url.match(/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?\?edited$/);
                 if (match != null) {
-                    let [_, year, month, day, __, hour, minute, second] = match;
+                    let [ , year, month, day, , hour, minute, second] = match;
                     let chunks = [];
                     req.on('data', chunk => chunks.push(chunk));
                     req.on('end', () => {
