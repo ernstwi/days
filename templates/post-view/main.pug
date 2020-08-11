@@ -1,14 +1,9 @@
-html
-    include ../head
-    body
-        #banner
-            a(href='/')= title
-        #main
-            include ../sidebar
-            #content
-                .header
-                    span.back
-                        a(href=`/${year}/${month}`) ←
-                    span= dateFormat(new Date(year, month-1, day), 'dddd, mmmm d yyyy')
-                include post
-                #footer
+extends ../main
+
+block content
+    .header
+        span.back
+            a(href=`/${year}/${month}`) ←
+        span= dateFormat(new Date(year, month-1, day), 'dddd, mmmm d yyyy')
+    include post
+    #footer
