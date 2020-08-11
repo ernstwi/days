@@ -1,0 +1,16 @@
+html
+    include ../head
+    body
+        #banner
+            a(href='/')= title
+        #main
+            include ../sidebar
+            #content
+                .stat.year
+                    .list
+                        each n, year in data
+                            .item
+                                .title!= year
+                                .bar
+                                    .fill(style=`width: ${(n/max)*100}%`)
+                                .value!= n

@@ -7,6 +7,9 @@
     --link-hover:    #ff0086;
     --fav:           #ffd700;
     --subtle:        #aaaaaa;
+    --stat-bar:      #E6FFFC;
+    --stat-bar:      #E6FFEC;
+    --stat-bar-fill: #43c464;
 }
 
 /* {{{1 Main sections */
@@ -204,6 +207,50 @@ hr {
 
 .header .back {
     margin-right: 0.7em;
+}
+
+/* {{{1 Stat */
+
+.stat-header {
+    margin-bottom: 1em;
+    text-decoration: underline;
+}
+
+.stat .list {
+    margin-bottom: 1em;
+}
+
+.stat .list .item {
+    display: flex;
+    align-items: center;
+}
+
+.stat .list .item .title {
+    margin-right: 1ch;
+}
+
+.stat.month .list .item .title {
+    width: 8ch;
+}
+
+.stat.year .list .item .title {
+    width: 4ch;
+}
+
+.stat .list .item .bar {
+    height: 1em;
+    width: 20em;
+    background-color: var(--stat-bar);
+}
+
+.stat .list .item .bar .fill {
+    height: 1em;
+    background-color: var(--stat-bar-fill);
+}
+
+.stat .list .item .value {
+    margin-left: 1em;
+    color: var(--subtle);
 }
 
 /* {{{1 Misc */

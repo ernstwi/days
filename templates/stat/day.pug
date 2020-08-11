@@ -1,0 +1,20 @@
+html
+    include ../head
+    body
+        #banner
+            a(href='/')= title
+        #main
+            include ../sidebar
+            #content
+                .stat
+                    each monthData, year in data
+                        .stat-header!= year
+                        each dayData, month in monthData
+                            .stat-header!= dateFormat(new Date(0, month-1), 'mmmm')
+                            .list
+                                each n, day in dayData
+                                    .item
+                                        .title!= day
+                                        .bar
+                                            .fill(style=`width: ${(n/max)*100}%`)
+                                        .value!= n

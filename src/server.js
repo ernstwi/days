@@ -13,6 +13,8 @@ let md = require('markdown-it')({
     breaks: true
 });
 
+let stat = require('./stat.js');
+
 class Server {
     #server;
 
@@ -30,6 +32,9 @@ class Server {
         let pugFavorites = pug.compileFile(`${__basedir}/templates/favorites.pug`);
         let pugPostView  = pug.compileFile(`${__basedir}/templates/post-view/main.pug`);
         let pugPostEdit  = pug.compileFile(`${__basedir}/templates/post-edit/main.pug`);
+        let pugStatDay   = pug.compileFile(`${__basedir}/templates/stat/day.pug`);
+        let pugStatMonth = pug.compileFile(`${__basedir}/templates/stat/month.pug`);
+        let pugStatYear  = pug.compileFile(`${__basedir}/templates/stat/year.pug`);
 
         let firstYear  = parseInt(fs.readdirSync('content').filter(f => /\d{4}/.test(f))[0]);
         let firstMonth = parseInt(fs.readdirSync(`content/${firstYear}`).filter(f => /\d{2}/.test(f))[0]);
@@ -167,6 +172,45 @@ class Server {
                         fs.unlinkSync(__favoritesFile);
                     else
                         fs.writeFileSync(__favoritesFile, [...favorites].join('\n'));
+                    return;
+                }
+            }
+
+            {
+                // Stat view (day)
+                let match = url.match(/^\/stat(\/day)?$/);
+                if (match != null) {
+                    let [data, max] = stat.day();
+                    res.end(pugStatDay(Object.assign(Object.create(pugVars), {
+                        data: data,
+                        max: max
+                    })));
+                    return;
+                }
+            }
+
+            {
+                // Stat view (month)
+                let match = url.match(/^\/stat\/month/);
+                if (match != null) {
+                    let [data, max] = stat.month();
+                    res.end(pugStatMonth(Object.assign(Object.create(pugVars), {
+                        data: data,
+                        max: max
+                    })));
+                    return;
+                }
+            }
+
+            {
+                // Stat view (year)
+                let match = url.match(/^\/stat\/year/);
+                if (match != null) {
+                    let [data, max] = stat.year();
+                    res.end(pugStatYear(Object.assign(Object.create(pugVars), {
+                        data: data,
+                        max: max
+                    })));
                     return;
                 }
             }
