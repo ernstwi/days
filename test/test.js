@@ -6,7 +6,7 @@ let path = require('path');
 let dateformat = require('dateformat');
 let puppeteer = require('puppeteer');
 
-let { Server } = require('../src/server.js');
+let Server = require('../src/server');
 
 before(function() {
     global.__basedir = path.join(__dirname, '..');

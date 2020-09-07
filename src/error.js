@@ -5,4 +5,6 @@ class NameCollision extends Error {
     }
 }
 
-exports.NameCollision = NameCollision;
+module.exports = {
+    NameCollision: NameCollision
+};

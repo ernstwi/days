@@ -1,18 +1,20 @@
 #!/usr/bin/env node
 
+let assert = require('assert');
+let cp = require('child_process');
+let fs = require('fs');
+
+let dateFormat = require('dateformat');
+
+let Server = require('./src/server');
+let mergePath = require('./src/merge/path');
+let mergeImessage = require('./src/merge/imessage');
+let prune = require('./src/prune');
+
 global.__basedir = __dirname;
 global.__binname = process.argv[1].match(/[^\/]*$/)[0];
 global.__favoritesFile = '.fav';
 global.__title = 'days';
-
-let assert = require('assert');
-let cp = require('child_process');
-let fs = require('fs');
-let dateFormat = require('dateformat');
-let { Server } = require('./src/server.js');
-let mergePath = require('./src/merge/path.js');
-let mergeImessage = require('./src/merge/imessage.js');
-let prune = require('./src/prune.js');
 
 if (!Number.prototype.zeropad) {
     Number.prototype.zeropad = function(width) {

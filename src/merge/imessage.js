@@ -3,11 +3,13 @@ let cp = require('child_process');
 let fs = require('fs');
 let os = require('os');
 let path = require('path');
-let merge = require('./merge');
-let { NameCollision } = require('../error');
+
+let dateformat = require('dateformat');
 let parse = require('csv-parse/lib/sync');
 let pug = require('pug');
-let dateformat = require('dateformat');
+
+let merge = require('./merge');
+let { NameCollision } = require('../error');
 
 let pugAsset = pug.compileFile(`${__dirname}/asset.pug`);
 

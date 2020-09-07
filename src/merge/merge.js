@@ -1,6 +1,7 @@
 let assert = require('assert');
 let fs = require('fs');
 let path = require('path');
+
 let { NameCollision } = require('../error');
 
 /**

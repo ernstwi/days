@@ -3,17 +3,17 @@ let cp = require('child_process');
 let events = require('events');
 let fs = require('fs');
 let http = require('http');
-let qs = require('querystring');
 
-let pug = require('pug');
-let serveStatic = require('serve-static');
 let dateFormat = require('dateformat');
 let md = require('markdown-it')({
     html: true,
     breaks: true
 });
+let pug = require('pug');
+let qs = require('querystring');
+let serveStatic = require('serve-static');
 
-let stat = require('./stat.js');
+let stat = require('./stat');
 
 class Server {
     #server;
@@ -95,8 +95,7 @@ class Server {
                 // Favorites view
                 let match = url.match(/^\/favorites$/);
                 if (match != null) {
-                    res.end(pugFavorites(Object.assign(Object.create(pugVars), {
-                    })));
+                    res.end(pugFavorites(Object.create(pugVars)));
                     return;
                 }
             }
@@ -229,4 +228,4 @@ class Server {
     }
 }
 
-exports.Server = Server;
+module.exports = Server;
