@@ -9,5 +9,5 @@ block content
                     .item
                         .title!= dateFormat(new Date(0, month-1), 'mmmm')
                         .bar
-                            .fill(style=`width: ${(n/max)*100}%`)
+                            .fill(style=`width: ${max == 0 ? 0 : (n/max)*100}%`)
                         .value!= n

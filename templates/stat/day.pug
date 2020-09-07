@@ -11,5 +11,5 @@ block content
                         .item
                             .title!= day
                             .bar
-                                .fill(style=`width: ${(n/max)*100}%`)
+                                .fill(style=`width: ${max == 0 ? 0 : (n/max)*100}%`)
                             .value!= n
