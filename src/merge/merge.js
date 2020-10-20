@@ -45,7 +45,7 @@ function mergeAsset(src, dst, resolve) {
 
 /**
  * @param {string} text Post body.
- * @param {string} dst Destination path (relative to 'content').
+ * @param {string} dst Destination path (relative to root).
  * @param {Date} birthtime Creation date.
  * @param {Date} mtime Modification date.
  * @param {Object.<string, string>} substitutions Dictionary of asset name
@@ -53,8 +53,6 @@ function mergeAsset(src, dst, resolve) {
  * @throws {NameCollision} If {@param dst} exists.
  */
 function mergePost(text, dst, birthtime, mtime, substitutions) {
-    dst = path.join('content', dst);
-
     for (let [key, value] of Object.entries(substitutions)) {
         text = text.split(key).join(value);
     }

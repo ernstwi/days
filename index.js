@@ -4,11 +4,10 @@ let assert = require('assert');
 let cp = require('child_process');
 let fs = require('fs');
 
-let dateFormat = require('dateformat');
-
+let CustomDate = require('./src/custom-date');
 let Server = require('./src/server');
-let mergePath = require('./src/merge/path');
 let mergeImessage = require('./src/merge/imessage');
+let mergePath = require('./src/merge/path');
 let prune = require('./src/prune');
 
 global.__basedir = __dirname;
@@ -100,32 +99,24 @@ switch (process.argv[2]) {
         }
         if (args.date.length > 6)
             usage(false);
-        if (args.date.length >= 2)
-            args.date[1]--; // Month
 
         let date;
         if (args.date.length == 0) {
-            date = new Date();
+            date = new CustomDate();
         } else {
-            date = new Date(...args.date);
+            date = new CustomDate(...args.date);
         }
 
-        let dir = `content/${dateFormat(date, 'yyyy/mm/dd')}`;
-
-        let file = (args.allday || args.date.length == 3) ?
-            `${dir}/allday.md` :
-            `${dir}/${dateFormat(date, 'HH-MM-ss".md"')}`;
-
-        if (fs.existsSync(file)) {
-            console.error(`\x1b[31mError\x1b[0m: \x1b[36m${file}\x1b[0m already exists`);
+        if (fs.existsSync(date.file())) {
+            console.error(`\x1b[31mError\x1b[0m: \x1b[36m${date.file()}\x1b[0m already exists`);
             process.exit(1);
         }
 
-        fs.mkdirSync(dir, { recursive: true });
-        fs.writeFileSync(file, '');
+        fs.mkdirSync(date.dayDir(), { recursive: true });
+        fs.writeFileSync(date.file(), '');
 
         if (args.noEdit) {
-            console.log(file);
+            console.log(date.file());
             return;
         }
 
@@ -133,7 +124,7 @@ switch (process.argv[2]) {
         if (editor == undefined || editor == '')
             editor = 'vi';
 
-        cp.spawn(editor, [file], { stdio: 'inherit' }).on('error', err => {
+        cp.spawn(editor, [date.file()], { stdio: 'inherit' }).on('error', err => {
             assert(err.code == 'ENOENT');
             console.error(`\x1b[31mError\x1b[0m: Could not start editor`);
             process.exit(1);

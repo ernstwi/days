@@ -1,11 +1,9 @@
 extends ../post
 
 block content
-    div(class='post-body view')!= md.render(fs.readFileSync(file).toString())
+    div(class='post-body view')!= md.render(fs.readFileSync(date.file()).toString())
 
 block link
-    a(href = (hour === undefined ?
-        `/${year}/${month}/${day}` :
-        `/${year}/${month}/${day}/${hour}/${minute}/${second}`)) view
+    a(href=date.postUrl()) view
 
 block extra

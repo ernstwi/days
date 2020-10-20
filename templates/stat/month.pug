@@ -7,7 +7,7 @@ block content
             .list
                 each n, month in monthData
                     .item
-                        .title!= dateFormat(new Date(0, month-1), 'mmmm')
+                        .title!= new CustomDate(0, month-1).monthString()
                         .bar
                             .fill(style=`width: ${max == 0 ? 0 : (n/max)*100}%`)
                         .value!= n

@@ -5,7 +5,7 @@ block content
         each monthData, year in data
             .stat-header!= year
             each dayData, month in monthData
-                .stat-header!= dateFormat(new Date(0, month-1), 'mmmm')
+                .stat-header!= new CustomDate(0, month-1).monthString()
                 .list
                     each n, day in dayData
                         .item

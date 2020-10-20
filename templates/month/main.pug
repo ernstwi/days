@@ -1,24 +1,24 @@
 extends ../main
 
 block content
-    - let pathMonth = ['content', year, month].join('/');
-    if (!fs.existsSync(pathMonth))
+    if (!fs.existsSync(date.monthDir()))
         #no-posts-container
-            #no-posts= `No posts this ${dateFormat(new Date(year, month-1), "mmmm")}.`
+            #no-posts= `No posts this ${date.monthString()}.`
     else
-        - let days = fs.readdirSync(pathMonth).filter(f => /^\d{2}$/.test(f));
-        each day in days
-            .header= dateFormat(new Date(year, month-1, day), 'dddd, mmmm d yyyy')
-            - let pathDay = [pathMonth, day].join('/');
-            if fs.existsSync([pathDay, 'allday.md'].join('/'))
+        each day in fs.readdirSync(date.monthDir()).filter(f => /^\d{2}$/.test(f))
+            - date.setDate(day);
+            - date.allday = true;
+            .header= date.dayMonthDateYearString()
+            if fs.existsSync(date.file())
                 include post
-            - let posts = fs.readdirSync(pathDay).filter(f => /^\d{2}-\d{2}-\d{2}\.md$/.test(f));
-            each post, i in posts
-                - let [_, hour, minute, second] = post.match(/^(\d{2})-(\d{2})-(\d{2}).md$/);
+            - date.allday = false;
+            each post, i in fs.readdirSync(date.dayDir()).filter(f => /^\d{2}-\d{2}-\d{2}\.md$/.test(f))
+                - let [ , hour, minute, second] = post.match(/^(\d{2})-(\d{2})-(\d{2}).md$/);
+                - date.setHours(hour, minute, second);
                 include post
         #footer
             #navArrows
-                - month = parseInt(month); year = parseInt(year);
+                - month = date.getMonth() + 1; year = date.getFullYear();
                 div
                     if (year > firstYear || month > firstMonth)
                         a(href=month == 1 ? `/${year-1}/12` : `/${year}/${(month-1).zeropad(2)}`) ←

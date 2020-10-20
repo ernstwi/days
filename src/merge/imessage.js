@@ -4,10 +4,10 @@ let fs = require('fs');
 let os = require('os');
 let path = require('path');
 
-let dateformat = require('dateformat');
 let parse = require('csv-parse/lib/sync');
 let pug = require('pug');
 
+let CustomDate = require('../custom-date');
 let merge = require('./merge');
 let { NameCollision } = require('../error');
 
@@ -32,7 +32,7 @@ function mergeImessage(id, resolve) {
     sqlite(id, 'time.sql').forEach(row => {
         let [id, time] = row;
         data[id] = {};
-        data[id].date = new Date(time*1000);
+        data[id].date = new CustomDate(time*1000);
     });
     sqlite(id, 'text.sql').forEach(row => {
         let [id, text] = row;
@@ -82,7 +82,7 @@ function mergeImessage(id, resolve) {
         if (post.text == ' ' && post.assets == undefined)
             return;
 
-        post.dst = dateformat(post.date, 'yyyy/mm/dd/HH-MM-ss".md"');
+        post.dst = post.date.file();
         try {
             merge.mergePost(post.text, post.dst, post.date, post.date, substitutions);
         } catch (err) {

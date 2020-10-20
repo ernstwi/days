@@ -1,45 +1,25 @@
--
-    let file, date, time, id;
-    if (hour === undefined) {
-        file = `content/${year}/${month}/${day}/allday.md`;
-        date = new Date(year, month-1, day);
-        time = 'all day';
-        id = `/${year}/${month}/${day}`;
-    } else {
-        file = `content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`;
-        date = new Date(year, month-1, day, hour, minute);
-        time = dateFormat(date, 'HH:MM');
-        id = `/${year}/${month}/${day}/${hour}/${minute}/${second}`;
-    }
+mixin dateSpans(d)
+    - let parts = [d.dayStringShort(), d.dateMonthStringShort(), d.getFullYear(), d.timeString()]
+    for part in parts
+        span= part
 
 .post
     block content
     block action
     .post-footer
         .info
-            span= dateFormat(date, 'ddd').toLowerCase()
-            span= dateFormat(date, 'dd/mm')
-            span= dateFormat(date, 'yyyy')
-            span= time
+            +dateSpans(date)
             block link
             span(
-                class = favorites.has(id) ?
+                class = favorites.has(date.postUrl()) ?
                     ['fav', 'active'] :
                     ['fav']
-                onclick = `fav(this, '${id}')`) ★
+                onclick = `fav(this, '${date.postUrl()}')`) ★
         block extra
             hr
             .info
-                - date = fs.statSync(file).birthtime
                 span created:
-                span= dateFormat(date, 'ddd').toLowerCase()
-                span= dateFormat(date, 'dd/mm')
-                span= dateFormat(date, 'yyyy')
-                span= dateFormat(date, 'HH:MM')
+                +dateSpans(new CustomDate(fs.statSync(date.file()).birthtime))
             .info
-                - date = fs.statSync(file).mtime
                 span edited:&nbsp;
-                span= dateFormat(date, 'ddd').toLowerCase()
-                span= dateFormat(date, 'dd/mm')
-                span= dateFormat(date, 'yyyy')
-                span= dateFormat(date, 'HH:MM')
+                +dateSpans(new CustomDate(fs.statSync(date.file()).mtime))

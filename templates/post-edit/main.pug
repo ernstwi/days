@@ -1,8 +1,3 @@
--
-    let back = (hour === undefined ?
-        `/${year}/${month}/${day}` :
-        `/${year}/${month}/${day}/${hour}/${minute}/${second}`);
-
 html
     include ../head
     body
@@ -13,7 +8,7 @@ html
             #content
                 .header
                     span.back
-                        a(href=back) ←
-                    span= dateFormat(new Date(year, month-1, day), 'dddd, mmmm d yyyy')
+                        a(href=date.postUrl()) ←
+                    span= date.dayMonthDateYearString()
                 include post
                 #footer

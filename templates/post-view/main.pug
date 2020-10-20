@@ -3,7 +3,7 @@ extends ../main
 block content
     .header
         span.back
-            a(href=`/${year}/${month}`) ←
-        span= dateFormat(new Date(year, month-1, day), 'dddd, mmmm d yyyy')
+            a(href=date.monthUrl()) ←
+        span= date.dayMonthDateYearString()
     include post
     #footer

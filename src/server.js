@@ -4,7 +4,6 @@ let events = require('events');
 let fs = require('fs');
 let http = require('http');
 
-let dateFormat = require('dateformat');
 let md = require('markdown-it')({
     html: true,
     breaks: true
@@ -13,6 +12,7 @@ let pug = require('pug');
 let qs = require('querystring');
 let serveStatic = require('serve-static');
 
+let CustomDate = require('./custom-date');
 let stat = require('./stat');
 
 class Server {
@@ -59,8 +59,8 @@ class Server {
 
         let pugVars = {
             fs: fs,
-            dateFormat: dateFormat,
             md: md,
+            CustomDate: CustomDate,
             title: __title,
             favorites: favorites,
             firstYear: firstYear,
@@ -84,8 +84,7 @@ class Server {
                 if (match != null) {
                     let [ , year, month] = match;
                     res.end(pugMonth(Object.assign(Object.create(pugVars), {
-                        year: year,
-                        month: month
+                        date: new CustomDate(year, month)
                     })));
                     return;
                 }
@@ -106,12 +105,7 @@ class Server {
                 if (match != null) {
                     let [ , year, month, day, , hour, minute, second] = match;
                     res.end(pugPostView(Object.assign(Object.create(pugVars), {
-                        year: year,
-                        month: month,
-                        day: day,
-                        hour: hour,
-                        minute: minute,
-                        second: second
+                        date: new CustomDate(year, month, day, hour, minute, second)
                     })));
                     return;
                 }
@@ -123,12 +117,7 @@ class Server {
                 if (match != null) {
                     let [ , year, month, day, , hour, minute, second] = match;
                     res.end(pugPostEdit(Object.assign(Object.create(pugVars), {
-                        year: year,
-                        month: month,
-                        day: day,
-                        hour: hour,
-                        minute: minute,
-                        second: second
+                        date: new CustomDate(year, month, day, hour, minute, second)
                     })));
                     return;
                 }

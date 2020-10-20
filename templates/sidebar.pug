@@ -8,7 +8,8 @@
                 .months
                     while ((y != lastYear && m <= 12) || m <= lastMonth)
                         .month
-                            a(href=`/${y}/${m.zeropad(2)}`)= dateFormat(new Date(y, m - 1), 'mmmm')
+                            - let date = new CustomDate(y, m);
+                            a(href=date.monthUrl())= date.monthString()
                         - m++;
             - y++; m = 1;
     #links

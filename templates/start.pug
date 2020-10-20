@@ -14,9 +14,10 @@ html
                             .months
                                 while (m <= 12)
                                     .month
+                                        - let date = new CustomDate(y, m)
                                         if ((y == firstYear && m < firstMonth) || (y == lastYear && m > lastMonth))
-                                            =dateFormat(new Date(y, m - 1), 'mmm').toLowerCase()
+                                            = date.monthStringShort()
                                         else
-                                            a(href=`/${y}/${m.zeropad(2)}`)= dateFormat(new Date(y, m - 1), 'mmm').toLowerCase()
+                                            a(href=date.monthUrl())= date.monthStringShort()
                                     - m++;
                         - y++; m = 1;

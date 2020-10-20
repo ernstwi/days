@@ -49,7 +49,7 @@ function mergePath(root, resolve) {
 
     readdirRecursive(path.join(root, 'content')).forEach(src => {
         let text = fs.readFileSync(src, 'utf8');
-        let dst = src.replace(`${root}/content/`, '');
+        let dst = src.replace(`${root}/`, '');
         let stat = fs.statSync(src);
         try {
             merge.mergePost(text, dst, stat.birthtime, stat.mtime, substitutions);
