@@ -197,8 +197,11 @@ hr {
 
 .header {
     color: var(--subtle);
-    text-decoration: underline;
+    background-color: var(--background);
+    border-bottom: 1px solid var(--subtle);
     margin-top: 50px;
+    position: sticky;
+    top: 0;
 }
 
 .header:nth-child(1) {
