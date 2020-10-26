@@ -9,8 +9,6 @@ block content
             - date.setDate(day);
             - date.allday = false;
 
-            .header= date.dayMonthDateYearString()
-
             - let today = new CustomDate(date);
             - let tomorrow = (x => { let res = new CustomDate(x); res.setDate(x.getDate() + 1); return res; })(today);
 
@@ -36,12 +34,13 @@ block content
                             res.setHours(hour, minute, second);
                             return res;
                         }))
-
-            each date in timedPosts
-                include post
-            - date.allday = true;
-            if fs.existsSync(date.file())
-                include post
+            if timedPosts.length > 0 || fs.existsSync(((x => { let res = new CustomDate(x); res.allday = true; return res; })(date)).file())
+                .header= date.dayMonthDateYearString()
+                each date in timedPosts
+                    include post
+                - date.allday = true;
+                if fs.existsSync(date.file())
+                    include post
         #footer
             #navArrows
                 - month = date.getMonth() + 1; year = date.getFullYear();
