@@ -12,7 +12,6 @@ before(function() {
     global.__basedir = path.join(__dirname, '..');
     global.__binname = 'days';
     global.__favoritesFile = '.fav';
-    global.__title = 'days';
 
     if (!Number.prototype.zeropad) {
         Number.prototype.zeropad = function(width) {
@@ -163,8 +162,8 @@ describe('Web', function() {
 
     before(async function() {
         cp.execSync('days new --no-edit 2020 01 01 12 00 00');
-        server = new Server();
-        await server.run(3004);
+        server = new Server('days', 3004, 'fruchtig');
+        await server.run();
     });
 
     after(async function() {

@@ -1,0 +1,21 @@
+/* https://github.com/fxn/vim-monochrome */
+
+:root {
+    --white: #ffffff;
+    --black: #0e1111;
+    --bgray: #181818;
+    --lgray: #d3d3d3;
+    --cgray: #737373;
+    --dgray: #a9a9a9;
+    --sblue: #778899;
+    --yello: #ffff09;
+    --red:   #b6403a;
+    --green: #478226;
+
+    --background:              var(--black);
+    --content:                 var(--lgray);
+    --link-hover:              var(--cgray);
+    --link:                    var(--sblue);
+    --post-edit-submit-border: var(--white);
+    --ui:                      var(--dgray);
+}

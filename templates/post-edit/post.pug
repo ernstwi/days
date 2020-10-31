@@ -6,4 +6,4 @@ block content
             != fs.readFileSync(date.file()).toString().replace(/\n$/, '')
 
 block action
-    input(type='submit' form='form' value='Done')
+    a(id='submit-edit' href="javascript:document.forms['form'].submit()") done

@@ -1,0 +1,29 @@
+/* https://github.com/schickele/vim-nachtleben */
+
+:root {
+    --red:          #EC224E;
+    --dark-orange:  #EC6C39;
+    --light-orange: #F39E35;
+    --yellow:       #FED522;
+    --green:        #0CC531;
+    --light-blue:   #06BED9;
+    --dark-blue:    #327EC9;
+    --magenta:      #C026C3;
+    --bluish-black: #040409;
+    --dark-gray:    #1E1C40;
+
+    --background:        var(--bluish-black);
+    --blockquote-border: var(--dark-gray);
+    --content:           var(--light-orange);
+    --figure-border:     var(--dark-gray);
+    --link-hover:        var(--magenta);
+    --link:              var(--light-blue);
+    --no-posts:          var(--dark-gray);
+    --post-body-hr:      var(--dark-orange);
+    --post-edit-border:  var(--yellow);
+    --post-footer-fav:   var(--yellow);
+    --sidebar-year:      var(--red);
+    --start-year:        var(--red);
+    --stat-bar-empty:    var(--bluish-black);
+    --ui:                var(--green);
+}

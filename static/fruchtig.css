@@ -1,0 +1,46 @@
+/* https://github.com/schickele/vim-fruchtig */
+
+:root {
+    --black:       #001217;
+    --blue:        #0086F7;
+    --gold:        #FFD700;
+    --green:       #43C464;
+    --light-gray:  #AAAAAA;
+    --light-green: #E6FFFC;
+    --pink:        #FF0086;
+
+    --blockquote-border: var(--light-gray);
+    --content:           var(--black);
+    --figure-border:     var(--light-gray);
+    --link-hover:        var(--pink);
+    --link:              var(--blue);
+    --post-body-hr:      var(--light-gray);
+    --post-footer-fav:   var(--gold);
+    --stat-bar-empty:    var(--light-green);
+    --stat-bar-fill:     var(--green);
+    --ui:                var(--light-gray);
+}
+
+/*
+Unused colors:
+#0086D2
+#1B5C8A
+#22A21F
+#3399FF
+#3687A2
+#3C78A2
+#438EC3
+#51B069
+#70796B
+#9BD4A9
+#B1FF00
+#C3DAEA
+#CB2F27
+#CCE7FD
+#D40000
+#F0F0F0
+#FB660A
+#FD8900
+#FF0007
+#FFCCE7
+ */

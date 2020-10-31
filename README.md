@@ -5,7 +5,7 @@ This is a tool for keeping a personal journal in the form of a directory of mark
 Journaling on iOS is supported by use of Apple Messages.
 
 <p align='center'>
-    <img src='https://github.com/ernstwi/days/raw/master/screenshot.png' width='600'>
+    <img src='https://github.com/ernstwi/days/raw/master/fruchtig.png' width='576'>
 </p>
 
 ## Directory structure
@@ -60,7 +60,7 @@ $ days new [--no-edit] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
 Start the web server.
 
 ```
-$ days server [--port <number>]
+$ days server [--port <number>] [--theme <name>]
 ```
 
 ### `merge`
@@ -86,4 +86,63 @@ $ days prune
 
 ## Configuration
 
-The root directory may contain a file `config.json`. At the moment there is only one configurable setting: `title`.
+The root directory may contain a file `config.json` with the following keys.
+
+| Setting | Default value |
+| ------- | ------------- |
+| title   | days          |
+| port    | 3004          |
+| theme   | fruchtig      |
+
+
+## Themes
+
+| Name       | Screenshot                                                     | Adapted from                                                            |
+| ---------- | -------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| fruchtig   | ![](https://github.com/ernstwi/days/raw/master/fruchtig.png)   | [schickele/vim-fruchtig](https://github.com/schickele/vim-fruchtig)     |
+| nachtleben | ![](https://github.com/ernstwi/days/raw/master/nachtleben.png) | [schickele/vim-nachtleben](https://github.com/schickele/vim-nachtleben) |
+| monochrome | ![](https://github.com/ernstwi/days/raw/master/monochrome.png) | [fxn/vim-monochrome](https://github.com/fxn/vim-monochrome)             |
+
+## Adding themes
+
+You can creating your own theme by adding a file `static/<theme-name>.css` containing definitions for a subset of the following CSS variables.
+
+| Name                            | Type  | Fallback value |
+| ------------------------------- | ----- | -------------- |
+| `--ui`                          | color | `gray`         |
+| `--content`                     | color | `black`        |
+| `--background`                  | color | `white`        |
+| `--post-footer-fav`             | color | `gold`         |
+| `--link`                        | color | `blue`         |
+| `--link-hover`                  | color | `magenta`      |
+
+| Name                            | Type  | Fallback value |
+| ------------------------------- | ----- | -------------- |
+| `--blockquote-border`           | color | `--content`    |
+| `--day-header`                  | color | `--ui`         |
+| `--day-header-background`       | color | `--background` |
+| `--day-header-border`           | color | `--ui`         |
+| `--figure-border`               | color | `--content`    |
+| `--footer-diamond`              | color | `--ui`         |
+| `--link-disabled`               | color | `--ui`         |
+| `--no-posts`                    | color | `--ui`         |
+| `--no-posts-border`             | color | `--ui`         |
+| `--post-body`                   | color | `--content`    |
+| `--post-body-hr`                | color | `--content`    |
+| `--post-edit-bg`                | color | `--background` |
+| `--post-edit-border`            | color | `--ui`         |
+| `--post-edit-fg`                | color | `--content`    |
+| `--post-edit-submit-background` | color | `--background` |
+| `--post-edit-submit-border`     | color | `--ui`         |
+| `--post-footer`                 | color | `--ui`         |
+| `--post-footer-hr`              | color | `--ui`         |
+| `--sidebar-divider`             | color | `--ui`         |
+| `--sidebar-year`                | color | `--ui`         |
+| `--start-index-border`          | color | `--ui`         |
+| `--start-index-border`          | color | `--ui`         |
+| `--start-year`                  | color | `--ui`         |
+| `--stat-bar-empty`              | color | `--background` |
+| `--stat-bar-fill`               | color | `--content`    |
+| `--stat-header`                 | color | `--ui`         |
+| `--stat-title`                  | color | `--ui`         |
+| `--stat-value`                  | color | `--ui`         |

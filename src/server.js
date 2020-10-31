@@ -16,9 +16,10 @@ let CustomDate = require('./custom-date');
 let stat = require('./stat');
 
 class Server {
+    #port;
     #server;
 
-    constructor() {
+    constructor(title, port, theme) {
         if (!fs.existsSync('content')) {
             console.error(`\x1b[31mError\x1b[0m: No content`);
             process.exit(1);
@@ -41,15 +42,6 @@ class Server {
         let lastYear   = parseInt(fs.readdirSync('content').filter(f => /\d{4}/.test(f)).last());
         let lastMonth  = parseInt(fs.readdirSync(`content/${lastYear}`).filter(f => /\d{2}/.test(f)).last());
 
-        let config = null;
-        try {
-            config = JSON.parse(fs.readFileSync('config.json'));
-        } catch(err) {}
-
-        if (config != null && config.title != undefined) {
-            __title = config.title;
-        }
-
         let favorites;
         try {
             favorites = new Set(fs.readFileSync(__favoritesFile).toString().lines());
@@ -58,16 +50,19 @@ class Server {
         }
 
         let pugVars = {
+            title: title,
+            theme: theme,
             fs: fs,
             md: md,
             CustomDate: CustomDate,
-            title: __title,
             favorites: favorites,
             firstYear: firstYear,
             firstMonth: firstMonth,
             lastYear: lastYear,
             lastMonth: lastMonth
         }
+
+        this.#port = port;
 
         this.#server = http.createServer((req, res) => {
             let url = decodeURI(req.url);
@@ -208,8 +203,8 @@ class Server {
         });
     }
 
-    run(port) {
-        return events.once(this.#server.listen(port), 'listening');
+    run() {
+        return events.once(this.#server.listen(this.#port), 'listening');
     }
 
     close() {

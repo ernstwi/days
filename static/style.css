@@ -1,17 +1,3 @@
-/* {{{1 Colors */
-
-:root {
-    --text:          #001217;
-    --background:    #ffffff;
-    --link:          #0086f7;
-    --link-hover:    #ff0086;
-    --fav:           #ffd700;
-    --subtle:        #aaaaaa;
-    --stat-bar:      #E6FFFC;
-    --stat-bar:      #E6FFEC;
-    --stat-bar-fill: #43c464;
-}
-
 /* {{{1 Main sections */
 
 #main {
@@ -36,7 +22,6 @@
 body {
     font-family: Monaco, "Ubuntu Mono", "Lucida Console", monospace;
     font-size: 11px;
-    color: var(--text);
     background-color: var(--background);
 
     width: 650px;
@@ -76,16 +61,12 @@ audio {
 blockquote {
     margin-left: 0;
     padding-left: 1em;
-    border-left: 1px solid black;
+    border-left: 1px solid var(--blockquote-border, var(--content));
 }
 
 figure {
-    border: 1px solid var(--subtle);
+    border: 1px solid var(--figure-border, var(--content));
     padding: 1em;
-}
-
-hr {
-    border: 0.5px solid var(--text);
 }
 
 /* {{{1 Start page */
@@ -96,13 +77,13 @@ hr {
 
 #start #index .unit {
     display: flex;
-    border-bottom: 1px solid var(--subtle);
+    border-bottom: 1px solid var(--start-index-border, var(--ui));
     padding: 0.5ch;
     /* justify-content: space-between; */
 }
 
 #start #index .unit:first-child {
-    border-top: 1px solid var(--subtle);
+    border-top: 1px solid var(--start-index-border, var(--ui));
 }
 
 #start #index .unit .months {
@@ -111,9 +92,13 @@ hr {
 }
 
 #start #index .unit .months .month {
-    color: var(--subtle);
+    color: var(--link-disabled, var(--ui));
     width: 4.5ch;
     text-align: right;
+}
+
+#start #index .unit .year {
+    color: var(--start-year, var(--ui));
 }
 
 /* {{{1 Sidebar */
@@ -125,7 +110,7 @@ hr {
 
 #sidebar #links {
     margin-top: 2ch;
-    border-top: 1px solid var(--subtle);
+    border-top: 1px solid var(--sidebar-divider, var(--ui));
     padding-top: 2ch;
     margin-bottom: 50px;
 }
@@ -135,6 +120,7 @@ hr {
 }
 
 #sidebar #index .unit .year {
+    color: var(--sidebar-year, var(--ui));
     margin-bottom: 0.5ch;
 }
 
@@ -142,6 +128,15 @@ hr {
 
 .post {
     margin-top: 2em;
+}
+
+.post-body.view {
+    color: var(--post-body, var(--content));
+}
+
+.post-body.view hr {
+    border: 0.5px solid var(--post-body-hr, var(--content));
+    width: 8em;
 }
 
 .post-body.view a {
@@ -161,6 +156,21 @@ hr {
     width: 100%;
     height: 25em;
     resize: none;
+    color: var(--post-edit-fg, var(--content));
+    background: var(--post-edit-bg, var(--background));
+    outline: none !important;
+    border: 1px solid var(--post-edit-border, var(--ui));
+    padding: 1em;
+}
+
+#submit-edit {
+    float: right;
+    border: 1px solid var(--post-edit-submit-border, var(--ui));
+    background: var(--post-edit-submit-background, var(--background));
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
+    padding-left: 1em;
+    padding-right: 1em;
 }
 
 .post-footer {
@@ -168,16 +178,12 @@ hr {
 }
 
 .post-footer hr {
-    border: 0.5px solid var(--subtle);
-}
-
-.post input {
-    float: right;
+    border: 0.5px solid var(--post-footer-hr, var(--ui));
 }
 
 .post-footer .info {
     font-size: 0.7em;
-    color: var(--subtle);
+    color: var(--post-footer, var(--ui));
     display: flex;
     justify-content: space-between;
     align-items: baseline;
@@ -190,15 +196,15 @@ hr {
 }
 
 .post-footer .fav.active {
-    color: var(--fav);
+    color: var(--post-footer-fav);
 }
 
 /* {{{1 Header */
 
 .header {
-    color: var(--subtle);
-    background-color: var(--background);
-    border-bottom: 1px solid var(--subtle);
+    color: var(--day-header, var(--ui));
+    background-color: var(--day-header-background, var(--background));
+    border-bottom: 1px solid var(--day-header-border, var(--ui));
     margin-top: 50px;
     position: sticky;
     top: 0;
@@ -217,6 +223,7 @@ hr {
 .stat-header {
     margin-bottom: 1em;
     text-decoration: underline;
+    color: var(--stat-header, var(--ui));
 }
 
 .stat .list {
@@ -230,6 +237,7 @@ hr {
 
 .stat .list .item .title {
     margin-right: 1ch;
+    color: var(--stat-title, var(--ui));
 }
 
 .stat.month .list .item .title {
@@ -243,17 +251,17 @@ hr {
 .stat .list .item .bar {
     height: 1em;
     width: 20em;
-    background-color: var(--stat-bar);
+    background-color: var(--stat-bar-empty, var(--background));
 }
 
 .stat .list .item .bar .fill {
     height: 1em;
-    background-color: var(--stat-bar-fill);
+    background-color: var(--stat-bar-fill, var(--content));
 }
 
 .stat .list .item .value {
     margin-left: 1em;
-    color: var(--subtle);
+    color: var(--stat-value, var(--ui));
 }
 
 /* {{{1 Misc */
@@ -268,6 +276,7 @@ hr {
     align-items: center;
     height: 200px;
     margin-bottom: 50px;
+    color: var(--footer-diamond, var(--ui));
 }
 
 #navArrows {
@@ -285,12 +294,12 @@ hr {
 #no-posts {
     width: 250px;
     height: 50px;
-    border: 1px dashed var(--subtle);
+    border: 1px dashed var(--no-posts-border, var(--ui));
     display: flex;
     justify-content: center;
     align-items: center;
     font-style: italic;
-    color: var(--subtle);
+    color: var(--no-posts, var(--ui));
 }
 
 #no-posts-container {

@@ -13,7 +13,6 @@ let prune = require('./src/prune');
 global.__basedir = __dirname;
 global.__binname = process.argv[1].match(/[^\/]*$/)[0];
 global.__favoritesFile = '.fav';
-global.__title = 'days';
 
 if (!Number.prototype.zeropad) {
     Number.prototype.zeropad = function(width) {
@@ -42,10 +41,20 @@ if (!String.prototype.lines) {
     }
 }
 
+let config = {
+    title: 'days',
+    port: 3004,
+    theme: 'fruchtig'
+};
+
+try {
+    Object.assign(config, JSON.parse(fs.readFileSync('config.json')));
+} catch(err) {}
+
 function usage(stdout) {
     let msg = `Usage:
   ${__binname} new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
-  ${__binname} server [--port <number>]
+  ${__binname} server [--port <number>] [--theme <name>]
   ${__binname} merge [--resolve] (<path> | --imessage <ID>)
   ${__binname} prune`;
 
@@ -132,10 +141,24 @@ switch (process.argv[2]) {
 
         return;
     case 'server':
-        let port = 3004;
-        if (process.argv.length == 5 && process.argv[3] == '--port')
-            port = process.argv[4];
-        new Server().run(port).then(() => {
+        let { title, port, theme } = config;
+
+        for (let i = 3; i < process.argv.length; i++) {
+            switch(process.argv[i]) {
+                case '--port':
+                    if (++i >= process.argv.length)
+                        usage(false);
+                    port = process.argv[i];
+                    break;
+                case '--theme':
+                    if (++i >= process.argv.length)
+                        usage(false);
+                    theme = process.argv[i];
+                    break;
+            }
+        }
+
+        new Server(title, port, theme).run().then(() => {
                 console.log(`Server is listening on http://localhost:${port}`)
             }).catch(err => {
                 console.error(`\x1b[31mError\x1b[0m: Port ${port} is already in use`);
