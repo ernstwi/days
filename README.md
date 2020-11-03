@@ -105,7 +105,7 @@ The root directory may contain a file `config.json` with the following keys.
 
 ## Adding themes
 
-You can creating your own theme by adding a file `static/<theme-name>.css` containing definitions for a subset of the following CSS variables.
+You can create your own theme by adding a file `static/<theme-name>.css` containing definitions for a subset of the following CSS variables.
 
 | Name                            | Type  | Fallback value |
 | ------------------------------- | ----- | -------------- |
