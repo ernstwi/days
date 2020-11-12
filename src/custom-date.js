@@ -29,7 +29,7 @@ class CustomDate extends Date {
             return;
         }
 
-        let match = args[0].toString().match(/^(http:\/\/localhost:\d{4})?\/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?$/);
+        let match = args[0].toString().match(/^(http:\/\/localhost:\d{4})?\/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?.*$/);
         if (match == null)
             match = args[0].toString().match(/(\d{4})\/(\d{2})\/(\d{2})\/((\d{2})-(\d{2})-(\d{2})|allday).md/);
         if (match != null)

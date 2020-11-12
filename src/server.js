@@ -73,129 +73,94 @@ class Server {
                 return;
             }
 
-            {
-                // Month view
-                let match = url.match(/^\/(\d{4})\/(\d{2})$/);
-                if (match != null) {
-                    let [ , year, month] = match;
-                    res.end(pugMonth(Object.assign(Object.create(pugVars), {
-                        date: new CustomDate(year, month)
-                    })));
-                    return;
-                }
+            // Month view
+            if (/^\/(\d{4})\/(\d{2})$/.test(url)) {
+                res.end(pugMonth(Object.assign(Object.create(pugVars), {
+                    date: new CustomDate(url)
+                })));
+                return;
             }
 
-            {
-                // Favorites view
-                let match = url.match(/^\/favorites$/);
-                if (match != null) {
-                    res.end(pugFavorites(Object.create(pugVars)));
-                    return;
-                }
+            // Favorites view
+            if (/^\/favorites$/.test(url)) {
+                res.end(pugFavorites(Object.create(pugVars)));
+                return;
             }
 
-            {
-                // Post view
-                let match = url.match(/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?$/);
-                if (match != null) {
-                    let [ , year, month, day, , hour, minute, second] = match;
-                    res.end(pugPostView(Object.assign(Object.create(pugVars), {
-                        date: new CustomDate(year, month, day, hour, minute, second)
-                    })));
-                    return;
-                }
+            // Post view
+            if (/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?$/.test(url)) {
+                res.end(pugPostView(Object.assign(Object.create(pugVars), {
+                    date: new CustomDate(url)
+                })));
+                return;
             }
 
-            {
-                // Edit view
-                let match = url.match(/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?\/edit$/);
-                if (match != null) {
-                    let [ , year, month, day, , hour, minute, second] = match;
-                    res.end(pugPostEdit(Object.assign(Object.create(pugVars), {
-                        date: new CustomDate(year, month, day, hour, minute, second)
-                    })));
-                    return;
-                }
+            // Edit view
+            if (/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?\/edit$/.test(url)) {
+                res.end(pugPostEdit(Object.assign(Object.create(pugVars), {
+                    date: new CustomDate(url)
+                })));
+                return;
             }
 
-            {
-                // Edit submitted
-                let match = url.match(/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?\?edited$/);
-                if (match != null) {
-                    let [ , year, month, day, , hour, minute, second] = match;
-                    let chunks = [];
-                    req.on('data', chunk => chunks.push(chunk));
-                    req.on('end', () => {
-                        let data = qs.parse(Buffer.concat(chunks).toString()).message.replace(/\r/g, '') + '\n';
-                        if (hour === undefined) {
-                            fs.writeFileSync(`content/${year}/${month}/${day}/allday.md`, data);
-                            res.writeHead(301, {Location: `/${year}/${month}/${day}`});
-                        } else {
-                            fs.writeFileSync(`content/${year}/${month}/${day}/${hour}-${minute}-${second}.md`, data);
-                            res.writeHead(301, {Location: `/${year}/${month}/${day}/${hour}/${minute}/${second}`});
-                        }
-                        res.end();
-                    })
-                    return;
-                }
-            }
-
-            {
-                // Favorite submitted
-                let match = url.match(/^(\/\d{4}\/\d{2}\/\d{2}(\/\d{2}\/\d{2}\/\d{2})?)\?favorite$/);
-                if (match != null) {
+            // Edit submitted
+            if (/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?\?edited$/.test(url)) {
+                let chunks = [];
+                req.on('data', chunk => chunks.push(chunk));
+                req.on('end', () => {
+                    let data = qs.parse(Buffer.concat(chunks).toString()).message.replace(/\r/g, '') + '\n';
+                    let date = new CustomDate(url);
+                    fs.writeFileSync(date.file(), data);
+                    res.writeHead(301, {Location: date.postUrl()});
                     res.end();
-                    let id = match[1];
-                    if (favorites.has(id))
-                        favorites.delete(id);
-                    else
-                        favorites.add(id);
-
-                    if (favorites.size == 0)
-                        fs.unlinkSync(__favoritesFile);
-                    else
-                        fs.writeFileSync(__favoritesFile, [...favorites].join('\n'));
-                    return;
-                }
+                })
+                return;
             }
 
-            {
-                // Stat view (day)
-                let match = url.match(/^\/stat(\/day)?$/);
-                if (match != null) {
-                    let [data, max] = stat.day();
-                    res.end(pugStatDay(Object.assign(Object.create(pugVars), {
-                        data: data,
-                        max: max
-                    })));
-                    return;
-                }
+            // Favorite submitted
+            if (/^(\/\d{4}\/\d{2}\/\d{2}(\/\d{2}\/\d{2}\/\d{2})?)\?favorite$/.test(url)) {
+                res.end();
+                let id = match[1];
+                if (favorites.has(id))
+                    favorites.delete(id);
+                else
+                    favorites.add(id);
+
+                if (favorites.size == 0)
+                    fs.unlinkSync(__favoritesFile);
+                else
+                    fs.writeFileSync(__favoritesFile, [...favorites].join('\n'));
+                return;
             }
 
-            {
-                // Stat view (month)
-                let match = url.match(/^\/stat\/month/);
-                if (match != null) {
-                    let [data, max] = stat.month();
-                    res.end(pugStatMonth(Object.assign(Object.create(pugVars), {
-                        data: data,
-                        max: max
-                    })));
-                    return;
-                }
+            // Stat view (day)
+            if (/^\/stat(\/day)?$/.test(url)) {
+                let [data, max] = stat.day();
+                res.end(pugStatDay(Object.assign(Object.create(pugVars), {
+                    data: data,
+                    max: max
+                })));
+                return;
             }
 
-            {
-                // Stat view (year)
-                let match = url.match(/^\/stat\/year/);
-                if (match != null) {
-                    let [data, max] = stat.year();
-                    res.end(pugStatYear(Object.assign(Object.create(pugVars), {
-                        data: data,
-                        max: max
-                    })));
-                    return;
-                }
+            // Stat view (month)
+            if (/^\/stat\/month/.test(url)) {
+                let [data, max] = stat.month();
+                res.end(pugStatMonth(Object.assign(Object.create(pugVars), {
+                    data: data,
+                    max: max
+                })));
+                return;
+            }
+
+            // Stat view (year)
+            if (/^\/stat\/year/.test(url)) {
+                let [data, max] = stat.year();
+                res.end(pugStatYear(Object.assign(Object.create(pugVars), {
+                    data: data,
+                    max: max
+                })));
+                return;
             }
 
             // Static file
