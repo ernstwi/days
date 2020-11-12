@@ -1,11 +1,13 @@
 {
   "name": "@ernstwi/days",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "Journaling tool",
   "author": "Ernst Widerberg <ernstwi@kth.se>",
   "license": "MIT",
   "repository": "github:ernstwi/days",
-  "bin": "./index.js",
+  "bin": {
+    "days": "index.js"
+  },
   "dependencies": {
     "csv-parse": "^4.12.0",
     "dateformat": "^3.0.3",
