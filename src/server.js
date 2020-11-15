@@ -120,7 +120,7 @@ class Server {
             // Favorite submitted
             if (/^(\/\d{4}\/\d{2}\/\d{2}(\/\d{2}\/\d{2}\/\d{2})?)\?favorite$/.test(url)) {
                 res.end();
-                let id = match[1];
+                let id = new CustomDate(url).postUrl();
                 if (favorites.has(id))
                     favorites.delete(id);
                 else
