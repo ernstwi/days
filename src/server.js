@@ -129,7 +129,7 @@ class Server {
                 if (favorites.size == 0)
                     fs.unlinkSync(__favoritesFile);
                 else
-                    fs.writeFileSync(__favoritesFile, [...favorites].join('\n'));
+                    fs.writeFileSync(__favoritesFile, [...favorites].sort().join('\n'));
                 return;
             }
 

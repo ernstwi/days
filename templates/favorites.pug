@@ -6,7 +6,7 @@ block content
             #no-posts= `No favorites.`
     else
         - let prevHeader = "";
-        each url in [...favorites]
+        each url in [...favorites].sort()
             - let date = new CustomDate(url);
             - let h = date.dayMonthDateYearString()
             if h != prevHeader
