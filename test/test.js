@@ -179,7 +179,7 @@ describe('Web', function() {
             await page.type('textarea', 'Hello, world!');
             await Promise.all([
                 page.waitForNavigation(),
-                page.click('input')
+                page.click('#submit-edit')
             ]);
             let text = await page.evaluate(() => {
                 return document.getElementsByClassName('post-body')[0].innerText;
