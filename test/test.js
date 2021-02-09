@@ -160,22 +160,26 @@ describe('CLI', function() {
 
 describe('Web', function() {
     let server;
+    let browser;
+    let page;
 
     before(async function() {
+        browser = await puppeteer.launch();
+        page = await browser.pages().then(pages => pages[0]);
         cp.execSync('days new --no-edit 2020 01 01 12 00 00');
+        cp.execSync('days new --no-edit 2020 01 11 01 00 00');
         server = new Server('days', 3004, 'fruchtig');
         await server.run();
     });
 
     after(async function() {
+        await browser.close();
         await server.close();
         cp.execSync('rm -rf content');
     });
 
     describe('edit post', function() {
         it('edit post', async function() {
-            let browser = await puppeteer.launch();
-            let page = await browser.pages().then(pages => pages[0]);
             await page.goto('http://localhost:3004/2020/01/01/12/00/00/edit');
             await page.type('textarea', 'Hello, world!');
             await Promise.all([
@@ -185,10 +189,17 @@ describe('Web', function() {
             let text = await page.evaluate(() => {
                 return document.getElementsByClassName('post-body')[0].innerText;
             });
-            await browser.close();
 
             assert(text == 'Hello, world!');
             assert(fs.readFileSync('content/2020/01/01/12-00-00.md', 'utf8') == 'Hello, world!\n');
+        });
+    });
+
+    describe('month page', function() {
+        it('should presents posts at 01:00 as belonging to the previous day', async function() {
+            await page.goto('http://localhost:3004/2020/01');
+            let postCount = await page.$$eval('.post', posts => posts.length);
+            assert.equal(postCount, 2);
         });
     });
 });

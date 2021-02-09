@@ -1,46 +1,14 @@
 extends ../main
 
 block content
-    if (!fs.existsSync(date.monthDir()))
+    if (data == null)
         #no-posts-container
             #no-posts= `No posts this ${date.monthString()}.`
     else
-        each day in fs.readdirSync(date.monthDir()).filter(f => /^\d{2}$/.test(f))
-            - date.setDate(day);
-            - date.allday = false;
-
-            - let today = new CustomDate(date);
-            - let tomorrow = (x => { let res = new CustomDate(x); res.setDate(x.getDate() + 1); return res; })(today);
-
-            -
-                let timedPosts = fs.readdirSync(today.dayDir())
-                    .filter(f => /^\d{2}-\d{2}-\d{2}\.md$/.test(f))
-                    .filter(f => f.match(/^(\d{2})-(\d{2})-(\d{2}).md$/)[1] >= 5)
-                    .map(f => {
-                        let [ , hour, minute, second] = f.match(/^(\d{2})-(\d{2})-(\d{2}).md$/);
-                        let res = new CustomDate(today);
-                        res.setHours(hour, minute, second);
-                        return res;
-                    });
-
-                if (fs.existsSync(tomorrow.dayDir()))
-                    timedPosts = timedPosts
-                        .concat(fs.readdirSync(tomorrow.dayDir())
-                        .filter(f => /^\d{2}-\d{2}-\d{2}\.md$/.test(f))
-                        .filter(f => f.match(/^(\d{2})-(\d{2})-(\d{2}).md$/)[1] < 5)
-                        .map(f => {
-                            let [ , hour, minute, second] = f.match(/^(\d{2})-(\d{2})-(\d{2}).md$/);
-                            let res = new CustomDate(tomorrow);
-                            res.setHours(hour, minute, second);
-                            return res;
-                        }))
-            if timedPosts.length > 0 || fs.existsSync(((x => { let res = new CustomDate(x); res.allday = true; return res; })(date)).file())
-                .header= date.dayMonthDateYearString()
-                each date in timedPosts
-                    include post
-                - date.allday = true;
-                if fs.existsSync(date.file())
-                    include post
+        each posts, header in data
+            .header= header
+            each date in posts
+                include post
         #footer
             #navArrows
                 - month = date.getMonth() + 1; year = date.getFullYear();

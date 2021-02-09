@@ -14,6 +14,7 @@ let serveStatic = require('serve-static');
 
 let CustomDate = require('./custom-date');
 let stat = require('./stat');
+let month = require('./month');
 
 class Server {
     #port;
@@ -76,7 +77,8 @@ class Server {
             // Month view
             if (/^\/(\d{4})\/(\d{2})$/.test(url)) {
                 res.end(pugMonth(Object.assign(Object.create(pugVars), {
-                    date: new CustomDate(url)
+                    date: new CustomDate(url),
+                    data: month.posts(new CustomDate(url))
                 })));
                 return;
             }
