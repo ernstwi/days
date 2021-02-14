@@ -1,0 +1,11 @@
+extends ../main
+
+block script
+    script.
+        function uniformWidth(className) {
+            let elements = Array.from(document.getElementsByClassName(className));
+            let max = elements.reduce((m, e) => e.offsetWidth > m ? e.offsetWidth : m, 0);
+            elements.forEach(e => e.style.minWidth = max);
+        }
+        uniformWidth('title');
+        uniformWidth('value');

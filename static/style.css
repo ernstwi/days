@@ -234,29 +234,22 @@ figure {
 
 .stat .list {
     margin-bottom: 1em;
+    line-height: 1;
 }
 
 .stat .list .item {
+    margin-bottom: 0.4em;
     display: flex;
-    align-items: center;
 }
 
 .stat .list .item .title {
-    margin-right: 1ch;
+    margin-right: 1em;
     color: var(--stat-title, var(--ui));
-}
-
-.stat.month .list .item .title {
-    width: 8ch;
-}
-
-.stat.year .list .item .title {
-    width: 4ch;
 }
 
 .stat .list .item .bar {
     height: 1em;
-    width: 20em;
+    width: 100%;
     background-color: var(--stat-bar-empty, var(--background));
 }
 
