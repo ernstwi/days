@@ -159,6 +159,8 @@ describe('CLI', function() {
 });
 
 describe('Web', function() {
+    this.timeout(4000);
+
     let server;
     let browser;
     let page;
