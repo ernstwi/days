@@ -165,13 +165,6 @@ class Server {
                 return;
             }
 
-            // Open video in mpv
-            if (/^\/mpv\?/.test(url)) {
-                cp.spawn('mpv',
-                    ['--loop', url.match(/^\/mpv\?(.*)$/)[1]],
-                    { detached: true, stdio: 'ignore' }).unref();
-            }
-
             // Static file
             root(req, res, () => assets(req, res, () => res.end('File not found')));
         });

@@ -199,12 +199,6 @@ figure {
     color: var(--post-footer-fav);
 }
 
-.post-body.view .video-wrapper {
-    border: 1px solid var(--video-button, var(--ui));
-    padding: 1em;
-    margin-bottom: 1em;
-}
-
 /* {{{1 Header */
 
 .header {

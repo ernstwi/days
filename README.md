@@ -146,4 +146,3 @@ You can create your own theme by adding a file `static/<theme-name>.css` contain
 | `--stat-header`                 | color | `--ui`         |
 | `--stat-title`                  | color | `--ui`         |
 | `--stat-value`                  | color | `--ui`         |
-| `--video-button`                | color | `--ui`         |
