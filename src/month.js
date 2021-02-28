@@ -29,13 +29,15 @@ function posts(month) {
                     res[postDay.dayMonthDateYearString()] = [];
                 res[postDay.dayMonthDateYearString()].push(postDate);
             });
-        if (fs.existsSync(day.file())) {
-            let postDate = new CustomDate(day);
-            postDate.allday = true;
 
-            if (!res.hasOwnProperty(postDate.dayMonthDateYearString()))
-                res[postDate.dayMonthDateYearString()] = [];
-            res[postDate.dayMonthDateYearString()].push(postDate);
+        {
+            let allday = new CustomDate(day);
+            allday.allday = true;
+            if (fs.existsSync(allday.file())) {
+                if (!res.hasOwnProperty(allday.dayMonthDateYearString()))
+                    res[allday.dayMonthDateYearString()] = [];
+                res[allday.dayMonthDateYearString()].push(allday);
+            }
         }
     }
     return res;

@@ -3,7 +3,7 @@ let assert = require('assert');
 let dateFormat = require('dateformat');
 
 class CustomDate extends Date {
-    #allday = false;
+    allday = false;
 
     // args := year, month [, day [, hours [, minutes [, seconds]]]]
     //       | url
