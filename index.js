@@ -115,6 +115,8 @@ switch (process.argv[2]) {
         } else {
             date = new CustomDate(...args.date);
         }
+        if (args.allday)
+            date.allday = true;
 
         if (fs.existsSync(date.file())) {
             console.error(`\x1b[31mError\x1b[0m: \x1b[36m${date.file()}\x1b[0m already exists`);
