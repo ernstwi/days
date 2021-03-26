@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+shopt -s globstar
+rm -rf build
+cp -R src build
+rm build/**/*.ts
+npx tsc
+chmod +x build/index.js

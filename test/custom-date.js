@@ -1,6 +1,6 @@
 let assert = require('assert');
 
-let CustomDate = require('../src/custom-date');
+let CustomDate = require('../build/custom-date');
 
 describe('CustomDate', function() {
     describe('constructor', function() {
