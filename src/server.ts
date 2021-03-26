@@ -1,51 +1,56 @@
-let assert = require('assert');
-let cp = require('child_process');
-let events = require('events');
-let fs = require('fs');
-let http = require('http');
+import assert = require('assert');
+import cp = require('child_process');
+import events = require('events');
+import fs = require('fs');
+import http = require('http');
+import path = require('path');
 
-let md = require('markdown-it')({
-    html: true,
-    breaks: true
-});
-let pug = require('pug');
-let qs = require('querystring');
-let serveStatic = require('serve-static');
+import pug = require('pug');
+import qs = require('querystring');
+import serveStatic = require('serve-static');
+import markdownIt = require('markdown-it');
 
-let CustomDate = require('./custom-date');
-let stat = require('./stat');
-let month = require('./month');
+import * as month from './month';
+import * as stat from './stat';
+import CustomDate from './custom-date';
+
+let templateDir = path.join(__dirname, '../templates');
 
 class Server {
     #port;
     #server;
 
-    constructor(title, port, theme) {
+    constructor(title: string, port: number, theme: string) {
         if (!fs.existsSync('content')) {
             console.error(`\x1b[31mError\x1b[0m: No content`);
             process.exit(1);
         }
 
-        let root = serveStatic(__basedir);
+        let root = serveStatic(path.join(__dirname, '..'));
         let assets = serveStatic('assets');
 
-        let pugStart     = pug.compileFile(`${__basedir}/templates/start.pug`);
-        let pugMonth     = pug.compileFile(`${__basedir}/templates/month/main.pug`);
-        let pugFavorites = pug.compileFile(`${__basedir}/templates/favorites.pug`);
-        let pugPostView  = pug.compileFile(`${__basedir}/templates/post-view/main.pug`);
-        let pugPostEdit  = pug.compileFile(`${__basedir}/templates/post-edit/main.pug`);
-        let pugStatDay   = pug.compileFile(`${__basedir}/templates/stat/day.pug`);
-        let pugStatMonth = pug.compileFile(`${__basedir}/templates/stat/month.pug`);
-        let pugStatYear  = pug.compileFile(`${__basedir}/templates/stat/year.pug`);
+        let md = markdownIt({
+            html: true,
+            breaks: true
+        });
+
+        let pugStart     = pug.compileFile(`${templateDir}/start.pug`);
+        let pugMonth     = pug.compileFile(`${templateDir}/month/main.pug`);
+        let pugFavorites = pug.compileFile(`${templateDir}/favorites.pug`);
+        let pugPostView  = pug.compileFile(`${templateDir}/post-view/main.pug`);
+        let pugPostEdit  = pug.compileFile(`${templateDir}/post-edit/main.pug`);
+        let pugStatDay   = pug.compileFile(`${templateDir}/stat/day.pug`);
+        let pugStatMonth = pug.compileFile(`${templateDir}/stat/month.pug`);
+        let pugStatYear  = pug.compileFile(`${templateDir}/stat/year.pug`);
 
         let firstYear  = parseInt(fs.readdirSync('content').filter(f => /\d{4}/.test(f))[0]);
         let firstMonth = parseInt(fs.readdirSync(`content/${firstYear}`).filter(f => /\d{2}/.test(f))[0]);
         let lastYear   = parseInt(fs.readdirSync('content').filter(f => /\d{4}/.test(f)).last());
         let lastMonth  = parseInt(fs.readdirSync(`content/${lastYear}`).filter(f => /\d{2}/.test(f)).last());
 
-        let favorites;
+        let favorites: Set<string>;
         try {
-            favorites = new Set(fs.readFileSync(__favoritesFile).toString().lines());
+            favorites = new Set(fs.readFileSync('.fav').toString().lines());
         } catch(err) {
             favorites = new Set();
         }
@@ -66,7 +71,7 @@ class Server {
         this.#port = port;
 
         this.#server = http.createServer((req, res) => {
-            let url = decodeURI(req.url);
+            let url = decodeURI(req.url as string);
 
             // Home
             if (url == '/') {
@@ -107,10 +112,11 @@ class Server {
 
             // Edit submitted
             if (/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?\?edited$/.test(url)) {
-                let chunks = [];
-                req.on('data', chunk => chunks.push(chunk));
+                let chunks: Buffer[] = [];
+                req.on('data', (chunk: Buffer) => chunks.push(chunk));
                 req.on('end', () => {
-                    let data = qs.parse(Buffer.concat(chunks).toString()).message.replace(/\r/g, '') + '\n';
+                    let data = (qs.parse(Buffer.concat(chunks).toString()).message as string)
+                        .replace(/\r/g, '') + '\n';
                     let date = new CustomDate(url);
                     fs.writeFileSync(date.file(), data);
                     res.writeHead(301, {Location: date.postUrl()});
@@ -129,9 +135,9 @@ class Server {
                     favorites.add(id);
 
                 if (favorites.size == 0)
-                    fs.unlinkSync(__favoritesFile);
+                    fs.unlinkSync('.fav');
                 else
-                    fs.writeFileSync(__favoritesFile, [...favorites].sort().join('\n'));
+                    fs.writeFileSync('.fav', [...favorites].sort().join('\n'));
                 return;
             }
 
@@ -179,4 +185,4 @@ class Server {
     }
 }
 
-module.exports = Server;
+export default Server;

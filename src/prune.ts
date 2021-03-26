@@ -1,7 +1,7 @@
-let assert = require('assert');
-let fs = require('fs');
+import assert = require('assert');
+import fs = require('fs');
 
-function prune(dir) {
+function prune(dir: string) {
     let empty = true;
     fs.readdirSync(dir).filter(file => file != '.DS_Store').forEach(file => {
         let path = [dir, file].join('/')
@@ -22,4 +22,4 @@ function prune(dir) {
     return empty;
 }
 
-module.exports = prune;
+export default prune;

@@ -1,10 +1,8 @@
 class NameCollision extends Error {
-    constructor(message) {
+    constructor(message: string) {
         super(message);
         this.name = 'NameCollision';
     }
 }
 
-module.exports = {
-    NameCollision: NameCollision
-};
+export { NameCollision };

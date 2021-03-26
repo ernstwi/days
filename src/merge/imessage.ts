@@ -1,19 +1,19 @@
-let assert = require('assert');
-let cp = require('child_process');
-let fs = require('fs');
-let os = require('os');
-let path = require('path');
+import assert = require('assert');
+import cp = require('child_process');
+import fs = require('fs');
+import os = require('os');
+import path = require('path');
 
-let parse = require('csv-parse/lib/sync');
-let pug = require('pug');
+import parse = require('csv-parse/lib/sync');
+import pug = require('pug');
 
-let CustomDate = require('../custom-date');
-let merge = require('./merge');
-let { NameCollision } = require('../error');
+import * as merge from './merge';
+import CustomDate from '../custom-date';
+import { NameCollision } from '../error';
 
 let pugAsset = pug.compileFile(`${__dirname}/asset.pug`);
 
-function assetStr(filename) {
+function assetStr(filename: string) {
     let extension = path.extname(filename).substring(1);
     return pugAsset({
         extension: extension,
@@ -21,18 +21,24 @@ function assetStr(filename) {
     });
 }
 
-function sqlite(id, file) {
+type csv = string[][]
+interface asset {
+    src: string;
+    dst: string;
+}
+
+function sqlite(id: string, file: string): csv {
     let sql = fs.readFileSync(path.join(__dirname, file), 'utf8').split('$ID').join(id);
     return parse(cp.execSync(`sqlite3 -csv ~/Library/Messages/chat.db`, { input: sql }));
 }
 
-function mergeImessage(id, resolve) {
+function mergeImessage(id: string, resolve: boolean) {
     // Collect data from Messages database
-    let data = {};
+    let data: any = {};
     sqlite(id, 'time.sql').forEach(row => {
         let [id, time] = row;
         data[id] = {};
-        data[id].date = new CustomDate(time*1000);
+        data[id].date = new CustomDate(Number(time) * 1000);
     });
     sqlite(id, 'text.sql').forEach(row => {
         let [id, text] = row;
@@ -44,7 +50,7 @@ function mergeImessage(id, resolve) {
         let [id, asset] = row;
         asset = asset.replace(/^~/, os.homedir());
         if (data[id].assets == undefined)
-            data[id].assets = [];
+            data[id].assets = new Array<asset>();
         data[id].assets.push({
             src: asset,
             dst: path.basename(asset)
@@ -52,18 +58,19 @@ function mergeImessage(id, resolve) {
     });
 
     // Add assets to head of post text
-    Object.values(data).forEach(post => {
+    Object.values(data).forEach((post: any) => {
         if (post.assets != undefined) {
-            post.text = post.assets.map(a => assetStr(a.dst)).join('\n')
+            post.text = post.assets.map((a: asset) => assetStr(a.dst)).join('\n')
                 + (post.text == '' ? '' : '\n\n' + post.text);
         }
     });
 
     // Merge assets
-    let substitutions = {};
-    Object.values(data).filter(p => p.assets != undefined).forEach(post => {
-        post.assets.forEach(asset => {
-            let newDst;
+    let substitutions = new Map<string, string>();
+    Object.values(data).filter((post: any) => post.assets != undefined)
+        .forEach((post: any) => {
+        post.assets.forEach((asset: asset) => {
+            let newDst = "";
             try {
                 newDst = merge.mergeAsset(asset.src, asset.dst, resolve);
             } catch (err) {
@@ -72,12 +79,12 @@ function mergeImessage(id, resolve) {
                 console.error(`Name collision: ${err.message}`);
             }
             if (newDst != asset.dst)
-                substitutions[asset.dst] = newDst;
+                substitutions.set(asset.dst, newDst);
         });
     });
 
     // Merge posts
-    Object.values(data).forEach(post => {
+    Object.values(data).forEach((post: any) => {
         // Special case for entries consisting of ' ' with no assets.
         if (post.text == ' ' && post.assets == undefined)
             return;
@@ -93,4 +100,4 @@ function mergeImessage(id, resolve) {
     });
 }
 
-module.exports = mergeImessage;
+export default mergeImessage;

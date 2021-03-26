@@ -1,44 +1,51 @@
 #!/usr/bin/env node
 
-let assert = require('assert');
-let cp = require('child_process');
-let fs = require('fs');
+import assert = require('assert');
+import cp = require('child_process');
+import fs = require('fs');
+import path = require('path');
 
-let CustomDate = require('./src/custom-date');
-let Server = require('./src/server');
-let mergeImessage = require('./src/merge/imessage');
-let mergePath = require('./src/merge/path');
-let prune = require('./src/prune');
+import CustomDate from './custom-date';
+import Server from './server';
+import mergeImessage from './merge/imessage';
+import mergePath from './merge/path';
+import prune from './prune';
 
-global.__basedir = __dirname;
-global.__binname = process.argv[1].match(/[^\/]*$/)[0];
-global.__favoritesFile = '.fav';
+const binname = 'days';
 
-if (!Number.prototype.zeropad) {
-    Number.prototype.zeropad = function(width) {
-        let res = this.toString();
-        return res.length >= width ? res :
-            new Array(width - res.length + 1).join('0') + res;
+declare global {
+    interface Number {
+        zeropad: (width: number) => string;
+    }
+
+    interface Array<T> {
+        last: () => T;
+    }
+
+    interface String {
+        lines: () => string[]
     }
 }
 
-if (!Array.prototype.last) {
-    Array.prototype.last = function() {
-        return this[this.length - 1];
-    }
+Number.prototype.zeropad = function(width) {
+    let res = this.toString();
+    return res.length >= width ? res :
+        new Array(width - res.length + 1).join('0') + res;
 }
 
-if (!String.prototype.lines) {
-    String.prototype.lines = function() {
-        let res = this.split('\n');
+Array.prototype.last = function() {
+    return this[this.length - 1];
+}
 
-        // Trailing newline
-        if (res[res.length-1] == '') {
-            res.splice(-1, 1);
-        }
+String.prototype.lines = function() {
+    let res = this.split('\n');
 
-        return res;
+    // Trailing newline
+    if (res[res.length-1] == '') {
+        res.splice(-1, 1);
     }
+
+    return res;
 }
 
 let config = {
@@ -48,15 +55,15 @@ let config = {
 };
 
 try {
-    Object.assign(config, JSON.parse(fs.readFileSync('config.json')));
+    Object.assign(config, JSON.parse(fs.readFileSync('config.json').toString()));
 } catch(err) {}
 
-function usage(stdout) {
+function usage(stdout: boolean) {
     let msg = `Usage:
-  ${__binname} new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
-  ${__binname} server [--port <number>] [--theme <name>]
-  ${__binname} merge [--resolve] (<path> | --imessage <ID>)
-  ${__binname} prune`;
+  ${binname} new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
+  ${binname} server [--port <number>] [--theme <name>]
+  ${binname} merge [--resolve] (<path> | --imessage <ID>)
+  ${binname} prune`;
 
     if (stdout) {
         console.log(msg);
@@ -77,13 +84,13 @@ if (/(--)?help/.test(process.argv[2])) {
 
 switch (process.argv[2]) {
     case '--version':
-        console.log(`${__binname} ${require('./package.json').version}`);
-        return;
+        console.log(`${binname} ${require('../package.json').version}`);
+        break;
     case 'new':
-        let args = {
-            'noEdit': false,
-            'allday': false,
-            'date': []
+        let args: {noEdit: boolean; allday: boolean; date: string[]} = {
+            noEdit: false,
+            allday: false,
+            date: []
         };
         for (let i = 3; i < process.argv.length; i++) {
             if (process.argv[i] == '--no-edit') {
@@ -128,20 +135,20 @@ switch (process.argv[2]) {
 
         if (args.noEdit) {
             console.log(date.file());
-            return;
+            break;
         }
 
         let editor = process.env.EDITOR;
         if (editor == undefined || editor == '')
             editor = 'vi';
 
-        cp.spawn(editor, [date.file()], { stdio: 'inherit' }).on('error', err => {
-            assert(err.code == 'ENOENT');
-            console.error(`\x1b[31mError\x1b[0m: Could not start editor`);
-            process.exit(1);
-        });
-
-        return;
+        cp.spawn(editor, [date.file()], { stdio: 'inherit' }).on('error',
+            (err: NodeJS.ErrnoException): void => {
+                assert(err.code == 'ENOENT');
+                console.error(`\x1b[31mError\x1b[0m: Could not start editor`);
+                process.exit(1);
+            });
+        break;
     case 'server':
         let { title, port, theme } = config;
 
@@ -150,7 +157,7 @@ switch (process.argv[2]) {
                 case '--port':
                     if (++i >= process.argv.length)
                         usage(false);
-                    port = process.argv[i];
+                    port = Number(process.argv[i]);
                     break;
                 case '--theme':
                     if (++i >= process.argv.length)
@@ -162,14 +169,14 @@ switch (process.argv[2]) {
 
         new Server(title, port, theme).run().then(() => {
                 console.log(`Server is listening on http://localhost:${port}`)
-            }).catch(err => {
+            }).catch((err: NodeJS.ErrnoException): void => {
                 console.error(`\x1b[31mError\x1b[0m: Port ${port} is already in use`);
                 process.exit(1);
             });
-        return;
+        break;
     case 'merge':
-        let resolve = false, imessage = false, pathOrId;
-        for (i = 3; i < process.argv.length; i++) {
+        let resolve = false, imessage = false, pathOrId = "";
+        for (let i = 3; i < process.argv.length; i++) {
             switch (process.argv[i]) {
                 case '--resolve':
                     resolve = true;
@@ -182,16 +189,16 @@ switch (process.argv[2]) {
                     break;
             }
         }
-        if (pathOrId == undefined)
+        if (pathOrId === "")
             usage(false);
         if (imessage)
             mergeImessage(pathOrId, resolve);
         else
             mergePath(pathOrId, resolve);
-        return;
+        break;
     case 'prune':
         prune('content');
-        return;
+        break;
     default:
         usage(false);
 }

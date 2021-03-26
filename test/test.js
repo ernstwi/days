@@ -6,42 +6,39 @@ let path = require('path');
 let dateformat = require('dateformat');
 let puppeteer = require('puppeteer');
 
-let Server = require('../src/server');
+let Server = require('../build/server').default;
+
+let bin = path.join(__dirname, '../build/index.js');
+let tmpDir = path.join(__dirname, 'test_data');
 
 before(function() {
-    global.__basedir = path.join(__dirname, '..');
-    global.__binname = 'days';
-    global.__favoritesFile = '.fav';
-
-    if (!Number.prototype.zeropad) {
-        Number.prototype.zeropad = function(width) {
-            let res = this.toString();
-            return res.length >= width ? res :
-                new Array(width - res.length + 1).join('0') + res;
-        }
+    Number.prototype.zeropad = function(width) {
+        let res = this.toString();
+        return res.length >= width ? res :
+            new Array(width - res.length + 1).join('0') + res;
     }
 
-    if (!Array.prototype.last) {
-        Array.prototype.last = function() {
-            return this[this.length - 1];
-        }
+    Array.prototype.last = function() {
+        return this[this.length - 1];
     }
 
-    if (!String.prototype.lines) {
-        String.prototype.lines = function() {
-            let res = this.split('\n');
+    String.prototype.lines = function() {
+        let res = this.split('\n');
 
-            // Trailing newline
-            if (res[res.length-1] == '') {
-                res.splice(-1, 1);
-            }
-
-            return res;
+        // Trailing newline
+        if (res[res.length-1] == '') {
+            res.splice(-1, 1);
         }
+
+        return res;
     }
 
-    cp.execSync('npm install -g');
-    process.chdir('test');
+    fs.mkdirSync(tmpDir);
+    process.chdir(tmpDir);
+});
+
+after(function() {
+    cp.execSync(`rm -rf ${tmpDir}`);
 });
 
 describe('CLI', function() {
@@ -53,15 +50,15 @@ describe('CLI', function() {
 
             context('no collision', function() {
                 it('should create a new file', function() {
-                    cp.execSync('days new --no-edit 1992 07 15 00 00 00');
+                    cp.execSync(`${bin} new --no-edit 1992 07 15 00 00 00`);
                     fs.accessSync('content/1992/07/15/00-00-00.md');
                 });
             });
             context('collision', function() {
                 it('should not overwrite an existing file', function() {
-                    cp.execSync('echo "Hello, world!" > $(days new --no-edit 1992 07 15 00 00 00)');
+                    cp.execSync(`echo "Hello, world!" > $(${bin} new --no-edit 1992 07 15 00 00 00)`);
                     assert.throws(() => {
-                        cp.execSync('days new --no-edit 1992 07 15 00 00 00', { stdio: 'ignore' })
+                        cp.execSync(`${bin} new --no-edit 1992 07 15 00 00 00`, { stdio: 'ignore' })
                     });
                     assert(fs.readFileSync('content/1992/07/15/00-00-00.md', 'utf8') == 'Hello, world!\n');
                 });
@@ -75,7 +72,7 @@ describe('CLI', function() {
                 fs.mkdirSync('source');
                 fs.mkdirSync('target');
                 process.chdir('source');
-                cp.execSync('echo "a reference to /image.png" > $(days new --no-edit 1992 07 15 00 00 00)');
+                cp.execSync(`echo "a reference to /image.png" > $(${bin} new --no-edit 1992 07 15 00 00 00)`);
                 fs.utimesSync('content/1992/07/15/00-00-00.md', new Date(), new Date(1992, 07, 15));
                 fs.utimesSync('content/1992/07/15/00-00-00.md', new Date(), new Date(1992, 07, 16));
                 fs.mkdirSync('assets/subdir', { recursive: true });
@@ -90,12 +87,12 @@ describe('CLI', function() {
 
             context('no conflict', function() {
                 it('should merge all posts and assets', function() {
-                    cp.execSync('days merge ../source');
+                    cp.execSync(`${bin} merge ../source`);
                     assert(fs.readFileSync('content/1992/07/15/00-00-00.md', 'utf8') == 'a reference to /image.png\n');
                 });
 
                 it('should set created and modified date on merged posts', function() {
-                    cp.execSync('days merge ../source');
+                    cp.execSync(`${bin} merge ../source`);
                     let stat = fs.statSync('content/1992/07/15/00-00-00.md');
                     assert(stat.birthtime.getTime() == new Date(1992, 07, 15).getTime());
                     assert(stat.mtime.getTime() == new Date(1992, 07, 16).getTime());
@@ -105,8 +102,8 @@ describe('CLI', function() {
 
             context('post conflict', function() {
                 it('should not overwrite an existing post', function() {
-                    cp.execSync('echo "new content in target dir" > $(days new --no-edit 1992 07 15 00 00 00)');
-                    cp.execSync('days merge ../source', { stdio: 'ignore' });
+                    cp.execSync(`echo "new content in target dir" > $(${bin} new --no-edit 1992 07 15 00 00 00)`);
+                    cp.execSync(`${bin} merge ../source`, { stdio: 'ignore' });
                     assert(fs.readFileSync('content/1992/07/15/00-00-00.md', 'utf8') == 'new content in target dir\n');
                 });
             });
@@ -119,14 +116,14 @@ describe('CLI', function() {
 
                 context('no --resolve', function() {
                     it('should ignore the colliding merged asset', function() {
-                        cp.execSync('days merge ../source', { stdio: 'ignore' });
+                        cp.execSync(`${bin} merge ../source`, { stdio: 'ignore' });
                         assert(fs.readFileSync('assets/image.png', 'utf8') == 'image data in target dir\n');
                     });
                 });
 
                 context('--resolve', function() {
                     it('should rename the colliding merged asset', function() {
-                        cp.execSync('days merge --resolve ../source', { stdio: 'ignore' });
+                        cp.execSync(`${bin} merge --resolve ../source`, { stdio: 'ignore' });
                         assert(fs.readFileSync('assets/image.png', 'utf8') == 'image data in target dir\n');
                         assert(fs.readFileSync('assets/image-0.png', 'utf8') == 'image data in source dir\n');
                         assert(fs.readFileSync('content/1992/07/15/00-00-00.md', 'utf8') == 'a reference to /image-0.png\n');
@@ -139,8 +136,8 @@ describe('CLI', function() {
             this.timeout(4000);
             context('no conflict', function() {
                 it('should set created and modified date on merged posts', function() {
-                    cp.execSync('osascript send-imessage.applescript "ernstwi_days_testing@icloud.com" "new message"');
-                    cp.execSync('days merge --imessage "ernstwi_days_testing@icloud.com"');
+                    cp.execSync('osascript ../send-imessage.applescript "ernstwi_days_testing@icloud.com" "new message"');
+                    cp.execSync(`${bin} merge --imessage "ernstwi_days_testing@icloud.com"`);
                     let postDate = new Date();
                     let dir = dateformat(postDate, '"content"/yyyy/mm/dd');
                     let post = fs.readdirSync(dir)[0];
@@ -168,8 +165,8 @@ describe('Web', function() {
     before(async function() {
         browser = await puppeteer.launch();
         page = await browser.pages().then(pages => pages[0]);
-        cp.execSync('days new --no-edit 2020 01 01 12 00 00');
-        cp.execSync('days new --no-edit 2020 01 11 01 00 00');
+        cp.execSync(`${bin} new --no-edit 2020 01 01 12 00 00`);
+        cp.execSync(`${bin} new --no-edit 2020 01 11 01 00 00`);
         server = new Server('days', 3004, 'fruchtig');
         await server.run();
     });

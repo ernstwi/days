@@ -1,8 +1,9 @@
-let fs = require('fs');
-let path = require('path');
+import assert = require('assert');
+import fs = require('fs');
+import path = require('path');
 
-function countPosts(dir) {
-    let res = {};
+function countPosts(dir: string): any {
+    let res: any = {};
     let files = 0;
 
     let dirContent = fs.readdirSync(dir);
@@ -24,10 +25,11 @@ function countPosts(dir) {
 function day() {
     let data = countPosts('content');
     let max = 0;
-    for (let [year, monthData] of Object.entries(data)) {
-        for (let [month, dayData] of Object.entries(monthData)) {
-            for (let [day, n] of Object.entries(dayData)) {
-                if (n > max) max = n;
+    for (let [, monthData] of Object.entries(data)) {
+        for (let [month, dayData] of Object.entries(monthData as any)) {
+            for (let [day, n] of Object.entries(dayData as any)) {
+                assert(typeof n === "number");
+                if (n as number > max) max = n as number;
             }
         }
     }
@@ -36,13 +38,13 @@ function day() {
 
 function month() {
     let [data, ] = day();
-    let res = {};
+    let res: any = {};
     let max = 0;
     for (let [year, monthData] of Object.entries(data)) {
         res[year] = {};
-        for (let [month, dayData] of Object.entries(monthData)) {
+        for (let [month, dayData] of Object.entries(monthData as any)) {
             res[year][month] = 0;
-            for (let [day, n] of Object.entries(dayData)) {
+            for (let [day, n] of Object.entries(dayData as any)) {
                 res[year][month] += n;
             }
             if (res[year][month] > max) max = res[year][month];
@@ -53,11 +55,11 @@ function month() {
 
 function year() {
     let [data, ] = month();
-    let res = {};
+    let res: any = {};
     let max = 0;
     for (let [year, monthData] of Object.entries(data)) {
         res[year] = 0;
-        for (let [month, n] of Object.entries(monthData)) {
+        for (let [month, n] of Object.entries(monthData as any)) {
             res[year] += n;
         }
         if (res[year] > max) max = res[year];
@@ -65,8 +67,4 @@ function year() {
     return [res, max];
 }
 
-module.exports = {
-    day: day,
-    month: month,
-    year: year
-};
+export { day, month, year };
