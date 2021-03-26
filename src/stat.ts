@@ -1,5 +1,5 @@
-let fs = require('fs');
-let path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
 
 function countPosts(dir) {
     let res = {};
@@ -65,8 +65,4 @@ function year() {
     return [res, max];
 }
 
-module.exports = {
-    day: day,
-    month: month,
-    year: year
-};
+export { day, month, year };

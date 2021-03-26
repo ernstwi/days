@@ -1,5 +1,5 @@
-let assert = require('assert');
-let fs = require('fs');
+import * as assert from 'assert';
+import * as fs from 'fs';
 
 function prune(dir) {
     let empty = true;
@@ -22,4 +22,4 @@ function prune(dir) {
     return empty;
 }
 
-module.exports = prune;
+export default prune;

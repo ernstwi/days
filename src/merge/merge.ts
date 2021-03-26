@@ -1,8 +1,8 @@
-let assert = require('assert');
-let fs = require('fs');
-let path = require('path');
+import * as assert from 'assert';
+import * as fs from 'fs';
+import * as path from 'path';
 
-let { NameCollision } = require('../error');
+import { NameCollision } from '../error';
 
 /**
  * @param {string} src Source path (full).
@@ -69,7 +69,4 @@ function mergePost(text, dst, birthtime, mtime, substitutions) {
     }
 }
 
-module.exports = {
-    mergeAsset: mergeAsset,
-    mergePost: mergePost
-};
+export { mergeAsset, mergePost };

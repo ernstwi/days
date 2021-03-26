@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-let assert = require('assert');
-let cp = require('child_process');
-let fs = require('fs');
-let path = require('path');
+import * as assert from 'assert';
+import * as cp from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
 
-let CustomDate = require('./custom-date');
-let Server = require('./server');
-let mergeImessage = require('./merge/imessage');
-let mergePath = require('./merge/path');
-let prune = require('./prune');
+import CustomDate from './custom-date';
+import Server from './server';
+import mergeImessage from './merge/imessage';
+import mergePath from './merge/path';
+import prune from './prune';
 
 global.__basedir = path.resolve(`${__dirname}/..`);
 global.__binname = process.argv[1].match(/[^\/]*$/)[0];

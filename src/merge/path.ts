@@ -1,9 +1,9 @@
-let assert = require('assert');
-let fs = require('fs');
-let path = require('path');
+import * as assert from 'assert';
+import * as fs from 'fs';
+import * as path from 'path';
 
-let merge = require('./merge');
-let { NameCollision } = require('../error');
+import * as merge from './merge';
+import { NameCollision } from '../error';
 
 function readdirRecursive(dir) {
     let res = [];
@@ -61,4 +61,4 @@ function mergePath(root, resolve) {
     });
 }
 
-module.exports = mergePath;
+export default mergePath;

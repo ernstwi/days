@@ -1,6 +1,6 @@
-let fs = require('fs');
+import * as fs from 'fs';
 
-let CustomDate = require('./custom-date');
+import CustomDate from './custom-date';
 
 function posts(month) {
     if (!fs.existsSync(month.monthDir()))
@@ -43,6 +43,4 @@ function posts(month) {
     return res;
 }
 
-module.exports = {
-    posts: posts
-}
+export { posts };

@@ -1,20 +1,17 @@
-let assert = require('assert');
-let cp = require('child_process');
-let events = require('events');
-let fs = require('fs');
-let http = require('http');
+import * as assert from 'assert';
+import * as cp from 'child_process';
+import * as events from 'events';
+import * as fs from 'fs';
+import * as http from 'http';
 
-let md = require('markdown-it')({
-    html: true,
-    breaks: true
-});
-let pug = require('pug');
-let qs = require('querystring');
-let serveStatic = require('serve-static');
+import * as pug from 'pug';
+import * as qs from 'querystring';
+import * as serveStatic from 'serve-static';
+import markdownIt = require('markdown-it');
 
-let CustomDate = require('./custom-date');
-let stat = require('./stat');
-let month = require('./month');
+import * as month from './month';
+import * as stat from './stat';
+import CustomDate from './custom-date';
 
 class Server {
     #port;
@@ -28,6 +25,11 @@ class Server {
 
         let root = serveStatic(__basedir);
         let assets = serveStatic('assets');
+
+        let md = markdownIt({
+            html: true,
+            breaks: true
+        });
 
         let pugStart     = pug.compileFile(`${__basedir}/templates/start.pug`);
         let pugMonth     = pug.compileFile(`${__basedir}/templates/month/main.pug`);
@@ -179,4 +181,4 @@ class Server {
     }
 }
 
-module.exports = Server;
+export default Server;

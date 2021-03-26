@@ -1,15 +1,15 @@
-let assert = require('assert');
-let cp = require('child_process');
-let fs = require('fs');
-let os = require('os');
-let path = require('path');
+import * as assert from 'assert';
+import * as cp from 'child_process';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
 
-let parse = require('csv-parse/lib/sync');
-let pug = require('pug');
+import * as parse from 'csv-parse/lib/sync';
+import * as pug from 'pug';
 
-let CustomDate = require('../custom-date');
-let merge = require('./merge');
-let { NameCollision } = require('../error');
+import * as merge from './merge';
+import CustomDate from '../custom-date';
+import NameCollision from '../error';
 
 let pugAsset = pug.compileFile(`${__dirname}/asset.pug`);
 
@@ -93,4 +93,4 @@ function mergeImessage(id, resolve) {
     });
 }
 
-module.exports = mergeImessage;
+export default mergeImessage;

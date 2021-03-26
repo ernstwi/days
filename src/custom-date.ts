@@ -1,6 +1,6 @@
-let assert = require('assert');
+import * as assert from 'assert';
 
-let dateFormat = require('dateformat');
+import * as dateFormat from 'dateformat';
 
 class CustomDate extends Date {
     allday = false;
@@ -105,4 +105,4 @@ class CustomDate extends Date {
     }
 }
 
-module.exports = CustomDate;
+export default CustomDate;
