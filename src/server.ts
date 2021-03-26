@@ -23,7 +23,7 @@ class Server {
             process.exit(1);
         }
 
-        let root = serveStatic(__basedir);
+        let root = serveStatic('..');
         let assets = serveStatic('assets');
 
         let md = markdownIt({
@@ -31,14 +31,14 @@ class Server {
             breaks: true
         });
 
-        let pugStart     = pug.compileFile(`${__basedir}/templates/start.pug`);
-        let pugMonth     = pug.compileFile(`${__basedir}/templates/month/main.pug`);
-        let pugFavorites = pug.compileFile(`${__basedir}/templates/favorites.pug`);
-        let pugPostView  = pug.compileFile(`${__basedir}/templates/post-view/main.pug`);
-        let pugPostEdit  = pug.compileFile(`${__basedir}/templates/post-edit/main.pug`);
-        let pugStatDay   = pug.compileFile(`${__basedir}/templates/stat/day.pug`);
-        let pugStatMonth = pug.compileFile(`${__basedir}/templates/stat/month.pug`);
-        let pugStatYear  = pug.compileFile(`${__basedir}/templates/stat/year.pug`);
+        let pugStart     = pug.compileFile('../templates/start.pug');
+        let pugMonth     = pug.compileFile('../templates/month/main.pug');
+        let pugFavorites = pug.compileFile('../templates/favorites.pug');
+        let pugPostView  = pug.compileFile('../templates/post-view/main.pug');
+        let pugPostEdit  = pug.compileFile('../templates/post-edit/main.pug');
+        let pugStatDay   = pug.compileFile('../templates/stat/day.pug');
+        let pugStatMonth = pug.compileFile('../templates/stat/month.pug');
+        let pugStatYear  = pug.compileFile('../templates/stat/year.pug');
 
         let firstYear  = parseInt(fs.readdirSync('content').filter(f => /\d{4}/.test(f))[0]);
         let firstMonth = parseInt(fs.readdirSync(`content/${firstYear}`).filter(f => /\d{2}/.test(f))[0]);
@@ -47,7 +47,7 @@ class Server {
 
         let favorites;
         try {
-            favorites = new Set(fs.readFileSync(__favoritesFile).toString().lines());
+            favorites = new Set(fs.readFileSync('.fav').toString().lines());
         } catch(err) {
             favorites = new Set();
         }
@@ -131,9 +131,9 @@ class Server {
                     favorites.add(id);
 
                 if (favorites.size == 0)
-                    fs.unlinkSync(__favoritesFile);
+                    fs.unlinkSync('.fav');
                 else
-                    fs.writeFileSync(__favoritesFile, [...favorites].sort().join('\n'));
+                    fs.writeFileSync('.fav', [...favorites].sort().join('\n'));
                 return;
             }
 

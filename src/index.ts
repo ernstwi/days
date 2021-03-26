@@ -11,9 +11,7 @@ import mergeImessage from './merge/imessage';
 import mergePath from './merge/path';
 import prune from './prune';
 
-global.__basedir = path.resolve(`${__dirname}/..`);
-global.__binname = process.argv[1].match(/[^\/]*$/)[0];
-global.__favoritesFile = '.fav';
+const binname = 'days';
 
 if (!Number.prototype.zeropad) {
     Number.prototype.zeropad = function(width) {
@@ -54,10 +52,10 @@ try {
 
 function usage(stdout) {
     let msg = `Usage:
-  ${__binname} new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
-  ${__binname} server [--port <number>] [--theme <name>]
-  ${__binname} merge [--resolve] (<path> | --imessage <ID>)
-  ${__binname} prune`;
+  ${binname} new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
+  ${binname} server [--port <number>] [--theme <name>]
+  ${binname} merge [--resolve] (<path> | --imessage <ID>)
+  ${binname} prune`;
 
     if (stdout) {
         console.log(msg);
@@ -78,7 +76,7 @@ if (/(--)?help/.test(process.argv[2])) {
 
 switch (process.argv[2]) {
     case '--version':
-        console.log(`${__binname} ${require(`${__basedir}/package.json`).version}`);
+        console.log(`${binname} ${require('../package.json').version}`);
         return;
     case 'new':
         let args = {

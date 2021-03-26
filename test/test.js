@@ -9,10 +9,6 @@ let puppeteer = require('puppeteer');
 let Server = require('../build/server');
 
 before(function() {
-    global.__basedir = path.join(__dirname, '..');
-    global.__binname = 'days';
-    global.__favoritesFile = '.fav';
-
     if (!Number.prototype.zeropad) {
         Number.prototype.zeropad = function(width) {
             let res = this.toString();
