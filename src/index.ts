@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import * as assert from 'assert';
-import * as cp from 'child_process';
-import * as fs from 'fs';
-import * as path from 'path';
+import assert = require('assert');
+import cp = require('child_process');
+import fs = require('fs');
+import path = require('path');
 
 import CustomDate from './custom-date';
 import Server from './server';

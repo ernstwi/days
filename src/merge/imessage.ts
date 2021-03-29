@@ -1,11 +1,11 @@
-import * as assert from 'assert';
-import * as cp from 'child_process';
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
+import assert = require('assert');
+import cp = require('child_process');
+import fs = require('fs');
+import os = require('os');
+import path = require('path');
 
-import * as parse from 'csv-parse/lib/sync';
-import * as pug from 'pug';
+import parse = require('csv-parse/lib/sync');
+import pug = require('pug');
 
 import * as merge from './merge';
 import CustomDate from '../custom-date';

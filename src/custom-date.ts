@@ -1,6 +1,6 @@
-import * as assert from 'assert';
+import assert = require('assert');
 
-import * as dateFormat from 'dateformat';
+import dateFormat = require('dateformat');
 
 class CustomDate extends Date {
     allday = false;

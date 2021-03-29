@@ -1,6 +1,6 @@
-import * as assert from 'assert';
-import * as fs from 'fs';
-import * as path from 'path';
+import assert = require('assert');
+import fs = require('fs');
+import path = require('path');
 
 import * as merge from './merge';
 import { NameCollision } from '../error';

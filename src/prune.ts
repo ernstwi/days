@@ -1,5 +1,5 @@
-import * as assert from 'assert';
-import * as fs from 'fs';
+import assert = require('assert');
+import fs = require('fs');
 
 function prune(dir) {
     let empty = true;

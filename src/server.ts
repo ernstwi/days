@@ -1,12 +1,12 @@
-import * as assert from 'assert';
-import * as cp from 'child_process';
-import * as events from 'events';
-import * as fs from 'fs';
-import * as http from 'http';
+import assert = require('assert');
+import cp = require('child_process');
+import events = require('events');
+import fs = require('fs');
+import http = require('http');
 
-import * as pug from 'pug';
-import * as qs from 'querystring';
-import * as serveStatic from 'serve-static';
+import pug = require('pug');
+import qs = require('querystring');
+import serveStatic = require('serve-static');
 import markdownIt = require('markdown-it');
 
 import * as month from './month';
