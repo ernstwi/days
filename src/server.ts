@@ -17,7 +17,7 @@ class Server {
     #port;
     #server;
 
-    constructor(title, port, theme) {
+    constructor(title: string, port: number, theme: string) {
         if (!fs.existsSync('content')) {
             console.error(`\x1b[31mError\x1b[0m: No content`);
             process.exit(1);
@@ -45,7 +45,7 @@ class Server {
         let lastYear   = parseInt(fs.readdirSync('content').filter(f => /\d{4}/.test(f)).last());
         let lastMonth  = parseInt(fs.readdirSync(`content/${lastYear}`).filter(f => /\d{2}/.test(f)).last());
 
-        let favorites;
+        let favorites: Set<string>;
         try {
             favorites = new Set(fs.readFileSync('.fav').toString().lines());
         } catch(err) {
@@ -68,7 +68,7 @@ class Server {
         this.#port = port;
 
         this.#server = http.createServer((req, res) => {
-            let url = decodeURI(req.url);
+            let url = decodeURI(req.url as string);
 
             // Home
             if (url == '/') {
@@ -109,10 +109,11 @@ class Server {
 
             // Edit submitted
             if (/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?\?edited$/.test(url)) {
-                let chunks = [];
-                req.on('data', chunk => chunks.push(chunk));
+                let chunks: Buffer[] = [];
+                req.on('data', (chunk: Buffer) => chunks.push(chunk));
                 req.on('end', () => {
-                    let data = qs.parse(Buffer.concat(chunks).toString()).message.replace(/\r/g, '') + '\n';
+                    let data = (qs.parse(Buffer.concat(chunks).toString()).message as string)
+                        .replace(/\r/g, '') + '\n';
                     let date = new CustomDate(url);
                     fs.writeFileSync(date.file(), data);
                     res.writeHead(301, {Location: date.postUrl()});

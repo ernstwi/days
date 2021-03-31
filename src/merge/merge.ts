@@ -11,7 +11,7 @@ import { NameCollision } from '../error';
  * @returns {string} New {@param dst}, possibly updated to avoid name collision.
  * @throws {NameCollision} If {@param resolve} is false and {@param dst} exists.
  */
-function mergeAsset(src, dst, resolve) {
+function mergeAsset(src: string, dst: string, resolve: boolean): string {
     // Make the parent directory if it doesn't already exist
     fs.mkdirSync(path.dirname(path.join('assets', dst)), { recursive: true });
 
@@ -23,7 +23,7 @@ function mergeAsset(src, dst, resolve) {
                     fs.copyFileSync(src, path.join('assets', dst), fs.constants.COPYFILE_EXCL);
                     return dst;
                 } else {
-                    let components = path.parse(dst);
+                    let components: any = path.parse(dst);
                     delete components.base;
                     components.name += `-${suffix}`;
                     let newDst = path.format(components);
@@ -48,12 +48,13 @@ function mergeAsset(src, dst, resolve) {
  * @param {string} dst Destination path (relative to root).
  * @param {Date} birthtime Creation date.
  * @param {Date} mtime Modification date.
- * @param {Object.<string, string>} substitutions Dictionary of asset name
+ * @param {Map<string, string>} substitutions Dictionary of asset name
  * substitutions (due to name collisions).
  * @throws {NameCollision} If {@param dst} exists.
  */
-function mergePost(text, dst, birthtime, mtime, substitutions) {
-    for (let [key, value] of Object.entries(substitutions)) {
+function mergePost(text: string, dst: string, birthtime: Date, mtime: Date,
+    substitutions: Map<string, string>) {
+    for (let [key, value] of substitutions) {
         text = text.split(key).join(value);
     }
 
