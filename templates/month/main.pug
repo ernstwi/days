@@ -5,7 +5,7 @@ block content
         #no-posts-container
             #no-posts= `No posts this ${date.monthString()}.`
     else
-        each posts, header in data
+        each [header, posts] of data
             .header= header
             each date in posts
                 include post
