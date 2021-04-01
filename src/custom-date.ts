@@ -8,37 +8,61 @@ class CustomDate extends Date {
     // args := year, month [, day [, hours [, minutes [, seconds]]]]
     //       | url
     //       | file
-    //       | customDate
+    //       | CustomDate
     //       | Date
     //       | Unix epoch (milliseconds)
-    //       | undefined
-    constructor(...args) {
-        if (args[0] === undefined) {
-            super();
+    //       | []
+    constructor(...args: any) {
+        super();
+        
+        // []
+        if (args.length == 0) {
             return;
         }
 
+        // Unix epoch (milliseconds)
+        if (args.length == 1 && typeof args[0] == 'number') {
+            this.setTime(args[0]);
+            return;
+        }
+
+        // CustomDate
         if (args[0] instanceof CustomDate) {
-            super(args[0].valueOf());
+            this.setTime(args[0].valueOf());
             this.allday = args[0].allday;
             return;
         }
 
+        // Date
         if (args[0] instanceof Date) {
-            super(args[0].valueOf());
+            this.setTime(args[0].valueOf());
             return;
         }
 
-        let match = args[0].toString().match(/^(http:\/\/localhost:\d{4})?\/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?.*$/);
-        if (match == null)
-            match = args[0].toString().match(/(\d{4})\/(\d{2})\/(\d{2})\/((\d{2})-(\d{2})-(\d{2})|allday).md/);
-        if (match != null)
-            args = match.filter(x => /^\d+$/.test(x));
+        // url | file
+        if (typeof args[0] === 'string') {
+            let match = args[0].match(/^(http:\/\/localhost:\d{4})?\/(\d{4})\/(\d{2})(\/(\d{2}))?(\/(\d{2})\/(\d{2})\/(\d{2}))?.*$/);
+            if (match == null)
+                match = args[0].match(/(\d{4})\/(\d{2})\/(\d{2})\/((\d{2})-(\d{2})-(\d{2})|allday).md/);
+            if (match != null)
+                args = match.filter(x => /^\d+$/.test(x));
+        }
 
-        if (args.length > 1)
-            args[1]--;
-        super(...args);
-        if (args.length > 1 && args.length < 4)
+        // year, month [, day [, hours [, minutes [, seconds]]]]
+        assert(args.length >= 2);
+        this.setFullYear(args[0]);
+        this.setMonth(args[1] - 1, 1);
+
+        if (args.length > 2)
+            this.setDate(args[2]);
+        if (args.length > 3)
+            this.setHours(args[3]);
+        if (args.length > 4)
+            this.setMinutes(args[4]);
+        if (args.length > 5)
+            this.setSeconds(args[5]);
+
+        if (args.length < 4)
             this.allday = true;
     }
 
