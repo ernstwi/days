@@ -1,15 +1,17 @@
 {
   "name": "@ernstwi/days",
-  "version": "1.9.4",
+  "version": "1.9.5",
   "description": "Journaling tool",
   "author": "Ernst Widerberg <ernstwi@kth.se>",
   "license": "MIT",
   "repository": "github:ernstwi/days",
-  "bin": "build/index.js",
+  "bin": {
+    "days": "build/index.js"
+  },
   "files": [
-      "/build",
-      "/static",
-      "/templates"
+    "/build",
+    "/static",
+    "/templates"
   ],
   "dependencies": {
     "@types/node": "^14.14.37",
