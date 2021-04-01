@@ -20,6 +20,7 @@ function posts(month: CustomDate): null | Map<string, CustomDate[]> {
                 let [ , hour, minute, second] = 
                     f.match(/^(\d{2})-(\d{2})-(\d{2}).md$/) as RegExpMatchArray;
                 let postDate = new CustomDate(day);
+                postDate.allday = false;
                 postDate.setHours(Number(hour), Number(minute), Number(second));
 
                 let postDay = new CustomDate(day);
