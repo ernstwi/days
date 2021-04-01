@@ -3,6 +3,7 @@ import cp = require('child_process');
 import events = require('events');
 import fs = require('fs');
 import http = require('http');
+import path = require('path');
 
 import pug = require('pug');
 import qs = require('querystring');
@@ -12,6 +13,8 @@ import markdownIt = require('markdown-it');
 import * as month from './month';
 import * as stat from './stat';
 import CustomDate from './custom-date';
+
+let templateDir = path.join(__dirname, '../templates');
 
 class Server {
     #port;
@@ -23,7 +26,7 @@ class Server {
             process.exit(1);
         }
 
-        let root = serveStatic('..');
+        let root = serveStatic(path.join(__dirname, '..'));
         let assets = serveStatic('assets');
 
         let md = markdownIt({
@@ -31,14 +34,14 @@ class Server {
             breaks: true
         });
 
-        let pugStart     = pug.compileFile('../templates/start.pug');
-        let pugMonth     = pug.compileFile('../templates/month/main.pug');
-        let pugFavorites = pug.compileFile('../templates/favorites.pug');
-        let pugPostView  = pug.compileFile('../templates/post-view/main.pug');
-        let pugPostEdit  = pug.compileFile('../templates/post-edit/main.pug');
-        let pugStatDay   = pug.compileFile('../templates/stat/day.pug');
-        let pugStatMonth = pug.compileFile('../templates/stat/month.pug');
-        let pugStatYear  = pug.compileFile('../templates/stat/year.pug');
+        let pugStart     = pug.compileFile(`${templateDir}/start.pug`);
+        let pugMonth     = pug.compileFile(`${templateDir}/month/main.pug`);
+        let pugFavorites = pug.compileFile(`${templateDir}/favorites.pug`);
+        let pugPostView  = pug.compileFile(`${templateDir}/post-view/main.pug`);
+        let pugPostEdit  = pug.compileFile(`${templateDir}/post-edit/main.pug`);
+        let pugStatDay   = pug.compileFile(`${templateDir}/stat/day.pug`);
+        let pugStatMonth = pug.compileFile(`${templateDir}/stat/month.pug`);
+        let pugStatYear  = pug.compileFile(`${templateDir}/stat/year.pug`);
 
         let firstYear  = parseInt(fs.readdirSync('content').filter(f => /\d{4}/.test(f))[0]);
         let firstMonth = parseInt(fs.readdirSync(`content/${firstYear}`).filter(f => /\d{2}/.test(f))[0]);
