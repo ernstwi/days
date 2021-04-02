@@ -133,7 +133,7 @@ describe('CLI', function() {
         });
 
         describe('imessage', function() {
-            this.timeout(4000);
+            this.timeout(10000);
             context('no conflict', function() {
                 it('should set created and modified date on merged posts', function() {
                     cp.execSync('osascript ../send-imessage.applescript "ernstwi_days_testing@icloud.com" "new message"');
@@ -156,7 +156,7 @@ describe('CLI', function() {
 });
 
 describe('Web', function() {
-    this.timeout(4000);
+    this.timeout(10000);
 
     let server;
     let browser;
