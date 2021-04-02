@@ -12,7 +12,7 @@ function countPosts(dir: string): any {
         let stat = fs.statSync(next);
         if (stat.isDirectory()) {
             res[file] = countPosts(next);
-        } else if (path.extname(file) == '.md') {
+        } else if (path.extname(file) === '.md') {
             files++;
         }
     });

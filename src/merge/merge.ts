@@ -19,7 +19,7 @@ function mergeAsset(src: string, dst: string, resolve: boolean): string {
         let suffix = -1;
         while (true) {
             try {
-                if (suffix == -1) {
+                if (suffix === -1) {
                     fs.copyFileSync(src, path.join('assets', dst), fs.constants.COPYFILE_EXCL);
                     return dst;
                 } else {
@@ -32,7 +32,7 @@ function mergeAsset(src: string, dst: string, resolve: boolean): string {
                     return newDst;
                 }
             } catch(err) {
-                assert(err.code == 'EEXIST');
+                assert(err.code === 'EEXIST');
                 if (!resolve) {
                     throw new NameCollision(`\x1b[36m${dst}\x1b[0m not merged`);
                 } else {
@@ -65,7 +65,7 @@ function mergePost(text: string, dst: string, birthtime: Date, mtime: Date,
         fs.utimesSync(dst, new Date(), birthtime);
         fs.utimesSync(dst, new Date(), mtime);
     } catch(err) {
-        assert(err.code == 'EEXIST');
+        assert(err.code === 'EEXIST');
         throw new NameCollision(`\x1b[36m${dst}\x1b[0m not merged`);
     }
 }

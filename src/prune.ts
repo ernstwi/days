@@ -3,7 +3,7 @@ import fs = require('fs');
 
 function prune(dir: string) {
     let empty = true;
-    fs.readdirSync(dir).filter(file => file != '.DS_Store').forEach(file => {
+    fs.readdirSync(dir).filter(file => file !== '.DS_Store').forEach(file => {
         let path = [dir, file].join('/')
         if (fs.statSync(path).isFile())
             empty = false;
@@ -15,7 +15,7 @@ function prune(dir: string) {
         try {
             fs.unlinkSync(`${dir}/.DS_Store`);
         } catch(err) {
-            assert(err.code == 'ENOENT');
+            assert(err.code === 'ENOENT');
         }
         fs.rmdirSync(dir);
     }

@@ -16,12 +16,12 @@ class CustomDate extends Date {
         super();
         
         // []
-        if (args.length == 0) {
+        if (args.length === 0) {
             return;
         }
 
         // Unix epoch (milliseconds)
-        if (args.length == 1 && typeof args[0] == 'number') {
+        if (args.length === 1 && typeof args[0] === 'number') {
             this.setTime(args[0]);
             return;
         }
@@ -42,9 +42,9 @@ class CustomDate extends Date {
         // url | file
         if (typeof args[0] === 'string') {
             let match = args[0].match(/^(http:\/\/localhost:\d{4})?\/(\d{4})\/(\d{2})(\/(\d{2}))?(\/(\d{2})\/(\d{2})\/(\d{2}))?.*$/);
-            if (match == null)
+            if (match === null)
                 match = args[0].match(/(\d{4})\/(\d{2})\/(\d{2})\/((\d{2})-(\d{2})-(\d{2})|allday).md/);
-            if (match != null)
+            if (match !== null)
                 args = match.filter(x => /^\d+$/.test(x));
         }
 

@@ -43,7 +43,7 @@ function mergePath(root: string, resolve: boolean): void {
                 throw err;
             console.error(`Name collision: ${err.message}`);
         }
-        if (newDst != dst)
+        if (newDst !== dst)
             substitutions.set(dst, newDst);
     });
 

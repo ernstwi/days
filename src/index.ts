@@ -41,7 +41,7 @@ String.prototype.lines = function() {
     let res = this.split('\n');
 
     // Trailing newline
-    if (res[res.length-1] == '') {
+    if (res[res.length-1] === '') {
         res.splice(-1, 1);
     }
 
@@ -93,12 +93,12 @@ switch (process.argv[2]) {
             date: []
         };
         for (let i = 3; i < process.argv.length; i++) {
-            if (process.argv[i] == '--no-edit') {
+            if (process.argv[i] === '--no-edit') {
                 args.noEdit = true;
                 continue;
             }
 
-            if (process.argv[i] == '--allday') {
+            if (process.argv[i] === '--allday') {
                 args.allday = true;
                 continue;
             }
@@ -117,7 +117,7 @@ switch (process.argv[2]) {
             usage(false);
 
         let date;
-        if (args.date.length == 0) {
+        if (args.date.length === 0) {
             date = new CustomDate();
         } else {
             date = new CustomDate(...args.date);
@@ -139,12 +139,12 @@ switch (process.argv[2]) {
         }
 
         let editor = process.env.EDITOR;
-        if (editor == undefined || editor == '')
+        if (editor === undefined || editor === '')
             editor = 'vi';
 
         cp.spawn(editor, [date.file()], { stdio: 'inherit' }).on('error',
             (err: NodeJS.ErrnoException): void => {
-                assert(err.code == 'ENOENT');
+                assert(err.code === 'ENOENT');
                 console.error(`\x1b[31mError\x1b[0m: Could not start editor`);
                 process.exit(1);
             });

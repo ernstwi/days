@@ -49,7 +49,7 @@ function mergeImessage(id: string, resolve: boolean) {
     sqlite(id, 'asset.sql').forEach(row => {
         let [id, asset] = row;
         asset = asset.replace(/^~/, os.homedir());
-        if (data[id].assets == undefined)
+        if (data[id].assets === undefined)
             data[id].assets = new Array<asset>();
         data[id].assets.push({
             src: asset,
@@ -59,15 +59,15 @@ function mergeImessage(id: string, resolve: boolean) {
 
     // Add assets to head of post text
     Object.values(data).forEach((post: any) => {
-        if (post.assets != undefined) {
+        if (post.assets !== undefined) {
             post.text = post.assets.map((a: asset) => assetStr(a.dst)).join('\n')
-                + (post.text == '' ? '' : '\n\n' + post.text);
+                + (post.text === '' ? '' : '\n\n' + post.text);
         }
     });
 
     // Merge assets
     let substitutions = new Map<string, string>();
-    Object.values(data).filter((post: any) => post.assets != undefined)
+    Object.values(data).filter((post: any) => post.assets !== undefined)
         .forEach((post: any) => {
         post.assets.forEach((asset: asset) => {
             let newDst = "";
@@ -78,7 +78,7 @@ function mergeImessage(id: string, resolve: boolean) {
                     throw err;
                 console.error(`Name collision: ${err.message}`);
             }
-            if (newDst != asset.dst)
+            if (newDst !== asset.dst)
                 substitutions.set(asset.dst, newDst);
         });
     });
@@ -86,7 +86,7 @@ function mergeImessage(id: string, resolve: boolean) {
     // Merge posts
     Object.values(data).forEach((post: any) => {
         // Special case for entries consisting of ' ' with no assets.
-        if (post.text == ' ' && post.assets == undefined)
+        if (post.text === ' ' && post.assets === undefined)
             return;
 
         post.dst = post.date.file();

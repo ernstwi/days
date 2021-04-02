@@ -74,7 +74,7 @@ class Server {
             let url = decodeURI(req.url as string);
 
             // Home
-            if (url == '/') {
+            if (url === '/') {
                 res.end(pugStart(Object.create(pugVars)));
                 return;
             }
@@ -134,7 +134,7 @@ class Server {
                 else
                     favorites.add(id);
 
-                if (favorites.size == 0)
+                if (favorites.size === 0)
                     fs.unlinkSync('.fav');
                 else
                     fs.writeFileSync('.fav', [...favorites].sort().join('\n'));

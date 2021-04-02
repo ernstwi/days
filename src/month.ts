@@ -10,7 +10,7 @@ function posts(month: CustomDate): null | Map<string, CustomDate[]> {
     let day = new CustomDate(month);
     day.setDate(1);
 
-    for (; day.getMonth() == month.getMonth(); day.setDate(day.getDate() + 1)) {
+    for (; day.getMonth() === month.getMonth(); day.setDate(day.getDate() + 1)) {
         if (!fs.existsSync(day.dayDir()))
             continue;
 

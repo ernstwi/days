@@ -26,7 +26,7 @@ before(function() {
         let res = this.split('\n');
 
         // Trailing newline
-        if (res[res.length-1] == '') {
+        if (res[res.length-1] === '') {
             res.splice(-1, 1);
         }
 
@@ -60,7 +60,7 @@ describe('CLI', function() {
                     assert.throws(() => {
                         cp.execSync(`${bin} new --no-edit 1992 07 15 00 00 00`, { stdio: 'ignore' })
                     });
-                    assert(fs.readFileSync('content/1992/07/15/00-00-00.md', 'utf8') == 'Hello, world!\n');
+                    assert(fs.readFileSync('content/1992/07/15/00-00-00.md', 'utf8') === 'Hello, world!\n');
                 });
             });
         });
@@ -88,14 +88,14 @@ describe('CLI', function() {
             context('no conflict', function() {
                 it('should merge all posts and assets', function() {
                     cp.execSync(`${bin} merge ../source`);
-                    assert(fs.readFileSync('content/1992/07/15/00-00-00.md', 'utf8') == 'a reference to /image.png\n');
+                    assert(fs.readFileSync('content/1992/07/15/00-00-00.md', 'utf8') === 'a reference to /image.png\n');
                 });
 
                 it('should set created and modified date on merged posts', function() {
                     cp.execSync(`${bin} merge ../source`);
                     let stat = fs.statSync('content/1992/07/15/00-00-00.md');
-                    assert(stat.birthtime.getTime() == new Date(1992, 07, 15).getTime());
-                    assert(stat.mtime.getTime() == new Date(1992, 07, 16).getTime());
+                    assert(stat.birthtime.getTime() === new Date(1992, 07, 15).getTime());
+                    assert(stat.mtime.getTime() === new Date(1992, 07, 16).getTime());
                 });
 
             });
@@ -104,7 +104,7 @@ describe('CLI', function() {
                 it('should not overwrite an existing post', function() {
                     cp.execSync(`echo "new content in target dir" > $(${bin} new --no-edit 1992 07 15 00 00 00)`);
                     cp.execSync(`${bin} merge ../source`, { stdio: 'ignore' });
-                    assert(fs.readFileSync('content/1992/07/15/00-00-00.md', 'utf8') == 'new content in target dir\n');
+                    assert(fs.readFileSync('content/1992/07/15/00-00-00.md', 'utf8') === 'new content in target dir\n');
                 });
             });
 
@@ -117,16 +117,16 @@ describe('CLI', function() {
                 context('no --resolve', function() {
                     it('should ignore the colliding merged asset', function() {
                         cp.execSync(`${bin} merge ../source`, { stdio: 'ignore' });
-                        assert(fs.readFileSync('assets/image.png', 'utf8') == 'image data in target dir\n');
+                        assert(fs.readFileSync('assets/image.png', 'utf8') === 'image data in target dir\n');
                     });
                 });
 
                 context('--resolve', function() {
                     it('should rename the colliding merged asset', function() {
                         cp.execSync(`${bin} merge --resolve ../source`, { stdio: 'ignore' });
-                        assert(fs.readFileSync('assets/image.png', 'utf8') == 'image data in target dir\n');
-                        assert(fs.readFileSync('assets/image-0.png', 'utf8') == 'image data in source dir\n');
-                        assert(fs.readFileSync('content/1992/07/15/00-00-00.md', 'utf8') == 'a reference to /image-0.png\n');
+                        assert(fs.readFileSync('assets/image.png', 'utf8') === 'image data in target dir\n');
+                        assert(fs.readFileSync('assets/image-0.png', 'utf8') === 'image data in source dir\n');
+                        assert(fs.readFileSync('content/1992/07/15/00-00-00.md', 'utf8') === 'a reference to /image-0.png\n');
                     });
                 });
             });
@@ -145,10 +145,10 @@ describe('CLI', function() {
                     sec = sec.substring(0, 2);
                     postDate.setHours(hr, min, sec, 0);
                     let stat = fs.statSync(path.join(dir, post));
-                    assert(stat.birthtime.getTime() == postDate.getTime());
-                    assert(stat.mtime.getTime() == postDate.getTime());
+                    assert(stat.birthtime.getTime() === postDate.getTime());
+                    assert(stat.mtime.getTime() === postDate.getTime());
                     let text = fs.readFileSync(path.join(dir, post), 'utf8');
-                    assert(text == 'new message\n');
+                    assert(text === 'new message\n');
                 });
             });
         });
@@ -189,8 +189,8 @@ describe('Web', function() {
                 return document.getElementsByClassName('post-body')[0].innerText;
             });
 
-            assert(text == 'Hello, world!');
-            assert(fs.readFileSync('content/2020/01/01/12-00-00.md', 'utf8') == 'Hello, world!\n');
+            assert(text === 'Hello, world!');
+            assert(fs.readFileSync('content/2020/01/01/12-00-00.md', 'utf8') === 'Hello, world!\n');
         });
     });
 
