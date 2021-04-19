@@ -16,7 +16,8 @@
   "prettier": {
     "tabWidth": 4,
     "singleQuote": true,
-    "trailingComma": "none"
+    "trailingComma": "none",
+    "arrowParens": "avoid"
   },
   "dependencies": {
     "csv-parse": "^4.12.0",
