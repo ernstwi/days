@@ -1,9 +1,0 @@
-extends ../post
-
-block content
-    form(class='post-body edit' id='form' action=`${date.postUrl()}?edited` method='post')
-        textarea(form='form' name='message')
-            != fs.readFileSync(date.file()).toString().replace(/\n$/, '')
-
-block action
-    a(id='submit-edit' href="javascript:document.forms['form'].submit()") done

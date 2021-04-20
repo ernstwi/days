@@ -1,0 +1,34 @@
+#container {
+    display: flex;
+    justify-content: space-between;
+}
+
+#sidebar {
+    width: 9ch;
+    line-height: 1.6em;
+    text-align: right;
+}
+
+#primary {
+    width: 515px;
+}
+
+#sidebar #links {
+    margin-top: 2ch;
+    border-top: 1px solid var(--sidebar-divider, var(--ui));
+    padding-top: 2ch;
+    margin-bottom: 50px;
+}
+
+#sidebar #index .unit {
+    margin-bottom: 3ch;
+}
+
+#sidebar #index .unit .year {
+    color: var(--sidebar-year, var(--ui));
+    margin-bottom: 0.5ch;
+}
+
+#sidebar #index .unit .month {
+    color: var(--sidebar-month, var(--ui));
+}

@@ -16,8 +16,6 @@
     --link:              var(--blue);
     --post-body-hr:      var(--light-gray);
     --post-footer-fav:   var(--gold);
-    --stat-bar-empty:    var(--light-green);
-    --stat-bar-fill:     var(--green);
     --ui:                var(--light-gray);
 }
 

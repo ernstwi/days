@@ -1,0 +1,23 @@
+extends two-pane
+
+append css
+    link(rel='stylesheet' href='/static/post.css')
+
+block primary
+    .header
+        span.back
+            a(href=month.url) ←
+        span= post.displayDate.longDate
+    .post
+        div(class='post-body view')!= post.html
+
+    .post-footer
+        span!= post.date.shortDayName
+        span!= post.date.shortDate
+        span!= post.date.year
+        span!= post.timeString
+        a(href=post.editUrl) edit
+        span(
+            class = post.favorite ? ['fav', 'active'] : ['fav']
+            onclick = `fav(this, '${post.url}')`) ★
+    #footer

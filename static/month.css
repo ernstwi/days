@@ -1,0 +1,20 @@
+#footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    margin-bottom: 50px;
+    color: var(--footer-diamond, var(--ui));
+}
+
+#navArrows {
+    font-size: 15px;
+    width: 5em;
+    display: flex;
+    justify-content: space-between;
+}
+
+#navArrows div {
+    width: 1em;
+    text-align: center;
+}

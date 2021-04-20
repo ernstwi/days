@@ -1,0 +1,29 @@
+#index-container {
+    display: flex;
+    justify-content: center;
+}
+
+#index .row {
+    display: flex;
+    border-bottom: 1px solid var(--start-index-border, var(--ui));
+    padding: 0.5ch;
+}
+
+#index .row:first-child {
+    border-top: 1px solid var(--start-index-border, var(--ui));
+}
+
+#index .row .months {
+    display: flex;
+    margin-left: 3ch;
+}
+
+#index .row .months .month {
+    color: var(--link-disabled, var(--ui));
+    width: 4.5ch;
+    text-align: right;
+}
+
+#index .row .year {
+    color: var(--start-year, var(--ui));
+}

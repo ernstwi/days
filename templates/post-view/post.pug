@@ -1,7 +1,0 @@
-extends ../post
-
-block content
-    div(class='post-body view')!= md.render(fs.readFileSync(date.file()).toString())
-
-block link
-    a(href=date.postEditUrl()) edit

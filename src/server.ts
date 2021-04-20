@@ -4,185 +4,148 @@ import events = require('events');
 import fs = require('fs');
 import http = require('http');
 import path = require('path');
+import qs = require('querystring');
+import url = require('url');
 
 import pug = require('pug');
-import qs = require('querystring');
 import serveStatic = require('serve-static');
-import markdownIt = require('markdown-it');
 
-import * as month from './month';
-import * as stat from './stat';
-import CustomDate from './custom-date';
+import { Route, router, HandlerFunc } from './router';
+import { Year, Month, Day, Date, Post } from './struct';
+import { content } from './read';
+import { templateDir, staticDir, assetDir } from './constants';
 
-let templateDir = path.join(__dirname, '../templates');
+let server: http.Server;
 
-class Server {
-    #port;
-    #server;
+function start(title: string, port: number, theme: string): Promise<any> { // TODO: Return type
+    let templates: Record<string, pug.compileTemplate> = {
+        start:     pug.compileFile(path.join(templateDir, 'start.pug')),
+        month:     pug.compileFile(path.join(templateDir, 'month.pug')),
+        postView:  pug.compileFile(path.join(templateDir, 'post-view.pug')),
+        postEdit:  pug.compileFile(path.join(templateDir, 'post-edit.pug')),
+        favorites: pug.compileFile(path.join(templateDir, 'favorites.pug'))
+    };
+    let staticServer = serveStatic(staticDir);
+    let assetServer = serveStatic(assetDir);
 
-    constructor(title: string, port: number, theme: string) {
-        if (!fs.existsSync('content')) {
-            console.error(`\x1b[31mError\x1b[0m: No content`);
-            process.exit(1);
-        }
+    let routes = [
+        new Route('/', startHandler(templates.start, title, theme)),
+        new Route('/(\\d{4})/(\\d{2})', monthHandler(templates.month, title, theme)),
+        new Route('/(\\d{4})/(\\d{2})/(\\d{2})(/(\\d{2})/(\\d{2})/(\\d{2}))?', postHandler(templates.postView, title, theme)),
+        new Route('/(\\d{4})/(\\d{2})/(\\d{2})(/(\\d{2})/(\\d{2})/(\\d{2}))?/edit', postHandler(templates.postEdit, title, theme)),
+        new Route('/(\\d{4})/(\\d{2})/(\\d{2})(/(\\d{2})/(\\d{2})/(\\d{2}))?\\?edited', editSubmitHandler()),
+        new Route('/(\\d{4})/(\\d{2})/(\\d{2})(/(\\d{2})/(\\d{2})/(\\d{2}))?\\?favorite', favoriteSubmitHandler()),
+        new Route('/favorites', favoritesHandler(templates.favorites, title, theme)),
+        new Route('/static/.*', staticHandler(staticServer)),
+        new Route('.*', assetHandler(assetServer))
+    ];
 
-        let root = serveStatic(path.join(__dirname, '..'));
-        let assets = serveStatic('assets');
+    if (server !== undefined)
+        throw new Error('server.start() called twice');
+    server = http.createServer(router(routes));
+    return events.once(server.listen(port), 'listening');
+}
 
-        let md = markdownIt({
-            html: true,
-            breaks: true
-        });
+function close() {
+    server.close();
+}
 
-        let pugStart     = pug.compileFile(`${templateDir}/start.pug`);
-        let pugMonth     = pug.compileFile(`${templateDir}/month/main.pug`);
-        let pugFavorites = pug.compileFile(`${templateDir}/favorites.pug`);
-        let pugPostView  = pug.compileFile(`${templateDir}/post-view/main.pug`);
-        let pugPostEdit  = pug.compileFile(`${templateDir}/post-edit/main.pug`);
-        let pugStatDay   = pug.compileFile(`${templateDir}/stat/day.pug`);
-        let pugStatMonth = pug.compileFile(`${templateDir}/stat/month.pug`);
-        let pugStatYear  = pug.compileFile(`${templateDir}/stat/year.pug`);
-
-        let firstYear  = parseInt(fs.readdirSync('content').filter(f => /\d{4}/.test(f))[0]);
-        let firstMonth = parseInt(fs.readdirSync(`content/${firstYear}`).filter(f => /\d{2}/.test(f))[0]);
-        let lastYear   = parseInt(fs.readdirSync('content').filter(f => /\d{4}/.test(f)).last());
-        let lastMonth  = parseInt(fs.readdirSync(`content/${lastYear}`).filter(f => /\d{2}/.test(f)).last());
-
-        let favorites: Set<string>;
-        try {
-            favorites = new Set(fs.readFileSync('.fav').toString().lines());
-        } catch(err) {
-            favorites = new Set();
-        }
-
-        let pugVars = {
+function startHandler(template: pug.compileTemplate, title: string, theme: string): HandlerFunc {
+    return function (req, res) {
+        let { years } = content();
+        res.end(template({
             title: title,
             theme: theme,
-            fs: fs,
-            md: md,
-            CustomDate: CustomDate,
-            favorites: favorites,
-            firstYear: firstYear,
-            firstMonth: firstMonth,
-            lastYear: lastYear,
-            lastMonth: lastMonth
-        }
-
-        this.#port = port;
-
-        this.#server = http.createServer((req, res) => {
-            let url = decodeURI(req.url as string);
-
-            // Home
-            if (url === '/') {
-                res.end(pugStart(Object.create(pugVars)));
-                return;
-            }
-
-            // Month view
-            if (/^\/(\d{4})\/(\d{2})$/.test(url)) {
-                res.end(pugMonth(Object.assign(Object.create(pugVars), {
-                    date: new CustomDate(url),
-                    data: month.posts(new CustomDate(url))
-                })));
-                return;
-            }
-
-            // Favorites view
-            if (/^\/favorites$/.test(url)) {
-                res.end(pugFavorites(Object.create(pugVars)));
-                return;
-            }
-
-            // Post view
-            if (/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?$/.test(url)) {
-                res.end(pugPostView(Object.assign(Object.create(pugVars), {
-                    date: new CustomDate(url)
-                })));
-                return;
-            }
-
-            // Edit view
-            if (/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?\/edit$/.test(url)) {
-                res.end(pugPostEdit(Object.assign(Object.create(pugVars), {
-                    date: new CustomDate(url)
-                })));
-                return;
-            }
-
-            // Edit submitted
-            if (/(\d{4})\/(\d{2})\/(\d{2})(\/(\d{2})\/(\d{2})\/(\d{2}))?\?edited$/.test(url)) {
-                let chunks: Buffer[] = [];
-                req.on('data', (chunk: Buffer) => chunks.push(chunk));
-                req.on('end', () => {
-                    let data = (qs.parse(Buffer.concat(chunks).toString()).message as string)
-                        .replace(/\r/g, '') + '\n';
-                    let date = new CustomDate(url);
-                    fs.writeFileSync(date.file(), data);
-                    res.writeHead(301, {Location: date.postUrl()});
-                    res.end();
-                })
-                return;
-            }
-
-            // Favorite submitted
-            if (/^(\/\d{4}\/\d{2}\/\d{2}(\/\d{2}\/\d{2}\/\d{2})?)\?favorite$/.test(url)) {
-                res.end();
-                let id = new CustomDate(url).postUrl();
-                if (favorites.has(id))
-                    favorites.delete(id);
-                else
-                    favorites.add(id);
-
-                if (favorites.size === 0)
-                    fs.unlinkSync('.fav');
-                else
-                    fs.writeFileSync('.fav', [...favorites].sort().join('\n'));
-                return;
-            }
-
-            // Stat view (day)
-            if (/^\/stat(\/day)?$/.test(url)) {
-                let [data, max] = stat.day();
-                res.end(pugStatDay(Object.assign(Object.create(pugVars), {
-                    data: data,
-                    max: max
-                })));
-                return;
-            }
-
-            // Stat view (month)
-            if (/^\/stat\/month/.test(url)) {
-                let [data, max] = stat.month();
-                res.end(pugStatMonth(Object.assign(Object.create(pugVars), {
-                    data: data,
-                    max: max
-                })));
-                return;
-            }
-
-            // Stat view (year)
-            if (/^\/stat\/year/.test(url)) {
-                let [data, max] = stat.year();
-                res.end(pugStatYear(Object.assign(Object.create(pugVars), {
-                    data: data,
-                    max: max
-                })));
-                return;
-            }
-
-            // Static file
-            root(req, res, () => assets(req, res, () => res.end('File not found')));
-        });
-    }
-
-    run() {
-        return events.once(this.#server.listen(this.#port), 'listening');
-    }
-
-    close() {
-        return this.#server.close();
+            years: [...years.values()]
+        }));
     }
 }
 
-export default Server;
+function monthHandler(template: pug.compileTemplate, title: string, theme: string): HandlerFunc {
+    return function (this: Route, req, res) {
+        let [year, month] = this.captureGroups(req.url as string);
+        let { years, months } = content();
+        res.end(template({
+            title: title,
+            theme: theme,
+            years: [...years.values()],
+            month: months.get(new Month(year, month).id) as Month
+        }));
+    }
+}
+
+function postHandler(template: pug.compileTemplate, title: string, theme: string): HandlerFunc {
+    return function (this: Route, req, res) {
+        let [year, month, day, , hour, min, sec] = this.captureGroups(req.url as string);
+        let { years, months, posts } = content();
+        res.end(template({
+            title: title,
+            theme: theme,
+            years: [...years.values()],
+            month: months.get(new Month(year, month).id) as Month,
+            post: posts.get(new Post(year, month, day, hour, min, sec).id) as Post
+        }));
+    };
+}
+
+function favoritesHandler(template: pug.compileTemplate, title: string, theme: string): HandlerFunc {
+    return function (this: Route, req, res) {
+        let { years } = content();
+        let { days } = content(p => p.favorite);
+        res.end(template({
+            title: title,
+            theme: theme,
+            years: [...years.values()],
+            days: [...days.values()]
+        }));
+    }
+}
+
+function editSubmitHandler(): HandlerFunc {
+    return function (this: Route, req, res) {
+        let [year, month, day, , hour, min, sec] = this.captureGroups(req.url as string);
+        let post = new Post(year, month, day, hour, min, sec);
+        let chunks: Buffer[] = [];
+        req.on('data', (chunk: Buffer) => chunks.push(chunk));
+        req.on('end', () => {
+            let body = (qs.parse(Buffer.concat(chunks).toString()).message as string).replace(/\r/g, '');
+            post.write(body);
+            res.writeHead(301, {Location: post.url});
+            res.end();
+        });
+    }
+}
+
+function favoriteSubmitHandler(): HandlerFunc {
+    return function (this: Route, req, res) {
+        res.end();
+        let [year, month, day, , hour, min, sec] = this.captureGroups(req.url as string);
+        let post = new Post(year, month, day, hour, min, sec);
+        let favorites = fs.existsSync('.fav')
+            ? new Set(fs.readFileSync('.fav', { encoding: 'utf8' }).lines())
+            : new Set();
+        if (favorites.has(post.id))
+            favorites.delete(post.id);
+        else
+            favorites.add(post.id);
+        if (favorites.size === 0)
+            fs.unlinkSync('.fav');
+        else
+            fs.writeFileSync('.fav', [...favorites].sort().join('\n'));
+    }
+}
+
+function staticHandler(server: serveStatic.RequestHandler<http.ServerResponse>): HandlerFunc {
+    return function (req, res) {
+        req.url = (req.url as string).substring('/static/'.length);
+        server(req, res, () => res.end('File not found')); // TODO: Proper error
+    }
+}
+
+function assetHandler(server: serveStatic.RequestHandler<http.ServerResponse>): HandlerFunc {
+    return function (req, res) {
+        server(req, res, () => res.end('File not found'));
+    }
+}
+
+export { start, close };

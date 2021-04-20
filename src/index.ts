@@ -6,7 +6,7 @@ import fs = require('fs');
 import path = require('path');
 
 import CustomDate from './custom-date';
-import Server from './server';
+import * as server from './server';
 import mergeImessage from './merge/imessage';
 import mergePath from './merge/path';
 import prune from './prune';
@@ -167,12 +167,15 @@ switch (process.argv[2]) {
             }
         }
 
-        new Server(title, port, theme).run().then(() => {
-                console.log(`Server is listening on http://localhost:${port}`)
-            }).catch((err: NodeJS.ErrnoException): void => {
+        server.start(title, port, theme).then(() => {
+            console.log(`Server is listening on http://localhost:${port}`)
+        }).catch((err: NodeJS.ErrnoException): void => {
+            if (err.code === 'EADDRINUSE')
                 console.error(`\x1b[31mError\x1b[0m: Port ${port} is already in use`);
-                process.exit(1);
-            });
+            else
+                console.error(`\x1b[31mError\x1b[0m: ${err.code}`);
+            process.exit(1);
+        });
         break;
     case 'merge':
         let resolve = false, imessage = false, pathOrId = "";

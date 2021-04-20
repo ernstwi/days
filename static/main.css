@@ -1,0 +1,25 @@
+#banner {
+    margin-bottom: 60px;
+    font-size: 40px;
+}
+
+body {
+    font-family: Monaco, "Ubuntu Mono", "Lucida Console", monospace;
+    font-size: 11px;
+    background-color: var(--background);
+
+    width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+}
+
+a {
+    text-decoration: none;
+    color: var(--link);
+}
+
+a:hover {
+    color: var(--link-hover);
+    text-decoration: underline;
+}

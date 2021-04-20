@@ -1,0 +1,23 @@
+extends main
+
+append css
+    link(rel='stylesheet' href='/static/two-pane.css')
+
+block body
+    #container
+        #sidebar
+            #index
+                each y of years
+                    .unit
+                        .year= y.year
+                        .months
+                            each m of y.months
+                                .month
+                                    if m.days.length > 0
+                                        a(href=`/${y.year}/${m.month}`)= m.longName
+                                    else
+                                        = m.longName
+            #links
+                a(href='/favorites') Favorites
+        #primary
+            block primary

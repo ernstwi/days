@@ -105,7 +105,7 @@ The root directory may contain a file `config.json` with the following keys.
 
 ## Adding themes
 
-You can create your own theme by adding a file `static/<theme-name>.css` containing definitions for a subset of the following CSS variables.
+You can create your own theme by adding a file `static/theme/<theme-name>.css` containing definitions for a subset of the following CSS variables.
 
 | Name                            | Type  | Fallback value |
 | ------------------------------- | ----- | -------------- |
@@ -137,12 +137,8 @@ You can create your own theme by adding a file `static/<theme-name>.css` contain
 | `--post-footer`                 | color | `--ui`         |
 | `--post-footer-hr`              | color | `--ui`         |
 | `--sidebar-divider`             | color | `--ui`         |
+| `--sidebar-month`               | color | `--ui`         |
 | `--sidebar-year`                | color | `--ui`         |
 | `--start-index-border`          | color | `--ui`         |
 | `--start-index-border`          | color | `--ui`         |
 | `--start-year`                  | color | `--ui`         |
-| `--stat-bar-empty`              | color | `--background` |
-| `--stat-bar-fill`               | color | `--content`    |
-| `--stat-header`                 | color | `--ui`         |
-| `--stat-title`                  | color | `--ui`         |
-| `--stat-value`                  | color | `--ui`         |

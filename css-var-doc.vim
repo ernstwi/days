@@ -1,6 +1,10 @@
 let s:b = bufnr()
 enew
-0read static/style.css
+0read static/main.css
+0read static/month.css
+0read static/post.css
+0read static/start.css
+0read static/two-pane.css
 %g!/var(/norm dd/
 %g!/var.*var/norm dd
 %s/var(//g
@@ -10,7 +14,7 @@ enew
 %s/, / | color | 
 %sort
 
-0read static/default.css
+0read static/theme/default.css
 %g/\(:root\|}\)/norm dd
 %s/;//g
 %s/^ \+\ze--/| 
