@@ -10,8 +10,7 @@ function readdirRecursive(dir: string): string[] {
     let list = fs.readdirSync(dir);
     for (let file of list) {
         // Ignore dotfiles
-        if (file.startsWith('.'))
-            continue;
+        if (file.startsWith('.')) continue;
 
         let next = path.join(dir, file);
         let stat = fs.statSync(next);
@@ -35,16 +34,14 @@ function mergePath(root: string, resolve: boolean): void {
 
     readdirRecursive(path.join(root, 'assets')).forEach(src => {
         let dst = src.replace(`${root}/assets/`, '');
-        let newDst = "";
+        let newDst = '';
         try {
             newDst = merge.mergeAsset(src, dst, resolve);
         } catch (err) {
-            if (!(err instanceof NameCollision))
-                throw err;
+            if (!(err instanceof NameCollision)) throw err;
             console.error(`Name collision: ${err.message}`);
         }
-        if (newDst !== dst)
-            substitutions.set(dst, newDst);
+        if (newDst !== dst) substitutions.set(dst, newDst);
     });
 
     readdirRecursive(path.join(root, 'content')).forEach(src => {
@@ -52,10 +49,15 @@ function mergePath(root: string, resolve: boolean): void {
         let dst = src.replace(`${root}/`, '');
         let stat = fs.statSync(src);
         try {
-            merge.mergePost(text, dst, stat.birthtime, stat.mtime, substitutions);
+            merge.mergePost(
+                text,
+                dst,
+                stat.birthtime,
+                stat.mtime,
+                substitutions
+            );
         } catch (err) {
-            if (!(err instanceof NameCollision))
-                throw err;
+            if (!(err instanceof NameCollision)) throw err;
             console.error(`Name collision: ${err.message}`);
         }
     });

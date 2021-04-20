@@ -14,7 +14,7 @@ class CustomDate extends Date {
     //       | []
     constructor(...args: any) {
         super();
-        
+
         // []
         if (args.length === 0) {
             return;
@@ -41,11 +41,14 @@ class CustomDate extends Date {
 
         // url | file
         if (typeof args[0] === 'string') {
-            let match = args[0].match(/^(http:\/\/localhost:\d{4})?\/(\d{4})\/(\d{2})(\/(\d{2}))?(\/(\d{2})\/(\d{2})\/(\d{2}))?.*$/);
+            let match = args[0].match(
+                /^(http:\/\/localhost:\d{4})?\/(\d{4})\/(\d{2})(\/(\d{2}))?(\/(\d{2})\/(\d{2})\/(\d{2}))?.*$/
+            );
             if (match === null)
-                match = args[0].match(/(\d{4})\/(\d{2})\/(\d{2})\/((\d{2})-(\d{2})-(\d{2})|allday).md/);
-            if (match !== null)
-                args = match.filter(x => /^\d+$/.test(x));
+                match = args[0].match(
+                    /(\d{4})\/(\d{2})\/(\d{2})\/((\d{2})-(\d{2})-(\d{2})|allday).md/
+                );
+            if (match !== null) args = match.filter(x => /^\d+$/.test(x));
         }
 
         // year, month [, day [, hours [, minutes [, seconds]]]]
@@ -53,17 +56,12 @@ class CustomDate extends Date {
         this.setFullYear(args[0]);
         this.setMonth(args[1] - 1, 1);
 
-        if (args.length > 2)
-            this.setDate(args[2]);
-        if (args.length > 3)
-            this.setHours(args[3]);
-        if (args.length > 4)
-            this.setMinutes(args[4]);
-        if (args.length > 5)
-            this.setSeconds(args[5]);
+        if (args.length > 2) this.setDate(args[2]);
+        if (args.length > 3) this.setHours(args[3]);
+        if (args.length > 4) this.setMinutes(args[4]);
+        if (args.length > 5) this.setSeconds(args[5]);
 
-        if (args.length < 4)
-            this.allday = true;
+        if (args.length < 4) this.allday = true;
     }
 
     // ---- File paths ---------------------------------------------------------
@@ -81,17 +79,16 @@ class CustomDate extends Date {
     }
 
     file() {
-        return dateFormat(this, `"content"/yyyy/mm/dd/${this.allday
-            ? '"allday"'
-            : 'HH-MM-ss'}".md"`);
+        return dateFormat(
+            this,
+            `"content"/yyyy/mm/dd/${this.allday ? '"allday"' : 'HH-MM-ss'}".md"`
+        );
     }
 
     // ---- URLs ---------------------------------------------------------------
 
     postUrl() {
-        return dateFormat(this, `/yyyy/mm/dd${this.allday
-            ? ''
-            : '/HH/MM/ss'}`);
+        return dateFormat(this, `/yyyy/mm/dd${this.allday ? '' : '/HH/MM/ss'}`);
     }
 
     postEditUrl() {

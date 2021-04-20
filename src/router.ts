@@ -1,7 +1,10 @@
 import url = require('url');
 import http = require('http');
 
-type HandlerFunc = (req: http.IncomingMessage, res: http.ServerResponse) => void;
+type HandlerFunc = (
+    req: http.IncomingMessage,
+    res: http.ServerResponse
+) => void;
 
 class Route {
     regexp: RegExp;
@@ -14,8 +17,7 @@ class Route {
 
     captureGroups(str: string): string[] {
         let match = str.match(this.regexp);
-        if (match === null)
-            return [];
+        if (match === null) return [];
         return match.slice(1);
     }
 }
@@ -29,7 +31,7 @@ function router(routes: Route[]): http.RequestListener {
             }
         }
         res.end('invalid url');
-    }
+    };
 }
 
 export { HandlerFunc, Route, router };

@@ -20,7 +20,11 @@ function mergeAsset(src: string, dst: string, resolve: boolean): string {
         while (true) {
             try {
                 if (suffix === -1) {
-                    fs.copyFileSync(src, path.join('assets', dst), fs.constants.COPYFILE_EXCL);
+                    fs.copyFileSync(
+                        src,
+                        path.join('assets', dst),
+                        fs.constants.COPYFILE_EXCL
+                    );
                     return dst;
                 } else {
                     let components: any = path.parse(dst);
@@ -28,10 +32,14 @@ function mergeAsset(src: string, dst: string, resolve: boolean): string {
                     components.name += `-${suffix}`;
                     let newDst = path.format(components);
 
-                    fs.copyFileSync(src, path.join('assets', newDst), fs.constants.COPYFILE_EXCL);
+                    fs.copyFileSync(
+                        src,
+                        path.join('assets', newDst),
+                        fs.constants.COPYFILE_EXCL
+                    );
                     return newDst;
                 }
-            } catch(err) {
+            } catch (err) {
                 assert(err.code === 'EEXIST');
                 if (!resolve) {
                     throw new NameCollision(`\x1b[36m${dst}\x1b[0m not merged`);
@@ -52,8 +60,13 @@ function mergeAsset(src: string, dst: string, resolve: boolean): string {
  * substitutions (due to name collisions).
  * @throws {NameCollision} If {@param dst} exists.
  */
-function mergePost(text: string, dst: string, birthtime: Date, mtime: Date,
-    substitutions: Map<string, string>) {
+function mergePost(
+    text: string,
+    dst: string,
+    birthtime: Date,
+    mtime: Date,
+    substitutions: Map<string, string>
+) {
     for (let [key, value] of substitutions) {
         text = text.split(key).join(value);
     }
@@ -64,7 +77,7 @@ function mergePost(text: string, dst: string, birthtime: Date, mtime: Date,
         fs.writeFileSync(dst, text, { flag: 'wx' });
         fs.utimesSync(dst, new Date(), birthtime);
         fs.utimesSync(dst, new Date(), mtime);
-    } catch(err) {
+    } catch (err) {
         assert(err.code === 'EEXIST');
         throw new NameCollision(`\x1b[36m${dst}\x1b[0m not merged`);
     }

@@ -23,30 +23,31 @@ declare global {
     }
 
     interface String {
-        lines: () => string[]
+        lines: () => string[];
     }
 }
 
-Number.prototype.zeropad = function(width) {
+Number.prototype.zeropad = function (width) {
     let res = this.toString();
-    return res.length >= width ? res :
-        new Array(width - res.length + 1).join('0') + res;
-}
+    return res.length >= width
+        ? res
+        : new Array(width - res.length + 1).join('0') + res;
+};
 
-Array.prototype.last = function() {
+Array.prototype.last = function () {
     return this[this.length - 1];
-}
+};
 
-String.prototype.lines = function() {
+String.prototype.lines = function () {
     let res = this.split('\n');
 
     // Trailing newline
-    if (res[res.length-1] === '') {
+    if (res[res.length - 1] === '') {
         res.splice(-1, 1);
     }
 
     return res;
-}
+};
 
 let config = {
     title: 'days',
@@ -55,8 +56,11 @@ let config = {
 };
 
 try {
-    Object.assign(config, JSON.parse(fs.readFileSync('config.json').toString()));
-} catch(err) {}
+    Object.assign(
+        config,
+        JSON.parse(fs.readFileSync('config.json').toString())
+    );
+} catch (err) {}
 
 function usage(stdout: boolean) {
     let msg = `Usage:
@@ -87,7 +91,7 @@ switch (process.argv[2]) {
         console.log(`${binname} ${require('../package.json').version}`);
         break;
     case 'new':
-        let args: {noEdit: boolean; allday: boolean; date: string[]} = {
+        let args: { noEdit: boolean; allday: boolean; date: string[] } = {
             noEdit: false,
             allday: false,
             date: []
@@ -104,8 +108,7 @@ switch (process.argv[2]) {
             }
 
             if (/\d{4}/.test(process.argv[i])) {
-                if (i+2 >= process.argv.length)
-                    usage(false);
+                if (i + 2 >= process.argv.length) usage(false);
                 while (i < process.argv.length) {
                     args.date.push(process.argv[i++]);
                 }
@@ -113,8 +116,7 @@ switch (process.argv[2]) {
             }
             usage(false);
         }
-        if (args.date.length > 6)
-            usage(false);
+        if (args.date.length > 6) usage(false);
 
         let date;
         if (args.date.length === 0) {
@@ -122,11 +124,12 @@ switch (process.argv[2]) {
         } else {
             date = new CustomDate(...args.date);
         }
-        if (args.allday)
-            date.allday = true;
+        if (args.allday) date.allday = true;
 
         if (fs.existsSync(date.file())) {
-            console.error(`\x1b[31mError\x1b[0m: \x1b[36m${date.file()}\x1b[0m already exists`);
+            console.error(
+                `\x1b[31mError\x1b[0m: \x1b[36m${date.file()}\x1b[0m already exists`
+            );
             process.exit(1);
         }
 
@@ -139,46 +142,51 @@ switch (process.argv[2]) {
         }
 
         let editor = process.env.EDITOR;
-        if (editor === undefined || editor === '')
-            editor = 'vi';
+        if (editor === undefined || editor === '') editor = 'vi';
 
-        cp.spawn(editor, [date.file()], { stdio: 'inherit' }).on('error',
+        cp.spawn(editor, [date.file()], { stdio: 'inherit' }).on(
+            'error',
             (err: NodeJS.ErrnoException): void => {
                 assert(err.code === 'ENOENT');
                 console.error(`\x1b[31mError\x1b[0m: Could not start editor`);
                 process.exit(1);
-            });
+            }
+        );
         break;
     case 'server':
         let { title, port, theme } = config;
 
         for (let i = 3; i < process.argv.length; i++) {
-            switch(process.argv[i]) {
+            switch (process.argv[i]) {
                 case '--port':
-                    if (++i >= process.argv.length)
-                        usage(false);
+                    if (++i >= process.argv.length) usage(false);
                     port = Number(process.argv[i]);
                     break;
                 case '--theme':
-                    if (++i >= process.argv.length)
-                        usage(false);
+                    if (++i >= process.argv.length) usage(false);
                     theme = process.argv[i];
                     break;
             }
         }
 
-        server.start(title, port, theme).then(() => {
-            console.log(`Server is listening on http://localhost:${port}`)
-        }).catch((err: NodeJS.ErrnoException): void => {
-            if (err.code === 'EADDRINUSE')
-                console.error(`\x1b[31mError\x1b[0m: Port ${port} is already in use`);
-            else
-                console.error(`\x1b[31mError\x1b[0m: ${err.code}`);
-            process.exit(1);
-        });
+        server
+            .start(title, port, theme)
+            .then(() => {
+                console.log(`Server is listening on http://localhost:${port}`);
+            })
+            .catch((err: NodeJS.ErrnoException): void => {
+                if (err.code === 'EADDRINUSE')
+                    console.error(
+                        `\x1b[31mError\x1b[0m: Port ${port} is already in use`
+                    );
+                else console.error(`\x1b[31mError\x1b[0m: ${err.code}`);
+                process.exit(1);
+            });
         break;
     case 'merge':
-        let resolve = false, imessage = false, pathOrId = "";
+        let resolve = false,
+            imessage = false,
+            pathOrId = '';
         for (let i = 3; i < process.argv.length; i++) {
             switch (process.argv[i]) {
                 case '--resolve':
@@ -192,12 +200,9 @@ switch (process.argv[2]) {
                     break;
             }
         }
-        if (pathOrId === "")
-            usage(false);
-        if (imessage)
-            mergeImessage(pathOrId, resolve);
-        else
-            mergePath(pathOrId, resolve);
+        if (pathOrId === '') usage(false);
+        if (imessage) mergeImessage(pathOrId, resolve);
+        else mergePath(pathOrId, resolve);
         break;
     case 'prune':
         prune('content');
