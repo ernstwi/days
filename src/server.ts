@@ -11,7 +11,7 @@ import pug = require('pug');
 import serveStatic = require('serve-static');
 
 import { Route, router, HandlerFunc } from './router';
-import { Year, Month, Day, Date, Post } from './struct';
+import { Year, Month, Day, Post } from './struct';
 import { content } from './read';
 import { templateDir, staticDir, assetDir } from './constants';
 

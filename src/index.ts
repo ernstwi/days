@@ -9,7 +9,7 @@ import * as server from './server';
 import mergeImessage from './merge/imessage';
 import mergePath from './merge/path';
 import prune from './prune';
-import { Post, Date, Time } from './struct';
+import { Post } from './struct';
 
 const binname = 'days';
 
@@ -122,8 +122,8 @@ switch (process.argv[2]) {
 
         let post: Post;
         if (args.date.length === 0) {
-            if (args.allday) post = new Post(new Date());
-            else post = new Post(new Date(), new Time());
+            if (args.allday) post = new Post(true);
+            else post = new Post(false);
         } else if (args.date.length < 3) {
             usage(false);
             // Note: usage() always calls process.exit() so this break statement
