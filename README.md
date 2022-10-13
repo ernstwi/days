@@ -71,8 +71,8 @@ Import content from another journal, or from iMessage.
 $ days merge [--resolve] (<path> | --imessage <ID>)
 ```
 
-- With `--resolve`, filename collisions on assets are resolved by renaming.
 - Merge posts from a *days* journal at `<path>`, or from an iMessage conversation with user `<ID>` (macOS only).
+- With `--resolve`, filename collisions on assets are resolved by renaming.
 
 Tip: Set up a dummy Apple ID for the purpose of journaling.
 
