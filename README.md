@@ -2,7 +2,7 @@
 
 This is a tool for keeping a personal journal in the form of a directory of markdown files. There are two main commands: `new` for writing posts, and `server` to browse the journal as a webpage.
 
-Journaling on iOS is supported by use of Apple Messages.
+Journaling on iOS is supported via iMessage import (see [`days merge`](#merge)).
 
 <p align='center'>
     <img src='https://github.com/ernstwi/days/raw/master/fruchtig.png' width='576'>
@@ -65,14 +65,14 @@ $ days server [--port <number>] [--theme <name>]
 
 ### `merge`
 
-Merge content from another journal or from Apple Messages.
+Import content from another journal, or from iMessage.
 
 ```
 $ days merge [--resolve] (<path> | --imessage <ID>)
 ```
 
 - With `--resolve`, filename collisions on assets are resolved by renaming.
-- Merge posts from a *days* journal at `<path>`, or from a Messages conversation with user `<ID>` (macOS only).
+- Merge posts from a *days* journal at `<path>`, or from an iMessage conversation with user `<ID>` (macOS only).
 
 Tip: Set up a dummy Apple ID for the purpose of journaling.
 
