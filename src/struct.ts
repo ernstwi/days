@@ -1,3 +1,12 @@
+// This file contains classes for representing a post and its containers.
+// Years hold months, month hold days, and days hold posts.
+//
+// Year, Month, Day, and Post each have a Date as a helper class. Posts
+// additionally have a Time, unless they are allday posts.
+//
+// This approach replaces the CustomDate class, which extended JS Date class
+// to work as a pointer to a post file.
+
 import path = require('path');
 import fs = require('fs');
 
@@ -108,6 +117,7 @@ class Post {
     time?: Time;
     favorite: boolean;
 
+    constructor(date: Date, time?: Time);
     constructor(year: string, month: string, day: string);
     constructor(
         year: string,
@@ -118,20 +128,33 @@ class Post {
         sec: string
     );
     constructor(
-        year: string,
-        month: string,
-        day: string,
+        yearOrDate: string | Date,
+        monthOrTime?: string | Time,
+        day?: string,
         hour?: string,
         min?: string,
         sec?: string
     ) {
         this.favorite = false;
-        this.date = new Date(year, month, day);
-        if (hour === undefined || min === undefined || sec === undefined) {
+
+        if (yearOrDate instanceof Date) {
+            let date = yearOrDate;
+            let time = monthOrTime as Time;
+            this.date = date;
+            this.time = time;
+        } else {
+            let year = yearOrDate;
+            let month = monthOrTime as string;
+            day = day as string;
+            this.date = new Date(year, month, day);
+            if (hour !== undefined && min !== undefined && sec !== undefined)
+                this.time = new Time(hour, min, sec);
+        }
+
+        if (this.time === undefined) {
             this.displayDate = this.date;
         } else {
-            this.time = new Time(hour, min, sec);
-            if (parseInt(hour) < 5) {
+            if (parseInt(this.time.hour) < 5) {
                 this.displayDate = this.date.preceedingDate();
             } else {
                 this.displayDate = this.date;
@@ -221,7 +244,16 @@ class Date {
     month: string;
     day: string;
 
-    constructor(year: string, month?: string, day?: string) {
+    constructor();
+    constructor(year: string, month?: string, day?: string);
+    constructor(year?: string, month?: string, day?: string) {
+        if (year === undefined) {
+            let d = new global.Date();
+            this.year = d.getFullYear().zeropad(4);
+            this.month = (d.getMonth() + 1).zeropad(2);
+            this.day = d.getDate().zeropad(2);
+            return;
+        }
         this.year = year;
         this.month = month === undefined ? '00' : month; // TODO: Make month and day fields optional?
         this.day = day === undefined ? '00' : day;
@@ -320,7 +352,16 @@ class Time {
     min: string;
     sec: string;
 
-    constructor(hour: string, min: string, sec: string) {
+    constructor();
+    constructor(hour: string, min: string, sec: string);
+    constructor(hour?: string, min?: string, sec?: string) {
+        if (hour === undefined || min === undefined || sec === undefined) {
+            let d = new global.Date();
+            this.hour = d.getHours().zeropad(2);
+            this.min = d.getMinutes().zeropad(2);
+            this.sec = d.getSeconds().zeropad(2);
+            return;
+        }
         this.hour = hour;
         this.min = min;
         this.sec = sec;
@@ -335,4 +376,4 @@ class Time {
     }
 }
 
-export { Year, Month, Day, Date, Post };
+export { Year, Month, Day, Post, Date, Time };

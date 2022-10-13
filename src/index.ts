@@ -5,11 +5,11 @@ import cp = require('child_process');
 import fs = require('fs');
 import path = require('path');
 
-import CustomDate from './custom-date';
 import * as server from './server';
 import mergeImessage from './merge/imessage';
 import mergePath from './merge/path';
 import prune from './prune';
+import { Post, Date, Time } from './struct';
 
 const binname = 'days';
 
@@ -96,6 +96,7 @@ switch (process.argv[2]) {
             allday: false,
             date: []
         };
+
         for (let i = 3; i < process.argv.length; i++) {
             if (process.argv[i] === '--no-edit') {
                 args.noEdit = true;
@@ -116,35 +117,47 @@ switch (process.argv[2]) {
             }
             usage(false);
         }
+
         if (args.date.length > 6) usage(false);
 
-        let date;
+        let post: Post;
         if (args.date.length === 0) {
-            date = new CustomDate();
+            if (args.allday) post = new Post(new Date());
+            else post = new Post(new Date(), new Time());
+        } else if (args.date.length < 3) {
+            usage(false);
+            // Note: usage() always calls process.exit() so this break statement
+            // is redundant, but fixes compiler error TS2454.
+            break;
         } else {
-            date = new CustomDate(...args.date);
+            let [ year, month, day, hour, min, sec ] = args.date;
+            if (hour === undefined) post = new Post(year, month, day)
+            else {
+                if (min === undefined) min = '00';
+                if (sec === undefined) sec = '00';
+                post = new Post(year, month, day, hour, min, sec);
+            }
         }
-        if (args.allday) date.allday = true;
 
-        if (fs.existsSync(date.file())) {
+        if (fs.existsSync(post.filename)) {
             console.error(
-                `\x1b[31mError\x1b[0m: \x1b[36m${date.file()}\x1b[0m already exists`
+                `\x1b[31mError\x1b[0m: \x1b[36m${post.filename}\x1b[0m already exists`
             );
             process.exit(1);
         }
 
-        fs.mkdirSync(date.dayDir(), { recursive: true });
-        fs.writeFileSync(date.file(), '');
+        fs.mkdirSync(path.dirname(post.filename), { recursive: true });
+        fs.writeFileSync(post.filename, '');
 
         if (args.noEdit) {
-            console.log(date.file());
+            console.log(post.filename);
             break;
         }
 
         let editor = process.env.EDITOR;
         if (editor === undefined || editor === '') editor = 'vi';
 
-        cp.spawn(editor, [date.file()], { stdio: 'inherit' }).on(
+        cp.spawn(editor, [post.filename], { stdio: 'inherit' }).on(
             'error',
             (err: NodeJS.ErrnoException): void => {
                 assert(err.code === 'ENOENT');
