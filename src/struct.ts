@@ -140,8 +140,7 @@ class Post {
         if (typeof yearOrAllday === 'boolean') {
             let allday = yearOrAllday;
             this.date = new Date();
-            if (!allday)
-                this.time = new Time();
+            if (!allday) this.time = new Time();
         } else {
             let year = yearOrAllday;
             this.date = new Date(year, month, day);

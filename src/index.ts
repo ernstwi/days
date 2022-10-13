@@ -130,8 +130,8 @@ switch (process.argv[2]) {
             // is redundant, but fixes compiler error TS2454.
             break;
         } else {
-            let [ year, month, day, hour, min, sec ] = args.date;
-            if (hour === undefined) post = new Post(year, month, day)
+            let [year, month, day, hour, min, sec] = args.date;
+            if (hour === undefined) post = new Post(year, month, day);
             else {
                 if (min === undefined) min = '00';
                 if (sec === undefined) sec = '00';
