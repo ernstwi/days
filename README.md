@@ -47,10 +47,10 @@ All commands assume your current directory is the journal root.
 Create a new post.
 
 ```
-$ days new [--no-edit] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
+$ days new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
 ```
 
-- If no date is given, the current time is used.
+- If no date is given, the current time is used. With `--allday`, an all day post is created.
 - If a date is given, but no time, an all day post is created.
 - Without `--no-edit`, the post opens in `$EDITOR`.
 - With `--no-edit`, the filename is printed to stdout.
