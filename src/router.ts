@@ -1,4 +1,3 @@
-import url = require('url');
 import http = require('http');
 
 type HandlerFunc = (

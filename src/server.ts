@@ -1,17 +1,14 @@
-import assert = require('assert');
-import cp = require('child_process');
 import events = require('events');
 import fs = require('fs');
 import http = require('http');
 import path = require('path');
 import qs = require('querystring');
-import url = require('url');
 
 import pug = require('pug');
 import serveStatic = require('serve-static');
 
 import { Route, router, HandlerFunc } from './router';
-import { Year, Month, Day, Post } from './struct';
+import { Month, Post } from './struct';
 import { content } from './read';
 import { templateDir, staticDir, assetDir } from './constants';
 
@@ -73,7 +70,7 @@ function startHandler(
     title: string,
     theme: string
 ): HandlerFunc {
-    return function (req, res) {
+    return function (_req, res) {
         let { years } = content();
         res.end(
             template({
@@ -133,7 +130,7 @@ function favoritesHandler(
     title: string,
     theme: string
 ): HandlerFunc {
-    return function (this: Route, req, res) {
+    return function (this: Route, _req, res) {
         let { years } = content();
         let { days } = content(p => p.favorite);
         res.end(

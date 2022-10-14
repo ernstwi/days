@@ -1,4 +1,3 @@
-import assert = require('assert');
 import cp = require('child_process');
 import fs = require('fs');
 import os = require('os');
