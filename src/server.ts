@@ -14,8 +14,7 @@ import { templateDir, staticDir, assetDir } from './constants';
 
 let server: http.Server;
 
-// TODO: Return type
-function start(title: string, port: number, theme: string): Promise<any> {
+function start(title: string, port: number, theme: string): Promise<any[]> {
     let templates: Record<string, pug.compileTemplate> = {
         start: pug.compileFile(path.join(templateDir, 'start.pug')),
         month: pug.compileFile(path.join(templateDir, 'month.pug')),
