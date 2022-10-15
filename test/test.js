@@ -6,7 +6,7 @@ let path = require('path');
 let dateformat = require('dateformat');
 let puppeteer = require('puppeteer');
 
-let server = require('../build/server');
+let Server = require('../build/server').default;
 
 let bin = path.join(__dirname, '../build/index.js');
 let tmpDir = path.join(__dirname, 'test_data');
@@ -224,13 +224,15 @@ describe('Web', function () {
 
     let browser;
     let page;
+    let server;
 
     before(async function () {
         browser = await puppeteer.launch();
         page = await browser.pages().then(pages => pages[0]);
         cp.execSync(`${bin} new --no-edit 2020 01 01 12 00 00`);
         cp.execSync(`${bin} new --no-edit 2020 01 11 01 00 00`);
-        await server.start('days', 3004, 'fruchtig');
+        server = new Server('days', 'fruchtig');
+        await server.listen(3004);
     });
 
     after(async function () {

@@ -5,7 +5,7 @@ import cp = require('child_process');
 import fs = require('fs');
 import path = require('path');
 
-import * as server from './server';
+import Server from './server';
 import mergeImessage from './merge/imessage';
 import mergePath from './merge/path';
 import prune from './prune';
@@ -182,8 +182,8 @@ switch (process.argv[2]) {
             }
         }
 
-        server
-            .start(title, port, theme)
+        new Server(title, theme)
+            .listen(port)
             .then(() => {
                 console.log(`Server is listening on http://localhost:${port}`);
             })

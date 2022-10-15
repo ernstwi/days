@@ -12,56 +12,60 @@ import { Month, Post } from './struct';
 import { content } from './read';
 import { templateDir, staticDir, assetDir } from './constants';
 
-let server: http.Server;
+class Server {
+    #server: http.Server;
 
-function start(title: string, port: number, theme: string): Promise<any[]> {
-    let templates: Record<string, pug.compileTemplate> = {
-        start: pug.compileFile(path.join(templateDir, 'start.pug')),
-        month: pug.compileFile(path.join(templateDir, 'month.pug')),
-        postView: pug.compileFile(path.join(templateDir, 'post-view.pug')),
-        postEdit: pug.compileFile(path.join(templateDir, 'post-edit.pug')),
-        favorites: pug.compileFile(path.join(templateDir, 'favorites.pug'))
-    };
-    let staticServer = serveStatic(staticDir);
-    let assetServer = serveStatic(assetDir);
+    constructor(title: string, theme: string) {
+        let templates: Record<string, pug.compileTemplate> = {
+            start: pug.compileFile(path.join(templateDir, 'start.pug')),
+            month: pug.compileFile(path.join(templateDir, 'month.pug')),
+            postView: pug.compileFile(path.join(templateDir, 'post-view.pug')),
+            postEdit: pug.compileFile(path.join(templateDir, 'post-edit.pug')),
+            favorites: pug.compileFile(path.join(templateDir, 'favorites.pug'))
+        };
+        let staticServer = serveStatic(staticDir);
+        let assetServer = serveStatic(assetDir);
 
-    let routes = [
-        new Route('/', startHandler(templates.start, title, theme)),
-        new Route(
-            '/(\\d{4})/(\\d{2})',
-            monthHandler(templates.month, title, theme)
-        ),
-        new Route(
-            '/(\\d{4})/(\\d{2})/(\\d{2})(/(\\d{2})/(\\d{2})/(\\d{2}))?',
-            postHandler(templates.postView, title, theme)
-        ),
-        new Route(
-            '/(\\d{4})/(\\d{2})/(\\d{2})(/(\\d{2})/(\\d{2})/(\\d{2}))?/edit',
-            postHandler(templates.postEdit, title, theme)
-        ),
-        new Route(
-            '/(\\d{4})/(\\d{2})/(\\d{2})(/(\\d{2})/(\\d{2})/(\\d{2}))?\\?edited',
-            editSubmitHandler()
-        ),
-        new Route(
-            '/(\\d{4})/(\\d{2})/(\\d{2})(/(\\d{2})/(\\d{2})/(\\d{2}))?\\?favorite',
-            favoriteSubmitHandler()
-        ),
-        new Route(
-            '/favorites',
-            favoritesHandler(templates.favorites, title, theme)
-        ),
-        new Route('/static/.*', staticHandler(staticServer)),
-        new Route('.*', assetHandler(assetServer))
-    ];
+        let routes = [
+            new Route('/', startHandler(templates.start, title, theme)),
+            new Route(
+                '/(\\d{4})/(\\d{2})',
+                monthHandler(templates.month, title, theme)
+            ),
+            new Route(
+                '/(\\d{4})/(\\d{2})/(\\d{2})(/(\\d{2})/(\\d{2})/(\\d{2}))?',
+                postHandler(templates.postView, title, theme)
+            ),
+            new Route(
+                '/(\\d{4})/(\\d{2})/(\\d{2})(/(\\d{2})/(\\d{2})/(\\d{2}))?/edit',
+                postHandler(templates.postEdit, title, theme)
+            ),
+            new Route(
+                '/(\\d{4})/(\\d{2})/(\\d{2})(/(\\d{2})/(\\d{2})/(\\d{2}))?\\?edited',
+                editSubmitHandler()
+            ),
+            new Route(
+                '/(\\d{4})/(\\d{2})/(\\d{2})(/(\\d{2})/(\\d{2})/(\\d{2}))?\\?favorite',
+                favoriteSubmitHandler()
+            ),
+            new Route(
+                '/favorites',
+                favoritesHandler(templates.favorites, title, theme)
+            ),
+            new Route('/static/.*', staticHandler(staticServer)),
+            new Route('.*', assetHandler(assetServer))
+        ];
 
-    if (server !== undefined) throw new Error('server.start() called twice');
-    server = http.createServer(router(routes));
-    return events.once(server.listen(port), 'listening');
-}
+        this.#server = http.createServer(router(routes));
+    }
 
-function close() {
-    server.close();
+    listen(port: number): Promise<any[]> {
+        return events.once(this.#server.listen(port), 'listening');
+    }
+
+    close(): void {
+        this.#server.close();
+    }
 }
 
 function startHandler(
@@ -199,4 +203,4 @@ function assetHandler(
     };
 }
 
-export { start, close };
+export default Server;
