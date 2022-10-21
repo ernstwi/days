@@ -193,6 +193,10 @@ describe('CLI', function () {
         });
 
         describe('imessage', function () {
+            after(async function () {
+                cp.execSync('rm -rf content');
+            });
+
             this.timeout(10000);
             context('no conflict', function () {
                 it('should set created and modified date on merged posts', function () {
