@@ -265,8 +265,8 @@ describe('Web', function () {
     describe('month page', function () {
         it('should presents posts at 01:00 as belonging to the previous day', async function () {
             await page.goto('http://localhost:3004/2020/01');
-            let postCount = await page.$$eval('.post', posts => posts.length);
-            assert.equal(postCount, 2);
+            let oneAmHeader = await page.$eval('.header:nth-child(3)', x => x.innerText);
+            assert.equal(oneAmHeader, 'Friday, January 10 2020');
         });
 
         it('should handle months without posts', async function() {
