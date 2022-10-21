@@ -269,6 +269,27 @@ describe('Web', function () {
             assert.equal(oneAmHeader, 'Friday, January 10 2020');
         });
 
+        it('should display the month page', async function() {
+            await page.goto('http://localhost:3004/2020/01');
+
+            let selectors = [
+                '#banner',
+                '#container',
+                '#container > #sidebar',
+                '#container > #primary',
+                '#container > #primary > .header',
+                '#container > #primary > .post',
+                '#container > #primary > .post > .post-body.view',
+                '#container > #primary > .post > .post-footer'
+            ];
+            for (let s of selectors) {
+                assert.notEqual(await page.$(s), null);
+            }
+
+            let postCount = await page.$$eval('.post', posts => posts.length);
+            assert.equal(postCount, 2);
+        });
+
         it('should handle months without posts', async function() {
             await page.goto('http://localhost:3004/2020/02');
             let content = await page.$eval('#primary', x => x.innerHTML);
