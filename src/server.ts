@@ -99,7 +99,7 @@ function monthHandler(
                 title: title,
                 theme: theme,
                 years: [...years.values()],
-                month: months.get(emptyMonth.id) || emptyMonth as Month
+                month: months.get(emptyMonth.id) || emptyMonth
             })
         );
     };
