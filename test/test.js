@@ -241,6 +241,27 @@ describe('Web', function () {
         cp.execSync('rm -rf content');
     });
 
+    describe('start page', function() {
+        it('should display the start page', async function() {
+            await page.goto('http://localhost:3004');
+
+            // There should be a banner
+            let banner = await page.$eval('#banner', banner => banner.innerHTML);
+            assert.equal(banner, '<a href="/">days</a>');
+            
+            // And an index with one year, and only january should be a link
+            let years = await page.$$eval('.row', rows => rows.length);
+            assert.equal(years, 1);
+
+            let months = await page.$$eval('.month', months => months.length);
+            assert.equal(months, 12);
+
+            let links = await page.$$eval('.month', months => months.filter(month => month.firstChild.tagName === "A").map(month => month.innerHTML));
+            assert.equal(links.length, 1);
+            assert.equal(links[0], '<a href="/2020/01">jan</a>');
+        });
+    });
+
     describe('edit post', function () {
         it('edit post', async function () {
             await page.goto('http://localhost:3004/2020/01/01/12/00/00/edit');
