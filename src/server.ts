@@ -93,12 +93,13 @@ function monthHandler(
     return function (this: Route, req, res) {
         let [year, month] = this.captureGroups(req.url as string);
         let { years, months } = content();
+        let emptyMonth = new Month(year, month);
         res.end(
             template({
                 title: title,
                 theme: theme,
                 years: [...years.values()],
-                month: months.get(new Month(year, month).id) as Month
+                month: months.get(emptyMonth.id) || emptyMonth as Month
             })
         );
     };

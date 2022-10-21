@@ -268,5 +268,11 @@ describe('Web', function () {
             let postCount = await page.$$eval('.post', posts => posts.length);
             assert.equal(postCount, 2);
         });
+
+        it('should handle months without posts', async function() {
+            await page.goto('http://localhost:3004/2020/02');
+            let content = await page.$eval('#primary', x => x.innerHTML);
+            assert.equal(content, '<div id="no-posts-container"><div id="no-posts">No posts this February.</div></div>');
+        });
     });
 });
