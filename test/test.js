@@ -245,14 +245,17 @@ describe('Web', function () {
         cp.execSync('rm -rf content');
     });
 
-    describe('start page', function() {
-        it('should display the start page', async function() {
+    describe('start page', function () {
+        it('should display the start page', async function () {
             await page.goto('http://localhost:3004');
 
             // There should be a banner
-            let banner = await page.$eval('#banner', banner => banner.innerHTML);
+            let banner = await page.$eval(
+                '#banner',
+                banner => banner.innerHTML
+            );
             assert.strictEqual(banner, '<a href="/">days</a>');
-            
+
             // And an index with one year, and only january should be a link
             let years = await page.$$eval('.row', rows => rows.length);
             assert.strictEqual(years, 1);
@@ -260,7 +263,11 @@ describe('Web', function () {
             let months = await page.$$eval('.month', months => months.length);
             assert.strictEqual(months, 12);
 
-            let links = await page.$$eval('.month', months => months.filter(month => month.firstChild.tagName === "A").map(month => month.innerHTML));
+            let links = await page.$$eval('.month', months =>
+                months
+                    .filter(month => month.firstChild.tagName === 'A')
+                    .map(month => month.innerHTML)
+            );
             assert.strictEqual(links.length, 1);
             assert.strictEqual(links[0], '<a href="/2020/01">jan</a>');
         });
@@ -290,11 +297,14 @@ describe('Web', function () {
     describe('month page', function () {
         it('should presents posts at 01:00 as belonging to the previous day', async function () {
             await page.goto('http://localhost:3004/2020/01');
-            let oneAmHeader = await page.$eval('.header:nth-child(3)', x => x.innerText);
+            let oneAmHeader = await page.$eval(
+                '.header:nth-child(3)',
+                x => x.innerText
+            );
             assert.strictEqual(oneAmHeader, 'Friday, January 10 2020');
         });
 
-        it('should display the month page', async function() {
+        it('should display the month page', async function () {
             await page.goto('http://localhost:3004/2020/01');
 
             let selectors = [
@@ -315,10 +325,13 @@ describe('Web', function () {
             assert.strictEqual(postCount, 2);
         });
 
-        it('should handle months without posts', async function() {
+        it('should handle months without posts', async function () {
             await page.goto('http://localhost:3004/2020/02');
             let content = await page.$eval('#primary', x => x.innerHTML);
-            assert.strictEqual(content, '<div id="no-posts-container"><div id="no-posts">No posts this February.</div></div>');
+            assert.strictEqual(
+                content,
+                '<div id="no-posts-container"><div id="no-posts">No posts this February.</div></div>'
+            );
         });
     });
 });
