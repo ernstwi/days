@@ -7,6 +7,7 @@ import qs = require('querystring');
 import pug = require('pug');
 import serveStatic = require('serve-static');
 
+import './extensions';
 import { Route, router, HandlerFunc } from './router';
 import { Month, Post } from './struct';
 import { content } from './read';

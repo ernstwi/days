@@ -1,6 +1,7 @@
 import path = require('path');
 import fs = require('fs');
 
+import './extensions';
 import { Year, Month, Day, Post } from './struct';
 
 type PostFilter = (post: Post) => boolean;

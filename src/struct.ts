@@ -12,6 +12,7 @@ import fs = require('fs');
 
 import markdownIt = require('markdown-it');
 
+import './extensions';
 import { markdownOptions } from './constants';
 
 const markdown = markdownIt(markdownOptions);
