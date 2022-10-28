@@ -10,7 +10,7 @@ let Server = require('../build/server').default;
 let bin = path.join(__dirname, '../build/index.js');
 let tmpDir = path.join(__dirname, 'test_data');
 
-suite('Web', function () {
+suite('server', function () {
     this.timeout(10000);
 
     let browser;
