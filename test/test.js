@@ -11,7 +11,7 @@ let Server = require('../build/server').default;
 let bin = path.join(__dirname, '../build/index.js');
 let tmpDir = path.join(__dirname, 'test_data');
 
-before(function () {
+suiteSetup(function () {
     Number.prototype.zeropad = function (width) {
         let res = this.toString();
         return res.length >= width
@@ -38,25 +38,25 @@ before(function () {
     process.chdir(tmpDir);
 });
 
-after(function () {
+suiteTeardown(function () {
     cp.execSync(`rm -rf ${tmpDir}`);
 });
 
-describe('CLI', function () {
-    describe('new', function () {
-        context('with a specified date', function () {
-            afterEach(function () {
+suite('CLI', function () {
+    suite('new', function () {
+        suite('with a specified date', function () {
+            teardown(function () {
                 cp.execSync('rm -rf content');
             });
 
-            context('no collision', function () {
-                it('should create a new file', function () {
+            suite('no collision', function () {
+                test('should create a new file', function () {
                     cp.execSync(`${bin} new --no-edit 1992 07 15 00 00 00`);
                     fs.accessSync('content/1992/07/15/00-00-00.md');
                 });
             });
-            context('collision', function () {
-                it('should not overwrite an existing file', function () {
+            suite('collision', function () {
+                test('should not overwrite an existing file', function () {
                     cp.execSync(
                         `echo "Hello, world!" > $(${bin} new --no-edit 1992 07 15 00 00 00)`
                     );
@@ -77,9 +77,9 @@ describe('CLI', function () {
         });
     });
 
-    describe('merge', function () {
-        describe('path', function () {
-            beforeEach(function () {
+    suite('merge', function () {
+        suite('path', function () {
+            setup(function () {
                 fs.mkdirSync('source');
                 fs.mkdirSync('target');
                 process.chdir('source');
@@ -103,13 +103,13 @@ describe('CLI', function () {
                 process.chdir('../target');
             });
 
-            afterEach(function () {
+            teardown(function () {
                 process.chdir('..');
                 cp.execSync('rm -rf source target');
             });
 
-            context('no conflict', function () {
-                it('should merge all posts and assets', function () {
+            suite('no conflict', function () {
+                test('should merge all posts and assets', function () {
                     cp.execSync(`${bin} merge ../source`);
                     assert(
                         fs.readFileSync(
@@ -119,7 +119,7 @@ describe('CLI', function () {
                     );
                 });
 
-                it('should set created and modified date on merged posts', function () {
+                test('should set created and modified date on merged posts', function () {
                     cp.execSync(`${bin} merge ../source`);
                     let stat = fs.statSync('content/1992/07/15/00-00-00.md');
                     assert(
@@ -133,8 +133,8 @@ describe('CLI', function () {
                 });
             });
 
-            context('post conflict', function () {
-                it('should not overwrite an existing post', function () {
+            suite('post conflict', function () {
+                test('should not overwrite an existing post', function () {
                     cp.execSync(
                         `echo "new content in target dir" > $(${bin} new --no-edit 1992 07 15 00 00 00)`
                     );
@@ -148,16 +148,16 @@ describe('CLI', function () {
                 });
             });
 
-            context('asset conflict', function () {
-                beforeEach(function () {
+            suite('asset conflict', function () {
+                setup(function () {
                     fs.mkdirSync('assets');
                     cp.execSync(
                         'echo "image data in target dir" > assets/image.png'
                     );
                 });
 
-                context('no --resolve', function () {
-                    it('should ignore the colliding merged asset', function () {
+                suite('no --resolve', function () {
+                    test('should ignore the colliding merged asset', function () {
                         cp.execSync(`${bin} merge ../source`, {
                             stdio: 'ignore'
                         });
@@ -168,8 +168,8 @@ describe('CLI', function () {
                     });
                 });
 
-                context('--resolve', function () {
-                    it('should rename the colliding merged asset', function () {
+                suite('--resolve', function () {
+                    test('should rename the colliding merged asset', function () {
                         cp.execSync(`${bin} merge --resolve ../source`, {
                             stdio: 'ignore'
                         });
@@ -192,14 +192,14 @@ describe('CLI', function () {
             });
         });
 
-        describe('imessage', function () {
-            after(async function () {
+        suite('imessage', function () {
+            suiteTeardown(async function () {
                 cp.execSync('rm -rf content');
             });
 
             this.timeout(10000);
-            context('no conflict', function () {
-                it('should set created and modified date on merged posts', function () {
+            suite('no conflict', function () {
+                test('should set created and modified date on merged posts', function () {
                     cp.execSync(
                         'osascript ../send-imessage.applescript "ernstwi_days_testing@icloud.com" "new message"'
                     );
@@ -223,14 +223,14 @@ describe('CLI', function () {
     });
 });
 
-describe('Web', function () {
+suite('Web', function () {
     this.timeout(10000);
 
     let browser;
     let page;
     let server;
 
-    before(async function () {
+    suiteSetup(async function () {
         browser = await puppeteer.launch();
         page = await browser.pages().then(pages => pages[0]);
         cp.execSync(`${bin} new --no-edit 2020 01 01 12 00 00`);
@@ -239,14 +239,14 @@ describe('Web', function () {
         await server.listen(3004);
     });
 
-    after(async function () {
+    suiteTeardown(async function () {
         await browser.close();
         await server.close();
         cp.execSync('rm -rf content');
     });
 
-    describe('start page', function () {
-        it('should display the start page', async function () {
+    suite('start page', function () {
+        test('should display the start page', async function () {
             await page.goto('http://localhost:3004');
 
             // There should be a banner
@@ -273,8 +273,8 @@ describe('Web', function () {
         });
     });
 
-    describe('edit post', function () {
-        it('edit post', async function () {
+    suite('edit post', function () {
+        test('edit post', async function () {
             await page.goto('http://localhost:3004/2020/01/01/12/00/00/edit');
             await page.type('textarea', 'Hello, world!');
             await Promise.all([
@@ -294,8 +294,8 @@ describe('Web', function () {
         });
     });
 
-    describe('month page', function () {
-        it('should presents posts at 01:00 as belonging to the previous day', async function () {
+    suite('month page', function () {
+        test('should presents posts at 01:00 as belonging to the previous day', async function () {
             await page.goto('http://localhost:3004/2020/01');
             let oneAmHeader = await page.$eval(
                 '.header:nth-child(3)',
@@ -304,7 +304,7 @@ describe('Web', function () {
             assert.strictEqual(oneAmHeader, 'Friday, January 10 2020');
         });
 
-        it('should display the month page', async function () {
+        test('should display the month page', async function () {
             await page.goto('http://localhost:3004/2020/01');
 
             let selectors = [
@@ -325,7 +325,7 @@ describe('Web', function () {
             assert.strictEqual(postCount, 2);
         });
 
-        it('should handle months without posts', async function () {
+        test('should handle months without posts', async function () {
             await page.goto('http://localhost:3004/2020/02');
             let content = await page.$eval('#primary', x => x.innerHTML);
             assert.strictEqual(
