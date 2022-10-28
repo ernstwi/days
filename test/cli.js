@@ -40,7 +40,6 @@ suite('CLI', function () {
         cp.execSync(`rm -rf ${tmpDir}`);
     });
 
-
     suite('new', function () {
         suite('with a specified date', function () {
             teardown(function () {
