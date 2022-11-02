@@ -53,7 +53,7 @@ function mergeAsset(src: string, dst: string, resolve: boolean): string {
 
 /**
  * @param {string} text Post body.
- * @param {string} dst Destination path (relative to root).
+ * @param {string} dst Destination path (relative to 'content').
  * @param {Date} birthtime Creation date.
  * @param {Date} mtime Modification date.
  * @param {Map<string, string>} substitutions Dictionary of asset name
@@ -71,6 +71,7 @@ function mergePost(
         text = text.split(key).join(value);
     }
 
+    dst = path.join('content', dst);
     fs.mkdirSync(path.dirname(dst), { recursive: true });
 
     try {

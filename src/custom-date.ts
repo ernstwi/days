@@ -67,21 +67,21 @@ class CustomDate extends Date {
     // ---- File paths ---------------------------------------------------------
 
     yearDir() {
-        return dateFormat(this, '"content"/yyyy');
+        return dateFormat(this, '/yyyy');
     }
 
     monthDir() {
-        return dateFormat(this, '"content"/yyyy/mm');
+        return dateFormat(this, '/yyyy/mm');
     }
 
     dayDir() {
-        return dateFormat(this, '"content"/yyyy/mm/dd');
+        return dateFormat(this, '/yyyy/mm/dd');
     }
 
     file() {
         return dateFormat(
             this,
-            `"content"/yyyy/mm/dd/${this.allday ? '"allday"' : 'HH-MM-ss'}".md"`
+            `/yyyy/mm/dd/${this.allday ? '"allday"' : 'HH-MM-ss'}".md"`
         );
     }
 

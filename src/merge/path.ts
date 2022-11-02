@@ -29,10 +29,16 @@ function mergePath(root: string, resolve: boolean): void {
     if (fs.existsSync(path.join(root, '.fav')))
         console.error(`\x1b[33mNote\x1b[0m: \x1b[36m/.fav\x1b[0m not merged`);
 
-    let substitutions = new Map<string, string>();
+    let substitutions = mergeAssets(path.join(root, 'assets'), resolve);
+    mergeContent(path.join(root, 'content'), substitutions);
+}
 
-    readdirRecursive(path.join(root, 'assets')).forEach(src => {
-        let dst = src.replace(`${root}/assets/`, '');
+function mergeAssets(path: string, resolve: boolean): Map<string, string> {
+    let substitutions = new Map<string, string>();
+    if (!fs.existsSync(path)) return substitutions;
+
+    readdirRecursive(path).forEach(src => {
+        let dst = src.replace(path, '');
         let newDst = '';
         try {
             newDst = merge.mergeAsset(src, dst, resolve);
@@ -42,10 +48,15 @@ function mergePath(root: string, resolve: boolean): void {
         }
         if (newDst !== dst) substitutions.set(dst, newDst);
     });
+    return substitutions;
+}
 
-    readdirRecursive(path.join(root, 'content')).forEach(src => {
+function mergeContent(path: string, substitutions: Map<string, string>): void {
+    if (!fs.existsSync(path)) return;
+
+    readdirRecursive(path).forEach(src => {
         let text = fs.readFileSync(src, 'utf8');
-        let dst = src.replace(`${root}/`, '');
+        let dst = src.replace(path, '');
         let stat = fs.statSync(src);
         try {
             merge.mergePost(

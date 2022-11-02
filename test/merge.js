@@ -8,6 +8,8 @@ let dateformat = require('dateformat');
 let bin = path.join(__dirname, '../build/index.js');
 let tmpDir = path.join(__dirname, 'test_data');
 
+let mergePath = require(path.join(__dirname, '../build/merge/path')).default;
+
 suite('merge', function () {
     suiteSetup(function () {
         fs.mkdirSync(tmpDir);
@@ -67,6 +69,38 @@ suite('merge', function () {
                 assert(
                     stat.mtime.getTime() === new Date(1992, 07, 16).getTime()
                 );
+            });
+
+            test('no asset dir', function () {
+                cp.execSync(`rm -r ${path.join(tmpDir, 'source', 'assets')}`);
+                assert.doesNotThrow(() => {
+                    mergePath(path.join(tmpDir, 'source'), false);
+                });
+                assert(
+                    fs.readFileSync(
+                        'content/1992/07/15/00-00-00.md',
+                        'utf8'
+                    ) === 'a reference to /image.png\n'
+                );
+            });
+
+            test('no content dir', function () {
+                cp.execSync(`rm -r ${path.join(tmpDir, 'source', 'content')}`);
+                assert.doesNotThrow(() => {
+                    mergePath(path.join(tmpDir, 'source'), false);
+                });
+                assert(
+                    fs.readFileSync('assets/image.png', 'utf8') ===
+                        'image data in source dir\n'
+                );
+            });
+
+            test('no asset or content dir', function () {
+                cp.execSync(`rm -r ${path.join(tmpDir, 'source', 'assets')}`);
+                cp.execSync(`rm -r ${path.join(tmpDir, 'source', 'content')}`);
+                assert.doesNotThrow(() => {
+                    mergePath(path.join(tmpDir, 'source'), false);
+                });
             });
         });
 
