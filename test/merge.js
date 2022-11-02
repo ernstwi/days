@@ -10,6 +10,8 @@ let tmpDir = path.join(__dirname, 'test_data');
 
 let mergePath = require(path.join(__dirname, '../build/merge/path')).default;
 
+// TODO: Check entire tree, i.e. make sure no other files are added.
+
 suite('merge', function () {
     suiteSetup(function () {
         fs.mkdirSync(tmpDir);
