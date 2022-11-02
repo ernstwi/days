@@ -25,7 +25,7 @@ try {
         config,
         JSON.parse(fs.readFileSync('config.json').toString())
     );
-} catch (err) {}
+} catch {}
 
 function usage(stdout: boolean) {
     let msg = `Usage:
