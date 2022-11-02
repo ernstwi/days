@@ -59,6 +59,10 @@ suite('merge', function () {
                         'utf8'
                     ) === 'a reference to /image.png\n'
                 );
+                assert(
+                    fs.readFileSync('assets/image.png', 'utf8') ===
+                        'image data in source dir\n'
+                );
             });
 
             test('should set created and modified date on merged posts', function () {
