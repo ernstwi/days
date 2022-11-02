@@ -66,7 +66,7 @@ switch (process.argv[2]) {
         cmd_merge();
         break;
     case 'prune':
-        prune('content');
+        cmd_prune();
         break;
     default:
         usage(true);
@@ -208,4 +208,8 @@ function cmd_merge() {
     if (pathOrId === '') usage(true);
     if (imessage) mergeImessage(pathOrId, resolve);
     else mergePath(pathOrId, resolve);
+}
+
+function cmd_prune() {
+    prune('content');
 }
