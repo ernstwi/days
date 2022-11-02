@@ -57,13 +57,13 @@ switch (process.argv[2]) {
         cmd_version();
         break;
     case 'new':
-        cmd_new();
+        cmd_new(process.argv.slice(3));
         break;
     case 'server':
-        cmd_server();
+        cmd_server(process.argv.slice(3));
         break;
     case 'merge':
-        cmd_merge();
+        cmd_merge(process.argv.slice(3));
         break;
     case 'prune':
         cmd_prune();
@@ -80,47 +80,47 @@ function cmd_version(): void {
     console.log(`${binname} ${require('../package.json').version}`);
 }
 
-function cmd_new(): void {
-    let args: { noEdit: boolean; allday: boolean; date: string[] } = {
+function cmd_new(argv: string[]): void {
+    let options: { noEdit: boolean; allday: boolean; date: string[] } = {
         noEdit: false,
         allday: false,
         date: []
     };
 
-    for (let i = 3; i < process.argv.length; i++) {
-        if (process.argv[i] === '--no-edit') {
-            args.noEdit = true;
+    for (let i = 0; i < argv.length; i++) {
+        if (argv[i] === '--no-edit') {
+            options.noEdit = true;
             continue;
         }
 
-        if (process.argv[i] === '--allday') {
-            args.allday = true;
+        if (argv[i] === '--allday') {
+            options.allday = true;
             continue;
         }
 
-        if (/\d{4}/.test(process.argv[i])) {
-            if (i + 2 >= process.argv.length) usage(true);
-            while (i < process.argv.length) {
-                args.date.push(process.argv[i++]);
+        if (/\d{4}/.test(argv[i])) {
+            if (i + 2 >= argv.length) usage(true);
+            while (i < argv.length) {
+                options.date.push(argv[i++]);
             }
             continue;
         }
         usage(true);
     }
 
-    if (args.date.length > 6) usage(true);
+    if (options.date.length > 6) usage(true);
 
     let post: Post;
-    if (args.date.length === 0) {
-        if (args.allday) post = new Post(true);
+    if (options.date.length === 0) {
+        if (options.allday) post = new Post(true);
         else post = new Post(false);
-    } else if (args.date.length < 3) {
+    } else if (options.date.length < 3) {
         usage(true);
         // Note: usage() always calls process.exit() so this return statement
         // is redundant, but fixes compiler error TS2454.
         return;
     } else {
-        let [year, month, day, hour, min, sec] = args.date;
+        let [year, month, day, hour, min, sec] = options.date;
         if (hour === undefined) post = new Post(year, month, day);
         else {
             if (min === undefined) min = '00';
@@ -139,7 +139,7 @@ function cmd_new(): void {
     fs.mkdirSync(path.dirname(post.filename), { recursive: true });
     fs.writeFileSync(post.filename, '');
 
-    if (args.noEdit) {
+    if (options.noEdit) {
         console.log(post.filename);
         return;
     }
@@ -157,18 +157,18 @@ function cmd_new(): void {
     );
 }
 
-function cmd_server(): void {
+function cmd_server(argv: string[]): void {
     let { title, port, theme } = config;
 
-    for (let i = 3; i < process.argv.length; i++) {
-        switch (process.argv[i]) {
+    for (let i = 0; i < argv.length; i++) {
+        switch (argv[i]) {
             case '--port':
-                if (++i >= process.argv.length) usage(true);
-                port = Number(process.argv[i]);
+                if (++i >= argv.length) usage(true);
+                port = Number(argv[i]);
                 break;
             case '--theme':
-                if (++i >= process.argv.length) usage(true);
-                theme = process.argv[i];
+                if (++i >= argv.length) usage(true);
+                theme = argv[i];
                 break;
         }
     }
@@ -188,12 +188,12 @@ function cmd_server(): void {
         });
 }
 
-function cmd_merge(): void {
+function cmd_merge(argv: string[]): void {
     let resolve = false,
         imessage = false,
         pathOrId = '';
-    for (let i = 3; i < process.argv.length; i++) {
-        switch (process.argv[i]) {
+    for (let a of argv) {
+        switch (a) {
             case '--resolve':
                 resolve = true;
                 break;
@@ -201,7 +201,7 @@ function cmd_merge(): void {
                 imessage = true;
                 break;
             default:
-                pathOrId = process.argv[i];
+                pathOrId = a;
                 break;
         }
     }
