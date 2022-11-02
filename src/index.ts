@@ -27,22 +27,6 @@ try {
     );
 } catch {}
 
-function usage(error: boolean): void {
-    let msg = `Usage:
-  ${binname} new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
-  ${binname} server [--port <number>] [--theme <name>]
-  ${binname} merge [--resolve] (<path> | --imessage <ID>)
-  ${binname} prune`;
-
-    if (error) {
-        console.error(msg);
-        process.exit(1);
-    } else {
-        console.log(msg);
-        process.exit(0);
-    }
-}
-
 if (process.argv.length < 3) {
     usage(true);
 }
@@ -212,4 +196,20 @@ function cmd_merge(argv: string[]): void {
 
 function cmd_prune(): void {
     prune('content');
+}
+
+function usage(error: boolean): void {
+    let msg = `Usage:
+  ${binname} new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
+  ${binname} server [--port <number>] [--theme <name>]
+  ${binname} merge [--resolve] (<path> | --imessage <ID>)
+  ${binname} prune`;
+
+    if (error) {
+        console.error(msg);
+        process.exit(1);
+    } else {
+        console.log(msg);
+        process.exit(0);
+    }
 }
