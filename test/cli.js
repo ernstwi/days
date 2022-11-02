@@ -14,39 +14,28 @@ let version = `days ${require('../package.json').version}\n`;
 
 suite('cli', function () {
     test('no command', function () {
-        let out = cp.spawnSync(bin);
-        assert.strictEqual(out.status, 1);
-        assert.strictEqual(out.stdout.toString(), '');
-        assert.strictEqual(out.stderr.toString(), help);
+        assertOutput(bin, [], 1, '', help);
     });
     test('undefined command', function () {
-        let out = cp.spawnSync(bin, ['x']);
-        assert.strictEqual(out.status, 1);
-        assert.strictEqual(out.stdout.toString(), '');
-        assert.strictEqual(out.stderr.toString(), help);
+        assertOutput(bin, [], 1, '', help);
     });
     test('--help', function () {
-        let out = cp.spawnSync(bin, ['--help']);
-        assert.strictEqual(out.status, 0);
-        assert.strictEqual(out.stdout.toString(), help);
-        assert.strictEqual(out.stderr.toString(), '');
+        assertOutput(bin, ['--help'], 0, help, '');
     });
     test('-h', function () {
-        let out = cp.spawnSync(bin, ['-h']);
-        assert.strictEqual(out.status, 0);
-        assert.strictEqual(out.stdout.toString(), help);
-        assert.strictEqual(out.stderr.toString(), '');
+        assertOutput(bin, ['-h'], 0, help, '');
     });
     test('--version', function () {
-        let out = cp.spawnSync(bin, ['--version']);
-        assert.strictEqual(out.status, 0);
-        assert.strictEqual(out.stdout.toString(), version);
-        assert.strictEqual(out.stderr.toString(), '');
+        assertOutput(bin, ['--version'], 0, version, '');
     });
     test('-v', function () {
-        let out = cp.spawnSync(bin, ['-v']);
-        assert.strictEqual(out.status, 0);
-        assert.strictEqual(out.stdout.toString(), version);
-        assert.strictEqual(out.stderr.toString(), '');
+        assertOutput(bin, ['-v'], 0, version, '');
     });
 });
+
+function assertOutput(cmd, args, status, stdout, stderr) {
+    let out = cp.spawnSync(cmd, args);
+    assert.strictEqual(out.status, status);
+    assert.strictEqual(out.stdout.toString(), stdout);
+    assert.strictEqual(out.stderr.toString(), stderr);
+}
