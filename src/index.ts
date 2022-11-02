@@ -47,12 +47,13 @@ if (process.argv.length < 3) {
     usage(true);
 }
 
-if (/(--)?help/.test(process.argv[2])) {
-    usage(false);
-}
-
 switch (process.argv[2]) {
+    case '--help':
+    case '-h':
+        cmd_help();
+        break;
     case '--version':
+    case '-v':
         cmd_version();
         break;
     case 'new':
@@ -69,6 +70,10 @@ switch (process.argv[2]) {
         break;
     default:
         usage(true);
+}
+
+function cmd_help() {
+    usage(false);
 }
 
 function cmd_version() {
