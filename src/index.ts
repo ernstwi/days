@@ -53,138 +53,154 @@ if (/(--)?help/.test(process.argv[2])) {
 
 switch (process.argv[2]) {
     case '--version':
-        console.log(`${binname} ${require('../package.json').version}`);
+        cmd_version();
         break;
     case 'new':
-        let args: { noEdit: boolean; allday: boolean; date: string[] } = {
-            noEdit: false,
-            allday: false,
-            date: []
-        };
-
-        for (let i = 3; i < process.argv.length; i++) {
-            if (process.argv[i] === '--no-edit') {
-                args.noEdit = true;
-                continue;
-            }
-
-            if (process.argv[i] === '--allday') {
-                args.allday = true;
-                continue;
-            }
-
-            if (/\d{4}/.test(process.argv[i])) {
-                if (i + 2 >= process.argv.length) usage(true);
-                while (i < process.argv.length) {
-                    args.date.push(process.argv[i++]);
-                }
-                continue;
-            }
-            usage(true);
-        }
-
-        if (args.date.length > 6) usage(true);
-
-        let post: Post;
-        if (args.date.length === 0) {
-            if (args.allday) post = new Post(true);
-            else post = new Post(false);
-        } else if (args.date.length < 3) {
-            usage(true);
-            // Note: usage() always calls process.exit() so this break statement
-            // is redundant, but fixes compiler error TS2454.
-            break;
-        } else {
-            let [year, month, day, hour, min, sec] = args.date;
-            if (hour === undefined) post = new Post(year, month, day);
-            else {
-                if (min === undefined) min = '00';
-                if (sec === undefined) sec = '00';
-                post = new Post(year, month, day, hour, min, sec);
-            }
-        }
-
-        if (fs.existsSync(post.filename)) {
-            console.error(
-                `\x1b[31mError\x1b[0m: \x1b[36m${post.filename}\x1b[0m already exists`
-            );
-            process.exit(1);
-        }
-
-        fs.mkdirSync(path.dirname(post.filename), { recursive: true });
-        fs.writeFileSync(post.filename, '');
-
-        if (args.noEdit) {
-            console.log(post.filename);
-            break;
-        }
-
-        let editor = process.env.EDITOR;
-        if (editor === undefined || editor === '') editor = 'vi';
-
-        cp.spawn(editor, [post.filename], { stdio: 'inherit' }).on(
-            'error',
-            (err: NodeJS.ErrnoException): void => {
-                assert(err.code === 'ENOENT');
-                console.error(`\x1b[31mError\x1b[0m: Could not start editor`);
-                process.exit(1);
-            }
-        );
+        cmd_new();
         break;
     case 'server':
-        let { title, port, theme } = config;
-
-        for (let i = 3; i < process.argv.length; i++) {
-            switch (process.argv[i]) {
-                case '--port':
-                    if (++i >= process.argv.length) usage(true);
-                    port = Number(process.argv[i]);
-                    break;
-                case '--theme':
-                    if (++i >= process.argv.length) usage(true);
-                    theme = process.argv[i];
-                    break;
-            }
-        }
-
-        new Server(title, theme)
-            .listen(port)
-            .then(() => {
-                console.log(`Server is listening on http://localhost:${port}`);
-            })
-            .catch((err: NodeJS.ErrnoException): void => {
-                if (err.code === 'EADDRINUSE')
-                    console.error(
-                        `\x1b[31mError\x1b[0m: Port ${port} is already in use`
-                    );
-                else console.error(`\x1b[31mError\x1b[0m: ${err.code}`);
-                process.exit(1);
-            });
+        cmd_server();
         break;
     case 'merge':
-        let resolve = false,
-            imessage = false,
-            pathOrId = '';
-        for (let i = 3; i < process.argv.length; i++) {
-            switch (process.argv[i]) {
-                case '--resolve':
-                    resolve = true;
-                    break;
-                case '--imessage':
-                    imessage = true;
-                    break;
-                default:
-                    pathOrId = process.argv[i];
-                    break;
-            }
-        }
-        if (pathOrId === '') usage(true);
-        if (imessage) mergeImessage(pathOrId, resolve);
-        else mergePath(pathOrId, resolve);
+        cmd_merge();
         break;
     case 'prune':
         prune('content');
         break;
     default:
         usage(true);
+}
+
+function cmd_version() {
+    console.log(`${binname} ${require('../package.json').version}`);
+}
+
+function cmd_new() {
+    let args: { noEdit: boolean; allday: boolean; date: string[] } = {
+        noEdit: false,
+        allday: false,
+        date: []
+    };
+
+    for (let i = 3; i < process.argv.length; i++) {
+        if (process.argv[i] === '--no-edit') {
+            args.noEdit = true;
+            continue;
+        }
+
+        if (process.argv[i] === '--allday') {
+            args.allday = true;
+            continue;
+        }
+
+        if (/\d{4}/.test(process.argv[i])) {
+            if (i + 2 >= process.argv.length) usage(true);
+            while (i < process.argv.length) {
+                args.date.push(process.argv[i++]);
+            }
+            continue;
+        }
+        usage(true);
+    }
+
+    if (args.date.length > 6) usage(true);
+
+    let post: Post;
+    if (args.date.length === 0) {
+        if (args.allday) post = new Post(true);
+        else post = new Post(false);
+    } else if (args.date.length < 3) {
+        usage(true);
+        // Note: usage() always calls process.exit() so this return statement
+        // is redundant, but fixes compiler error TS2454.
+        return;
+    } else {
+        let [year, month, day, hour, min, sec] = args.date;
+        if (hour === undefined) post = new Post(year, month, day);
+        else {
+            if (min === undefined) min = '00';
+            if (sec === undefined) sec = '00';
+            post = new Post(year, month, day, hour, min, sec);
+        }
+    }
+
+    if (fs.existsSync(post.filename)) {
+        console.error(
+            `\x1b[31mError\x1b[0m: \x1b[36m${post.filename}\x1b[0m already exists`
+        );
+        process.exit(1);
+    }
+
+    fs.mkdirSync(path.dirname(post.filename), { recursive: true });
+    fs.writeFileSync(post.filename, '');
+
+    if (args.noEdit) {
+        console.log(post.filename);
+        return;
+    }
+
+    let editor = process.env.EDITOR;
+    if (editor === undefined || editor === '') editor = 'vi';
+
+    cp.spawn(editor, [post.filename], { stdio: 'inherit' }).on(
+        'error',
+        (err: NodeJS.ErrnoException): void => {
+            assert(err.code === 'ENOENT');
+            console.error(`\x1b[31mError\x1b[0m: Could not start editor`);
+            process.exit(1);
+        }
+    );
+}
+
+function cmd_server() {
+    let { title, port, theme } = config;
+
+    for (let i = 3; i < process.argv.length; i++) {
+        switch (process.argv[i]) {
+            case '--port':
+                if (++i >= process.argv.length) usage(true);
+                port = Number(process.argv[i]);
+                break;
+            case '--theme':
+                if (++i >= process.argv.length) usage(true);
+                theme = process.argv[i];
+                break;
+        }
+    }
+
+    new Server(title, theme)
+        .listen(port)
+        .then(() => {
+            console.log(`Server is listening on http://localhost:${port}`);
+        })
+        .catch((err: NodeJS.ErrnoException): void => {
+            if (err.code === 'EADDRINUSE')
+                console.error(
+                    `\x1b[31mError\x1b[0m: Port ${port} is already in use`
+                );
+            else console.error(`\x1b[31mError\x1b[0m: ${err.code}`);
+            process.exit(1);
+        });
+}
+
+function cmd_merge() {
+    let resolve = false,
+        imessage = false,
+        pathOrId = '';
+    for (let i = 3; i < process.argv.length; i++) {
+        switch (process.argv[i]) {
+            case '--resolve':
+                resolve = true;
+                break;
+            case '--imessage':
+                imessage = true;
+                break;
+            default:
+                pathOrId = process.argv[i];
+                break;
+        }
+    }
+    if (pathOrId === '') usage(true);
+    if (imessage) mergeImessage(pathOrId, resolve);
+    else mergePath(pathOrId, resolve);
 }
