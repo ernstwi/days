@@ -27,7 +27,7 @@ try {
     );
 } catch {}
 
-function usage(error: boolean) {
+function usage(error: boolean): void {
     let msg = `Usage:
   ${binname} new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
   ${binname} server [--port <number>] [--theme <name>]
@@ -72,15 +72,15 @@ switch (process.argv[2]) {
         usage(true);
 }
 
-function cmd_help() {
+function cmd_help(): void {
     usage(false);
 }
 
-function cmd_version() {
+function cmd_version(): void {
     console.log(`${binname} ${require('../package.json').version}`);
 }
 
-function cmd_new() {
+function cmd_new(): void {
     let args: { noEdit: boolean; allday: boolean; date: string[] } = {
         noEdit: false,
         allday: false,
@@ -157,7 +157,7 @@ function cmd_new() {
     );
 }
 
-function cmd_server() {
+function cmd_server(): void {
     let { title, port, theme } = config;
 
     for (let i = 3; i < process.argv.length; i++) {
@@ -188,7 +188,7 @@ function cmd_server() {
         });
 }
 
-function cmd_merge() {
+function cmd_merge(): void {
     let resolve = false,
         imessage = false,
         pathOrId = '';
@@ -210,6 +210,6 @@ function cmd_merge() {
     else mergePath(pathOrId, resolve);
 }
 
-function cmd_prune() {
+function cmd_prune(): void {
     prune('content');
 }
