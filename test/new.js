@@ -13,12 +13,12 @@ suite('new', function () {
     });
 
     suiteTeardown(function () {
-        cp.execSync(`rm -rf ${tmpDir}`);
+        cp.execSync(`rm -r ${tmpDir}`);
     });
 
     suite('with a specified date', function () {
         teardown(function () {
-            cp.execSync('rm -rf content');
+            cp.execSync('rm -r content');
         });
 
         suite('no collision', function () {

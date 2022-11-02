@@ -32,7 +32,7 @@ suite('server', function () {
     suiteTeardown(async function () {
         await browser.close();
         await server.close();
-        cp.execSync(`rm -rf ${tmpDir}`);
+        cp.execSync(`rm -r ${tmpDir}`);
     });
 
     suite('start page', function () {

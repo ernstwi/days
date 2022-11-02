@@ -17,7 +17,7 @@ suite('merge', function () {
     });
 
     suiteTeardown(function () {
-        cp.execSync(`rm -rf ${tmpDir}`);
+        cp.execSync(`rm -r ${tmpDir}`);
     });
 
     suite('path', function () {
@@ -45,7 +45,7 @@ suite('merge', function () {
 
         teardown(function () {
             process.chdir('..');
-            cp.execSync('rm -rf source target');
+            cp.execSync('rm -r source target');
         });
 
         suite('no conflict', function () {
@@ -165,7 +165,7 @@ suite('merge', function () {
 
     suite('imessage', function () {
         suiteTeardown(async function () {
-            cp.execSync('rm -rf content');
+            cp.execSync('rm -r content');
         });
 
         this.timeout(10000);
