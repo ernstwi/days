@@ -27,28 +27,28 @@ try {
     );
 } catch {}
 
-function usage(stdout: boolean) {
+function usage(error: boolean) {
     let msg = `Usage:
   ${binname} new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
   ${binname} server [--port <number>] [--theme <name>]
   ${binname} merge [--resolve] (<path> | --imessage <ID>)
   ${binname} prune`;
 
-    if (stdout) {
-        console.log(msg);
-        process.exit(0);
-    } else {
+    if (error) {
         console.error(msg);
         process.exit(1);
+    } else {
+        console.log(msg);
+        process.exit(0);
     }
 }
 
 if (process.argv.length < 3) {
-    usage(false);
+    usage(true);
 }
 
 if (/(--)?help/.test(process.argv[2])) {
-    usage(true);
+    usage(false);
 }
 
 switch (process.argv[2]) {
@@ -74,23 +74,23 @@ switch (process.argv[2]) {
             }
 
             if (/\d{4}/.test(process.argv[i])) {
-                if (i + 2 >= process.argv.length) usage(false);
+                if (i + 2 >= process.argv.length) usage(true);
                 while (i < process.argv.length) {
                     args.date.push(process.argv[i++]);
                 }
                 continue;
             }
-            usage(false);
+            usage(true);
         }
 
-        if (args.date.length > 6) usage(false);
+        if (args.date.length > 6) usage(true);
 
         let post: Post;
         if (args.date.length === 0) {
             if (args.allday) post = new Post(true);
             else post = new Post(false);
         } else if (args.date.length < 3) {
-            usage(false);
+            usage(true);
             // Note: usage() always calls process.exit() so this break statement
             // is redundant, but fixes compiler error TS2454.
             break;
@@ -137,11 +137,11 @@ switch (process.argv[2]) {
         for (let i = 3; i < process.argv.length; i++) {
             switch (process.argv[i]) {
                 case '--port':
-                    if (++i >= process.argv.length) usage(false);
+                    if (++i >= process.argv.length) usage(true);
                     port = Number(process.argv[i]);
                     break;
                 case '--theme':
-                    if (++i >= process.argv.length) usage(false);
+                    if (++i >= process.argv.length) usage(true);
                     theme = process.argv[i];
                     break;
             }
@@ -178,7 +178,7 @@ switch (process.argv[2]) {
                     break;
             }
         }
-        if (pathOrId === '') usage(false);
+        if (pathOrId === '') usage(true);
         if (imessage) mergeImessage(pathOrId, resolve);
         else mergePath(pathOrId, resolve);
         break;
@@ -186,5 +186,5 @@ switch (process.argv[2]) {
         prune('content');
         break;
     default:
-        usage(false);
+        usage(true);
 }
