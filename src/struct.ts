@@ -129,7 +129,7 @@ class Post {
         sec: string
     );
     constructor(
-        yearOrAllday: string | boolean,
+        alldayOrYear: string | boolean,
         month?: string,
         day?: string,
         hour?: string,
@@ -138,12 +138,12 @@ class Post {
     ) {
         this.favorite = false;
 
-        if (typeof yearOrAllday === 'boolean') {
-            let allday = yearOrAllday;
+        if (typeof alldayOrYear === 'boolean') {
+            let allday = alldayOrYear;
             this.date = new Date();
             if (!allday) this.time = new Time();
         } else {
-            let year = yearOrAllday;
+            let year = alldayOrYear;
             this.date = new Date(year, month, day);
             // TODO: Do we need to check all three? Should be caught by typechecker.
             if (hour !== undefined && min !== undefined && sec !== undefined)
