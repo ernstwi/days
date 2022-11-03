@@ -13,7 +13,7 @@ import { NameCollision } from '../error';
 let pugAsset = pug.compileFile(`${__dirname}/asset.pug`);
 
 function assetStr(filename: string) {
-    let extension = path.extname(filename).substring(1);
+    let extension = path.extname(filename).substring(1).toLowerCase();
     return pugAsset({
         extension: extension,
         filename: filename
