@@ -244,15 +244,21 @@ class Date {
     day: string;
 
     constructor();
+    constructor(date: globalThis.Date);
     constructor(year: string, month?: string, day?: string);
-    constructor(year?: string, month?: string, day?: string) {
-        if (year === undefined) {
-            let d = new global.Date();
+    constructor(x?: string | globalThis.Date, month?: string, day?: string) {
+        if (x === undefined || x instanceof globalThis.Date) {
+            let d =
+                x === undefined
+                    ? new globalThis.Date()
+                    : (x as globalThis.Date);
             this.year = d.getFullYear().zeropad(4);
             this.month = (d.getMonth() + 1).zeropad(2);
             this.day = d.getDate().zeropad(2);
             return;
         }
+
+        let year = x as string;
         this.year = year;
         this.month = month === undefined ? '00' : month; // TODO: Make month and day fields optional?
         this.day = day === undefined ? '00' : day;
@@ -263,7 +269,7 @@ class Date {
     }
 
     preceedingDate(): Date {
-        let d = new global.Date(
+        let d = new globalThis.Date(
             parseInt(this.year),
             parseInt(this.month) - 1,
             parseInt(this.day)
@@ -278,7 +284,7 @@ class Date {
 
     // The day of week, where 0 represents Sunday
     private get weekday(): number {
-        return new global.Date(
+        return new globalThis.Date(
             parseInt(this.year),
             parseInt(this.month) - 1,
             parseInt(this.day)
@@ -352,18 +358,23 @@ class Time {
     sec: string;
 
     constructor();
+    constructor(date: globalThis.Date);
     constructor(hour: string, min: string, sec: string);
-    constructor(hour?: string, min?: string, sec?: string) {
-        if (hour === undefined || min === undefined || sec === undefined) {
-            let d = new global.Date();
+    constructor(x?: string | globalThis.Date, min?: string, sec?: string) {
+        if (x === undefined || x instanceof globalThis.Date) {
+            let d =
+                x === undefined
+                    ? new globalThis.Date()
+                    : (x as globalThis.Date);
             this.hour = d.getHours().zeropad(2);
             this.min = d.getMinutes().zeropad(2);
             this.sec = d.getSeconds().zeropad(2);
             return;
         }
-        this.hour = hour;
-        this.min = min;
-        this.sec = sec;
+
+        this.hour = x as string;
+        this.min = min as string;
+        this.sec = sec as string;
     }
 
     toString(): string {
