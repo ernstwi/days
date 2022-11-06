@@ -18,11 +18,11 @@ import { markdownOptions } from './constants';
 const markdown = markdownIt(markdownOptions);
 
 class Year {
-    private date: Date;
+    private date: PlainDate;
     months: Month[];
 
     constructor(year: string) {
-        this.date = new Date(year);
+        this.date = new PlainDate(year);
         this.months = [
             new Month(year, '01'),
             new Month(year, '02'),
@@ -48,11 +48,11 @@ class Year {
 }
 
 class Month {
-    private date: Date;
+    private date: PlainDate;
     days: Day[];
 
     constructor(year: string, month: string) {
-        this.date = new Date(year, month);
+        this.date = new PlainDate(year, month);
         this.days = [];
     }
 
@@ -77,12 +77,12 @@ class Month {
 }
 
 class Day {
-    private date: Date;
+    private date: PlainDate;
     timedPosts: Post[];
     alldayPost?: Post;
 
     constructor(year: string, month: string, day: string) {
-        this.date = new Date(year, month, day);
+        this.date = new PlainDate(year, month, day);
         this.timedPosts = [];
     }
 
@@ -113,13 +113,13 @@ class Day {
 }
 
 class Post {
-    date: Date;
-    displayDate: Date;
+    date: PlainDate;
+    displayDate: PlainDate;
     time?: Time;
     favorite: boolean;
 
     constructor(allday: boolean);
-    constructor(allday: boolean, date: globalThis.Date);
+    constructor(allday: boolean, date: Date);
     constructor(year: string, month: string, day: string);
     constructor(
         year: string,
@@ -131,7 +131,7 @@ class Post {
     );
     constructor(
         x: boolean | string,
-        y?: globalThis.Date | string,
+        y?: Date | string,
         day?: string,
         hour?: string,
         min?: string,
@@ -143,17 +143,17 @@ class Post {
         if (typeof x === 'boolean') {
             let allday = x as boolean;
             if (y === undefined) {
-                this.date = new Date();
+                this.date = new PlainDate();
                 if (!allday) this.time = new Time();
             } else {
-                let date = y as globalThis.Date;
-                this.date = new Date(date);
+                let date = y as Date;
+                this.date = new PlainDate(date);
                 if (!allday) this.time = new Time(date);
             }
         } else {
             let year = x as string;
             let month = y as string;
-            this.date = new Date(year, month, day);
+            this.date = new PlainDate(year, month, day);
             // TODO: Do we need to check all three? Should be caught by typechecker.
             if (hour !== undefined && min !== undefined && sec !== undefined)
                 this.time = new Time(hour, min, sec);
@@ -163,7 +163,7 @@ class Post {
             this.displayDate = this.date;
         } else {
             if (parseInt(this.time.hour) < 5) {
-                this.displayDate = this.date.preceedingDate();
+                this.displayDate = this.date.preceedingPlainDate();
             } else {
                 this.displayDate = this.date;
             }
@@ -247,20 +247,18 @@ class Post {
     }
 }
 
-class Date {
+// Simple date representation without a time element
+class PlainDate {
     year: string;
     month: string;
     day: string;
 
     constructor();
-    constructor(date: globalThis.Date);
+    constructor(date: Date);
     constructor(year: string, month?: string, day?: string);
-    constructor(x?: string | globalThis.Date, month?: string, day?: string) {
-        if (x === undefined || x instanceof globalThis.Date) {
-            let d =
-                x === undefined
-                    ? new globalThis.Date()
-                    : (x as globalThis.Date);
+    constructor(x?: string | Date, month?: string, day?: string) {
+        if (x === undefined || x instanceof Date) {
+            let d = x === undefined ? new Date() : (x as Date);
             this.year = d.getFullYear().zeropad(4);
             this.month = (d.getMonth() + 1).zeropad(2);
             this.day = d.getDate().zeropad(2);
@@ -277,19 +275,19 @@ class Date {
         return [this.year, this.month, this.day].join('-');
     }
 
-    preceedingDate(): Date {
-        let d = new globalThis.Date(
+    preceedingPlainDate(): PlainDate {
+        let d = new Date(
             parseInt(this.year),
             parseInt(this.month) - 1,
             parseInt(this.day)
         );
         d.setDate(d.getDate() - 1);
-        return new Date(d);
+        return new PlainDate(d);
     }
 
     // The day of week, where 0 represents Sunday
     private get weekday(): number {
-        return new globalThis.Date(
+        return new Date(
             parseInt(this.year),
             parseInt(this.month) - 1,
             parseInt(this.day)
@@ -363,14 +361,11 @@ class Time {
     sec: string;
 
     constructor();
-    constructor(date: globalThis.Date);
+    constructor(date: Date);
     constructor(hour: string, min: string, sec: string);
-    constructor(x?: string | globalThis.Date, min?: string, sec?: string) {
-        if (x === undefined || x instanceof globalThis.Date) {
-            let d =
-                x === undefined
-                    ? new globalThis.Date()
-                    : (x as globalThis.Date);
+    constructor(x?: string | Date, min?: string, sec?: string) {
+        if (x === undefined || x instanceof Date) {
+            let d = x === undefined ? new Date() : (x as Date);
             this.hour = d.getHours().zeropad(2);
             this.min = d.getMinutes().zeropad(2);
             this.sec = d.getSeconds().zeropad(2);
