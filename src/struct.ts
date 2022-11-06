@@ -276,22 +276,22 @@ class PlainDate {
     }
 
     preceedingPlainDate(): PlainDate {
-        let d = new Date(
-            parseInt(this.year),
-            parseInt(this.month) - 1,
-            parseInt(this.day)
-        );
+        let d = this.date;
         d.setDate(d.getDate() - 1);
         return new PlainDate(d);
     }
 
-    // The day of week, where 0 represents Sunday
-    private get weekday(): number {
+    private get date(): Date {
         return new Date(
             parseInt(this.year),
             parseInt(this.month) - 1,
             parseInt(this.day)
-        ).getDay();
+        );
+    }
+
+    // The day of week, where 0 represents Sunday
+    private get weekday(): number {
+        return this.date.getDay();
     }
 
     get shortDayName(): string {
