@@ -275,11 +275,7 @@ class Date {
             parseInt(this.day)
         );
         d.setDate(d.getDate() - 1);
-        return new Date(
-            d.getFullYear().zeropad(4),
-            (d.getMonth() + 1).zeropad(2),
-            d.getDate().zeropad(2)
-        );
+        return new Date(d);
     }
 
     // The day of week, where 0 represents Sunday
