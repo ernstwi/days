@@ -275,25 +275,6 @@ class PlainDate {
         return [this.year, this.month, this.day].join('-');
     }
 
-    preceedingPlainDate(): PlainDate {
-        let d = this.date;
-        d.setDate(d.getDate() - 1);
-        return new PlainDate(d);
-    }
-
-    private get date(): Date {
-        return new Date(
-            parseInt(this.year),
-            parseInt(this.month) - 1,
-            parseInt(this.day)
-        );
-    }
-
-    // The day of week, where 0 represents Sunday
-    private get weekday(): number {
-        return this.date.getDay();
-    }
-
     get shortDayName(): string {
         return ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][this.weekday];
     }
@@ -352,6 +333,25 @@ class PlainDate {
         return `${this.longDayName}, ${this.longMonthName} ${parseInt(
             this.day
         )} ${this.year}`;
+    }
+
+    preceedingPlainDate(): PlainDate {
+        let d = this.date;
+        d.setDate(d.getDate() - 1);
+        return new PlainDate(d);
+    }
+
+    private get date(): Date {
+        return new Date(
+            parseInt(this.year),
+            parseInt(this.month) - 1,
+            parseInt(this.day)
+        );
+    }
+
+    // The day of week, where 0 represents Sunday
+    private get weekday(): number {
+        return this.date.getDay();
     }
 }
 
