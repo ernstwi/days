@@ -170,7 +170,12 @@ suite('merge', function () {
     });
 
     suite('imessage', function () {
-        suiteTeardown(async function () {
+        suiteSetup(function () {
+            if (process.env.DAYS_TEST_IMESSAGE === undefined) this.skip();
+        });
+
+        suiteTeardown(function () {
+            if (process.env.DAYS_TEST_IMESSAGE === undefined) return;
             cp.execSync('rm -r content');
         });
 
@@ -178,10 +183,10 @@ suite('merge', function () {
         suite('no conflict', function () {
             test('should set created and modified date on merged posts', function () {
                 cp.execSync(
-                    'osascript ../send-imessage.applescript "ernstwi_days_testing@icloud.com" "new message"'
+                    `osascript ../send-imessage.applescript "${process.env.DAYS_TEST_IMESSAGE}" "Test message"`
                 );
                 cp.execSync(
-                    `${bin} merge --imessage "ernstwi_days_testing@icloud.com"`
+                    `${bin} merge --imessage "${process.env.DAYS_TEST_IMESSAGE}"`
                 );
                 let postDate = new Date();
                 let dir = dateformat(postDate, '"content"/yyyy/mm/dd');
@@ -193,7 +198,7 @@ suite('merge', function () {
                 assert(stat.birthtime.getTime() === postDate.getTime());
                 assert(stat.mtime.getTime() === postDate.getTime());
                 let text = fs.readFileSync(path.join(dir, post), 'utf8');
-                assert(text === 'new message\n');
+                assert.strictEqual(text, 'Test message\n');
             });
         });
     });

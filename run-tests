@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+./prepack
+npx mocha --ui tdd
+if [[ -z "$DAYS_TEST_IMESSAGE" ]]; then
+    cat << EOF
+NOTE: iMessage tests skipped (pending)
+
+To test iMessage merge functionality, you must define the environment variable
+DAYS_TEST_IMESSAGE. This value will be used as the recipient of a test message
+sent using Applescript on each run of the test suite. Note that this means
+automatically opening the Messages app and sending a message from your logged in
+user.
+EOF
+fi

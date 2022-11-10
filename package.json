@@ -41,7 +41,7 @@
     "scripts": {
         "prepack": "./prepack",
         "start": "build/index.js",
-        "test": "npm run prepack && mocha --ui tdd"
+        "test": "./run-tests"
     },
     "engines": {
         "node": ">=14"
