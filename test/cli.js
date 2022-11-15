@@ -1,3 +1,4 @@
+// Functional tests: Misc argument parsing and `--help`, `--version`
 let assert = require('assert');
 let cp = require('child_process');
 let path = require('path');

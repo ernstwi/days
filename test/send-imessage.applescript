@@ -1,3 +1,4 @@
+-- Test helper script for sending iMessage messages
 on run {targetBuddyPhone, targetMessage}
     tell application "Messages"
         set targetService to 1st service whose service type = iMessage

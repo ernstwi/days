@@ -1,3 +1,4 @@
+// Functional tests: `new` command
 let assert = require('assert');
 let cp = require('child_process');
 let fs = require('fs');
