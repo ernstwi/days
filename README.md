@@ -145,3 +145,7 @@ You can create your own theme by adding a file `static/theme/<theme-name>.css` c
 ## Testing
 
 `npm run test`: Compile TypeScript and test the resulting JavaScript using Mocha.
+
+To test iMessage merge functionality, you must define the environment variable `DAYS_TEST_IMESSAGE`. This value will be used as the recipient of a test message sent using Applescript on each run of the test suite. Note that this means automatically opening the Messages app and sending a message from your logged in user.
+
+If `DAYS_TEST_IMESSAGE` is not defined, iMessage merge testing is skipped and no test message is sent.
