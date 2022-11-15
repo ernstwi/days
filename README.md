@@ -19,9 +19,8 @@ Journaling on iOS is supported via iMessage import (see [`days merge`](#merge)).
 │               └── allday.md ...... you can have one untimed post per day,
 │                                    written for example when looking back at
 │                                    some later point in time
-├── assets
-│   └── image.jpeg ................. anything you want to add to a post, eg
-│                                    `![an image](/image.jpeg)`
+├── assets ......................... files in this dir are served from root
+│   └── image.jpeg ................. ![an image](/image.jpeg)
 │
 └── config.json .................... optional configuration file
 ```
