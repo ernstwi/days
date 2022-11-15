@@ -142,3 +142,7 @@ You can create your own theme by adding a file `static/theme/<theme-name>.css` c
 | `--start-index-border`          | color | `--ui`         |
 | `--start-index-border`          | color | `--ui`         |
 | `--start-year`                  | color | `--ui`         |
+
+## Testing
+
+`npm run test`: Compile TypeScript and test the resulting JavaScript using Mocha.
