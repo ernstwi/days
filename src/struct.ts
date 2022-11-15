@@ -171,6 +171,7 @@ class Post {
     }
 
     write(body: string) {
+        fs.mkdirSync(path.dirname(this.filename), { recursive: true });
         fs.writeFileSync(this.filename, body + '\n');
     }
 

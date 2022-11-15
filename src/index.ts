@@ -120,8 +120,7 @@ function cmd_new(argv: string[]): void {
         process.exit(1);
     }
 
-    fs.mkdirSync(path.dirname(post.filename), { recursive: true });
-    fs.writeFileSync(post.filename, '');
+    post.write('');
 
     if (options.noEdit) {
         console.log(post.filename);
