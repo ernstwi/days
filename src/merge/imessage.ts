@@ -7,7 +7,6 @@ import parse = require('csv-parse/lib/sync');
 import pug = require('pug');
 
 import * as merge from './merge';
-import CustomDate from '../custom-date';
 import { NameCollision } from '../error';
 
 let pugAsset = pug.compileFile(`${__dirname}/asset.pug`);
@@ -42,7 +41,7 @@ function mergeImessage(id: string, resolve: boolean) {
     sqlite(id, 'time.sql').forEach(row => {
         let [id, time] = row;
         data[id] = {};
-        data[id].date = new CustomDate(Number(time) * 1000);
+        data[id].date = new Date(Number(time) * 1000);
     });
     sqlite(id, 'text.sql').forEach(row => {
         let [id, text] = row;
