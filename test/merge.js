@@ -179,7 +179,6 @@ suite('merge', function () {
             cp.execSync('rm -r content');
         });
 
-        this.timeout(10000);
         suite('no conflict', function () {
             test('should set created and modified date on merged posts', function () {
                 cp.execSync(

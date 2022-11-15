@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ./prepack
-npx mocha --ui tdd
+npx mocha
 if [[ -z "$DAYS_TEST_IMESSAGE" ]]; then
     cat << EOF
 NOTE: iMessage tests skipped (pending)
