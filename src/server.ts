@@ -61,7 +61,7 @@ class Server {
     }
 
     listen(port: number): Promise<any[]> {
-        return events.once(this.#server.listen(port), 'listening');
+        return events.once(this.#server.listen(port, 'localhost'), 'listening');
     }
 
     close(): void {
