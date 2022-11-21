@@ -1,6 +1,6 @@
 {
     "name": "@ernstwi/days",
-    "version": "1.9.5",
+    "version": "2.0.0",
     "description": "Journaling tool",
     "author": "Ernst Widerberg <ernstwi@kth.se>",
     "license": "MIT",
