@@ -3,7 +3,6 @@
 import assert = require('assert');
 import cp = require('child_process');
 import fs = require('fs');
-import path = require('path');
 
 import './extensions';
 import Server from './server';
