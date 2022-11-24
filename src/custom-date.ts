@@ -1,3 +1,6 @@
+// NOTE: This class is deprecated. It's still used in merge/imessage.ts. The
+// plan is to add all necessary functionality from this class to struct.Post and
+// refactor a lot of the merge code.
 import assert = require('assert');
 
 import dateFormat from 'dateformat';
