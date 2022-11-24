@@ -45,6 +45,7 @@
         "prepack": "./prepack",
         "start": "build/index.js",
         "test": "./run-tests",
+        "format": "prettier --write .",
         "lint": "eslint src --ext .ts"
     },
     "engines": {
