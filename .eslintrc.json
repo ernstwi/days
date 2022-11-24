@@ -12,6 +12,18 @@
     },
     "plugins": ["@typescript-eslint"],
     "rules": {
-        "prefer-const": ["off"]
+        "prefer-const": ["off"],
+        "no-empty": [
+            "error",
+            {
+                "allowEmptyCatch": true
+            }
+        ],
+        "no-constant-condition": [
+            "error",
+            {
+                "checkLoops": false
+            }
+        ]
     }
 }
