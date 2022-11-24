@@ -11,6 +11,7 @@ import mergeImessage from './merge/imessage';
 import mergePath from './merge/path';
 import prune from './prune';
 import { Post } from './struct';
+import package_json from '../package.json';
 
 const binname = 'days';
 
@@ -61,7 +62,7 @@ function cmd_help(): void {
 }
 
 function cmd_version(): void {
-    console.log(`${binname} ${require('../package.json').version}`);
+    console.log(`${binname} ${package_json.version}`);
 }
 
 function cmd_new(argv: string[]): void {
