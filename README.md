@@ -8,6 +8,12 @@ Journaling on iOS is supported via iMessage import (see [`days merge`](#merge)).
     <img src='https://github.com/ernstwi/days/raw/master/fruchtig.png' width='576'>
 </p>
 
+## Status
+
+**⚠️ Note: Version [2.0.0](https://github.com/ernstwi/days/releases/tag/v2.0.0) contains a security fix. Please do not use previous versions.**
+
+Please be mindful that this is a small project and that further security issues should be expected.
+
 ## Directory structure
 
 ```
