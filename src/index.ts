@@ -171,14 +171,10 @@ function cmd_server(argv: string[]): void {
 }
 
 function cmd_merge(argv: string[]): void {
-    let resolve = false,
-        imessage = false,
+    let imessage = false,
         pathOrId = '';
     for (let a of argv) {
         switch (a) {
-            case '--resolve':
-                resolve = true;
-                break;
             case '--imessage':
                 imessage = true;
                 break;
@@ -200,7 +196,7 @@ function usage(error: boolean): void {
     let msg = `Usage:
   ${binname} new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
   ${binname} server [--port <number>] [--theme <name>]
-  ${binname} merge [--resolve] (<path> | --imessage <ID>)
+  ${binname} merge (<path> | --imessage <ID>)
   ${binname} prune`;
 
     if (error) {
