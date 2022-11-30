@@ -9,48 +9,55 @@ import pug = require('pug');
 import * as merge from './merge';
 import CustomDate from '../custom-date';
 import { NameCollision } from '../error';
+import { Post } from '../struct';
 
 let pugAsset = pug.compileFile(`${__dirname}/asset.pug`);
 
 type csv = string[][];
 
-interface asset {
-    src: string;
-    dst: string;
-}
-
 function mergeImessage(id: string, resolve: boolean) {
     // Collect data from Messages database
+    let posts: Map<string, Post> = new Map();
+    let assets: Map<string, string[]> = new Map();
+
     let data: any = {};
-    sqlite(id, 'time.sql').forEach(row => {
-        let [id, time] = row;
-        data[id] = {};
-        data[id].date = new CustomDate(Number(time) * 1000);
+
+    sqlite(id, 'time.sql').forEach(([id, time]) => {
+        posts.set(id, new Post(false, new Date(Number(time) * 1000)));
     });
-    sqlite(id, 'text.sql').forEach(row => {
-        let [id, text] = row;
-        // Remove U+FFFC (object replacement character)
-        data[id].text = text.replace(/￼/g, '');
-        data[id].text += '\n';
+
+    sqlite(id, 'text.sql').forEach(([id, text]) => {
+        // HACK: Remove U+FFFC (object replacement character) which is sometimes
+        // mysteriously present
+        text = text.replace(/￼/g, '');
+
+        text += '\n';
+
+        (posts.get(id) as Post).body = text; // Works because map stores Post by reference
     });
-    sqlite(id, 'asset.sql').forEach(row => {
-        let [id, asset] = row;
-        asset = asset.replace(/^~/, os.homedir());
-        if (data[id].assets === undefined) data[id].assets = new Array<asset>();
-        data[id].assets.push({
-            src: asset,
-            dst: path.basename(asset)
-        });
+
+    sqlite(id, 'asset.sql').forEach(([id, asset]) => {
+        asset = asset.replace(/^~/, os.homedir()); // Absoulte path of asset
+        if (!assets.has(id)) assets.set(id, []);
+        (assets.get(id) as string[]).push(asset);
     });
 
     // Add assets to head of post text
-    Object.values(data).forEach((post: any) => {
-        if (post.assets !== undefined) {
-            post.text =
-                post.assets.map((a: asset) => assetStr(a.dst)).join('\n') +
-                (post.text === '' ? '' : '\n\n' + post.text);
-        }
-    });
+    for (let [id, post] of posts) {
+        if (!assets.has(id)) continue;
+
+        let assetsHeader =
+            (assets.get(id) as string[])
+                .map((a: string) => assetStr(path.basename(a)))
+                .join('\n') + '\n';
+        if (post.body === '') post.body = assetsHeader;
+        else post.body = [assetsHeader, post.body].join('\n');
+    }
+
+    // Check for post collisions
+    let postCollisions = posts.values().filter(p => p.fileExists());
+
+    // ---- Progress bar -------------------------------------------------------
 
     // Merge assets
     let substitutions = new Map<string, string>();

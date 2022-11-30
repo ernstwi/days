@@ -411,4 +411,21 @@ class Time {
     }
 }
 
-export { Year, Month, Day, Post };
+// Light wrapper around asset files, to mirror file API of Post
+class Asset {
+    filename: string; // Path relative to `assets`
+
+    constructor(filename: string) {
+        this.filename = filename;
+    }
+
+    fileExists(): boolean {
+        return fs.existsSync(this.path);
+    }
+
+    get path(): string {
+        return path.join('assets', this.filename);
+    }
+}
+
+export { Year, Month, Day, Post, Asset };
