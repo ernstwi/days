@@ -7,12 +7,11 @@ import { Year, Month, Day, Post } from './struct';
 type PostFilter = (post: Post) => boolean;
 
 // Used in server + merge
-function readPosts(filter?: PostFilter, root?: string): Map<string, Post> {
+function readPosts(root = '.', filter?: PostFilter): Map<string, Post> {
     let res = new Map<string, Post>();
     let favorites = fs.existsSync('.fav')
         ? new Set(fs.readFileSync('.fav', { encoding: 'utf8' }).lines())
         : new Set();
-    if (root === undefined) root = '.';
     let years = filterDir(path.join(root, 'content'), /^\d{4}$/);
     for (let y of years) {
         for (let m of filterDir(path.join(root, 'content', y), /^\d{2}$/)) {
@@ -55,7 +54,7 @@ function content(
     let years = new Map<string, Year>();
     let months = new Map<string, Month>();
     let days = new Map<string, Day>();
-    let posts = readPosts(filter);
+    let posts = readPosts('.', filter);
 
     {
         // Prefill years with every year between the first and last in file system
