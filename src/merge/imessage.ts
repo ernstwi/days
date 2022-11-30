@@ -9,7 +9,7 @@ import { Post, Asset } from '../struct';
 
 type csv = string[][];
 
-function mergeImessage(id: string): [Post[], Asset[]] {
+function readImessage(id: string): [Post[], Asset[]] {
     // Collect data from Messages database
     let posts: Map<string, Post> = new Map();
     let assets: Map<string, Asset[]> = new Map();
@@ -67,4 +67,4 @@ function sqlite(id: string, file: string): csv {
     );
 }
 
-export default mergeImessage;
+export default readImessage;
