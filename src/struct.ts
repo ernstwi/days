@@ -175,12 +175,12 @@ class Post {
         }
     }
 
-    read() {
+    read(): void {
         if (fs.existsSync(this.filename))
             this.body = fs.readFileSync(this.filename, 'utf8');
     }
 
-    write() {
+    write(): void {
         // Make directory if it doesn't exist
         fs.mkdirSync(path.dirname(this.filename), { recursive: true });
 
