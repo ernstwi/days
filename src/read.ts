@@ -6,17 +6,21 @@ import { Year, Month, Day, Post } from './struct';
 
 type PostFilter = (post: Post) => boolean;
 
-function readPosts(filter?: PostFilter): Map<string, Post> {
+function readPosts(filter?: PostFilter, root?: string): Map<string, Post> {
     let res = new Map<string, Post>();
     let favorites = fs.existsSync('.fav')
         ? new Set(fs.readFileSync('.fav', { encoding: 'utf8' }).lines())
         : new Set();
-    let years = filterDir('content', /^\d{4}$/);
+    if (root === undefined) root = '.';
+    let years = filterDir(path.join(root, 'content'), /^\d{4}$/);
     for (let y of years) {
-        for (let m of filterDir(path.join('content', y), /^\d{2}$/)) {
-            for (let d of filterDir(path.join('content', y, m), /^\d{2}$/)) {
+        for (let m of filterDir(path.join(root, 'content', y), /^\d{2}$/)) {
+            for (let d of filterDir(
+                path.join(root, 'content', y, m),
+                /^\d{2}$/
+            )) {
                 for (let f of filterDir(
-                    path.join('content', y, m, d),
+                    path.join(root, 'content', y, m, d),
                     /^(\d{2}-\d{2}-\d{2}\.md)|(allday\.md)$/
                 )) {
                     let p;
@@ -29,6 +33,7 @@ function readPosts(filter?: PostFilter): Map<string, Post> {
                         p = new Post(y, m, d, h, M, s);
                     }
                     if (favorites.has(p.id)) p.favorite = true;
+                    p.root = root;
                     if (filter === undefined || filter(p)) res.set(p.id, p);
                 }
             }
@@ -38,7 +43,8 @@ function readPosts(filter?: PostFilter): Map<string, Post> {
 }
 
 function content(
-    filter?: PostFilter
+    filter?: PostFilter,
+    root?: string
 ): {
     years: Map<string, Year>;
     months: Map<string, Month>;
@@ -48,7 +54,7 @@ function content(
     let years = new Map<string, Year>();
     let months = new Map<string, Month>();
     let days = new Map<string, Day>();
-    let posts = readPosts(filter);
+    let posts = readPosts(filter, root);
 
     {
         // Prefill years with every year between the first and last in file system
