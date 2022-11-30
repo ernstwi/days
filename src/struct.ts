@@ -418,13 +418,13 @@ class Asset {
     filename: string;
 
     // Absolute path somewhere else on the system, used when this Asset is to be merged
-    altPath?: string;
+    #altPath?: string;
 
     #pugAsset: any; // TODO: Pug types
 
     constructor(filename: string, altPath?: string) {
         this.filename = filename;
-        this.altPath = altPath;
+        this.#altPath = altPath;
 
         this.#pugAsset = pug.compileFile(`${__dirname}/asset.pug`);
     }
@@ -435,9 +435,9 @@ class Asset {
 
     // Copy from altPath to path
     write(): void {
-        if (this.altPath !== undefined)
+        if (this.#altPath !== undefined)
             fs.copyFileSync(
-                this.altPath,
+                this.#altPath,
                 this.path,
                 fs.constants.COPYFILE_EXCL
             );
