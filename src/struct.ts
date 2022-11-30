@@ -433,6 +433,11 @@ class Asset {
         return fs.existsSync(this.path);
     }
 
+    // Copy from altPath to path
+    write(): void {
+        fs.copyFileSync(this.altPath, this.path, fs.constants.COPYFILE_EXCL);
+    }
+
     get path(): string {
         return path.join('assets', this.filename);
     }
