@@ -121,6 +121,7 @@ class Post {
     body: string;
     birthtime: Date;
     mtime: Date;
+    root: string; // TODO: Set via options in constructor
 
     constructor(allday: boolean);
     constructor(allday: boolean, date: Date);
@@ -145,6 +146,7 @@ class Post {
         this.favorite = false;
         this.body = '';
         this.birthtime = this.mtime = new Date();
+        this.root = '.';
 
         if (typeof x === 'boolean') {
             let allday = x as boolean;
@@ -216,6 +218,7 @@ class Post {
     get path(): string {
         if (this.time === undefined)
             return path.join(
+                this.root,
                 'content',
                 this.date.year,
                 this.date.month,
@@ -223,6 +226,7 @@ class Post {
                 'allday.md'
             );
         return path.join(
+            this.root,
             'content',
             this.date.year,
             this.date.month,
