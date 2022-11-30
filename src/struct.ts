@@ -11,6 +11,7 @@ import path = require('path');
 import fs = require('fs');
 
 import markdownIt = require('markdown-it');
+import pug = require('pug');
 
 import './extensions';
 import { markdownOptions } from './constants';
@@ -413,10 +414,19 @@ class Time {
 
 // Light wrapper around asset files, to mirror file API of Post
 class Asset {
-    filename: string; // Path relative to `assets`
+    // Path relative to `assets`
+    filename: string;
 
-    constructor(filename: string) {
+    // Absolute path somewhere else on the system, used when this Asset is to be merged
+    altPath?: string;
+
+    #pugAsset: any; // TODO: Pug types
+
+    constructor(filename: string, altPath?: string) {
         this.filename = filename;
+        this.altPath = altPath;
+
+        this.#pugAsset = pug.compileFile(`${__dirname}/asset.pug`);
     }
 
     fileExists(): boolean {
@@ -425,6 +435,15 @@ class Asset {
 
     get path(): string {
         return path.join('assets', this.filename);
+    }
+
+    // Return an html tag for displaying file `filename`.
+    get htmlTag() {
+        let extension = path.extname(this.path).substring(1).toLowerCase();
+        return this.#pugAsset({
+            extension: extension,
+            path: this.path
+        });
     }
 }
 
