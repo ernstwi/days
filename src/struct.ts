@@ -117,6 +117,10 @@ class Post {
     displayDate: PlainDate;
     time?: Time;
     favorite: boolean;
+    body: string;
+    birthtime: Date;
+    mtime: Date;
+    assets: string[];
 
     constructor(allday: boolean);
     constructor(allday: boolean, date: Date);
@@ -139,6 +143,9 @@ class Post {
     ) {
         // TODO: Refactor for clarity
         this.favorite = false;
+        this.body = '';
+        this.birthtime = this.mtime = new Date();
+        this.assets = [];
 
         if (typeof x === 'boolean') {
             let allday = x as boolean;
@@ -170,9 +177,27 @@ class Post {
         }
     }
 
-    write(body: string) {
+    read() {
+        if (fs.existsSync(this.filename))
+            this.body = fs.readFileSync(this.filename, 'utf8');
+
+        // TODO: Populate this.assets using MarkdownIt.Parse
+    }
+
+    write() {
+        // Make directory if it doesn't exist
         fs.mkdirSync(path.dirname(this.filename), { recursive: true });
-        fs.writeFileSync(this.filename, body + '\n');
+
+        // Delete and readd file if it exists. This is a hack so that we can
+        // manipulate `birthtime` using `fs.utimesSync`.
+        if (fs.existsSync(this.filename)) fs.unlinkSync(this.filename);
+        fs.writeFileSync(this.filename, this.body);
+
+        // Set `birthtime` and `mtime` by making two changes to `mtime`. `atime`
+        // (access time) is set to now.
+        let now = new Date();
+        fs.utimesSync(this.filename, now, this.birthtime);
+        fs.utimesSync(this.filename, now, this.mtime);
     }
 
     get id(): string {
