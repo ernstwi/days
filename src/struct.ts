@@ -176,28 +176,27 @@ class Post {
     }
 
     read(): void {
-        if (this.fileExists())
-            this.body = fs.readFileSync(this.filename, 'utf8');
+        if (this.fileExists()) this.body = fs.readFileSync(this.path, 'utf8');
     }
 
     write(): void {
         // Make directory if it doesn't exist
-        fs.mkdirSync(path.dirname(this.filename), { recursive: true });
+        fs.mkdirSync(path.dirname(this.path), { recursive: true });
 
         // Delete and readd file if it exists. This is a hack so that we can
         // manipulate `birthtime` using `fs.utimesSync`.
-        if (this.fileExists()) fs.unlinkSync(this.filename);
-        fs.writeFileSync(this.filename, this.body);
+        if (this.fileExists()) fs.unlinkSync(this.path);
+        fs.writeFileSync(this.path, this.body);
 
         // Set `birthtime` and `mtime` by making two changes to `mtime`. `atime`
         // (access time) is set to now.
         let now = new Date();
-        fs.utimesSync(this.filename, now, this.birthtime);
-        fs.utimesSync(this.filename, now, this.mtime);
+        fs.utimesSync(this.path, now, this.birthtime);
+        fs.utimesSync(this.path, now, this.mtime);
     }
 
     fileExists(): boolean {
-        return fs.existsSync(this.filename);
+        return fs.existsSync(this.path);
     }
 
     get id(): string {
@@ -213,7 +212,7 @@ class Post {
         ].join('-');
     }
 
-    get filename(): string {
+    get path(): string {
         if (this.time === undefined)
             return path.join(
                 'content',
@@ -233,7 +232,7 @@ class Post {
 
     get markdown(): string {
         return fs
-            .readFileSync(this.filename, { encoding: 'utf8' })
+            .readFileSync(this.path, { encoding: 'utf8' })
             .replace(/\n$/, '');
     }
 
