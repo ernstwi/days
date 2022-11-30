@@ -43,8 +43,7 @@ function readPosts(filter?: PostFilter, root?: string): Map<string, Post> {
 }
 
 function content(
-    filter?: PostFilter,
-    root?: string
+    filter?: PostFilter
 ): {
     years: Map<string, Year>;
     months: Map<string, Month>;
@@ -54,7 +53,7 @@ function content(
     let years = new Map<string, Year>();
     let months = new Map<string, Month>();
     let days = new Map<string, Day>();
-    let posts = readPosts(filter, root);
+    let posts = readPosts(filter);
 
     {
         // Prefill years with every year between the first and last in file system
