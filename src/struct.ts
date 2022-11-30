@@ -437,7 +437,7 @@ class Asset {
         return path.join('assets', this.filename);
     }
 
-    // Return an html tag for displaying file `filename`.
+    // Return an html tag for referencing Asset in post body
     get htmlTag() {
         let extension = path.extname(this.path).substring(1).toLowerCase();
         return this.#pugAsset({
