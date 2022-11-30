@@ -47,13 +47,6 @@ function readImessage(id: string): [Post[], Asset[]] {
     }
 
     return [[...posts.values()], [...assets.values()].flatMap(x => x)];
-
-    // TODO
-    // Everything after this should be same for iMessage and path
-    // 1. Check for collisions
-    // let postCollisions = posts.values().filter(p => p.fileExists());
-    // let assetCollisions = assets.values().filter(a => a.fileExists());
-    // 2. Report collisions, or do merge
 }
 
 // Run sqlite template `file` with `$ID` = `id`.
