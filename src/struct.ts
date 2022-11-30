@@ -176,7 +176,7 @@ class Post {
     }
 
     read(): void {
-        if (fs.existsSync(this.filename))
+        if (this.fileExists())
             this.body = fs.readFileSync(this.filename, 'utf8');
     }
 
@@ -186,7 +186,7 @@ class Post {
 
         // Delete and readd file if it exists. This is a hack so that we can
         // manipulate `birthtime` using `fs.utimesSync`.
-        if (fs.existsSync(this.filename)) fs.unlinkSync(this.filename);
+        if (this.fileExists()) fs.unlinkSync(this.filename);
         fs.writeFileSync(this.filename, this.body);
 
         // Set `birthtime` and `mtime` by making two changes to `mtime`. `atime`
@@ -194,6 +194,10 @@ class Post {
         let now = new Date();
         fs.utimesSync(this.filename, now, this.birthtime);
         fs.utimesSync(this.filename, now, this.mtime);
+    }
+
+    fileExists(): boolean {
+        return fs.existsSync(this.filename);
     }
 
     get id(): string {
