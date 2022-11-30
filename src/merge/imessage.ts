@@ -12,28 +12,11 @@ import { NameCollision } from '../error';
 
 let pugAsset = pug.compileFile(`${__dirname}/asset.pug`);
 
-function assetStr(filename: string) {
-    let extension = path.extname(filename).substring(1).toLowerCase();
-    return pugAsset({
-        extension: extension,
-        filename: filename
-    });
-}
-
 type csv = string[][];
+
 interface asset {
     src: string;
     dst: string;
-}
-
-function sqlite(id: string, file: string): csv {
-    let sql = fs
-        .readFileSync(path.join(__dirname, file), 'utf8')
-        .split('$ID')
-        .join(id);
-    return parse(
-        cp.execSync(`sqlite3 -csv ~/Library/Messages/chat.db`, { input: sql })
-    );
 }
 
 function mergeImessage(id: string, resolve: boolean) {
@@ -104,6 +87,26 @@ function mergeImessage(id: string, resolve: boolean) {
             if (!(err instanceof NameCollision)) throw err;
             console.error(`Name collision: ${err.message}`);
         }
+    });
+}
+
+// Run sqlite template `file` with `$ID` = `id`.
+function sqlite(id: string, file: string): csv {
+    let sql = fs
+        .readFileSync(path.join(__dirname, file), 'utf8')
+        .split('$ID')
+        .join(id);
+    return parse(
+        cp.execSync(`sqlite3 -csv ~/Library/Messages/chat.db`, { input: sql })
+    );
+}
+
+// Return an html tag for displaying file `filename`.
+function assetStr(filename: string) {
+    let extension = path.extname(filename).substring(1).toLowerCase();
+    return pugAsset({
+        extension: extension,
+        filename: filename
     });
 }
 
