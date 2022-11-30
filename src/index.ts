@@ -119,7 +119,7 @@ function cmd_new(argv: string[]): void {
         process.exit(1);
     }
 
-    post.write('');
+    post.write();
 
     if (options.noEdit) {
         console.log(post.path);

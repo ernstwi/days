@@ -160,9 +160,9 @@ function editSubmitHandler(): HandlerFunc {
         req.on('data', (chunk: Buffer) => chunks.push(chunk));
 
         req.on('end', () => {
-            let body = (qs.parse(Buffer.concat(chunks).toString())
+            post.body = (qs.parse(Buffer.concat(chunks).toString())
                 .message as string).replace(/\r/g, '');
-            post.write(body);
+            post.write();
             res.writeHead(301, { Location: post.url });
             res.end();
         });
