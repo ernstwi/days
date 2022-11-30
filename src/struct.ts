@@ -435,7 +435,12 @@ class Asset {
 
     // Copy from altPath to path
     write(): void {
-        fs.copyFileSync(this.altPath, this.path, fs.constants.COPYFILE_EXCL);
+        if (this.altPath !== undefined)
+            fs.copyFileSync(
+                this.altPath,
+                this.path,
+                fs.constants.COPYFILE_EXCL
+            );
     }
 
     get path(): string {
