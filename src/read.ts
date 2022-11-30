@@ -108,4 +108,4 @@ function filterDir(dir: string, filter: RegExp): string[] {
     return fs.readdirSync(dir).filter(f => filter.test(f));
 }
 
-export { content };
+export { content, readPosts };
