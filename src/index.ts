@@ -112,9 +112,9 @@ function cmd_new(argv: string[]): void {
         }
     }
 
-    if (fs.existsSync(post.filename)) {
+    if (fs.existsSync(post.path)) {
         console.error(
-            `\x1b[31mError\x1b[0m: \x1b[36m${post.filename}\x1b[0m already exists`
+            `\x1b[31mError\x1b[0m: \x1b[36m${post.path}\x1b[0m already exists`
         );
         process.exit(1);
     }
@@ -122,14 +122,14 @@ function cmd_new(argv: string[]): void {
     post.write('');
 
     if (options.noEdit) {
-        console.log(post.filename);
+        console.log(post.path);
         return;
     }
 
     let editor = process.env.EDITOR;
     if (editor === undefined || editor === '') editor = 'vi';
 
-    cp.spawn(editor, [post.filename], { stdio: 'inherit' }).on(
+    cp.spawn(editor, [post.path], { stdio: 'inherit' }).on(
         'error',
         (err: NodeJS.ErrnoException): void => {
             assert(err.code === 'ENOENT');
