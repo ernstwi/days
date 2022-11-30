@@ -6,6 +6,7 @@ import { Year, Month, Day, Post } from './struct';
 
 type PostFilter = (post: Post) => boolean;
 
+// Used in server + merge
 function readPosts(filter?: PostFilter, root?: string): Map<string, Post> {
     let res = new Map<string, Post>();
     let favorites = fs.existsSync('.fav')
@@ -42,6 +43,7 @@ function readPosts(filter?: PostFilter, root?: string): Map<string, Post> {
     return res;
 }
 
+// Used in server
 function content(
     filter?: PostFilter
 ): {
