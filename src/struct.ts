@@ -120,7 +120,6 @@ class Post {
     body: string;
     birthtime: Date;
     mtime: Date;
-    assets: string[];
 
     constructor(allday: boolean);
     constructor(allday: boolean, date: Date);
@@ -145,7 +144,6 @@ class Post {
         this.favorite = false;
         this.body = '';
         this.birthtime = this.mtime = new Date();
-        this.assets = [];
 
         if (typeof x === 'boolean') {
             let allday = x as boolean;
@@ -180,8 +178,6 @@ class Post {
     read() {
         if (fs.existsSync(this.filename))
             this.body = fs.readFileSync(this.filename, 'utf8');
-
-        // TODO: Populate this.assets using MarkdownIt.Parse
     }
 
     write() {
