@@ -1,5 +1,12 @@
 import { Post, Asset } from './struct';
 
+export default function merge(posts: Post[], assets: Asset[]): void {
+    if (checkCollisions(posts, assets)) return;
+
+    for (let p of posts) p.write();
+    for (let a of assets) a.write();
+}
+
 function checkCollisions(posts: Post[], assets: Asset[]): boolean {
     let postCollisions = posts.filter(p => p.fileExists());
     let assetCollisions = assets.filter(a => a.fileExists());
@@ -17,11 +24,4 @@ function checkCollisions(posts: Post[], assets: Asset[]): boolean {
         for (let a of assetCollisions) console.error(a.path);
     }
     return true;
-}
-
-export function merge(posts: Post[], assets: Asset[]): void {
-    if (checkCollisions(posts, assets)) return;
-
-    for (let p of posts) p.write();
-    for (let a of assets) a.write();
 }
