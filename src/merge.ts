@@ -1,9 +1,4 @@
-import assert = require('assert');
-import fs = require('fs');
-import path = require('path');
-
-import { NameCollision } from '../error';
-import { Post, Asset } from '../struct';
+import { Post, Asset } from './struct';
 
 function checkCollisions(posts: Post[], assets: Asset[]): boolean {
     let postCollisions = posts.filter(p => p.fileExists());
@@ -24,7 +19,7 @@ function checkCollisions(posts: Post[], assets: Asset[]): boolean {
     return true;
 }
 
-function merge(posts: Post[], assets: Asset[]): void {
+export function merge(posts: Post[], assets: Asset[]): void {
     if (checkCollisions(posts, assets)) return;
 
     for (let p of posts) p.write();
