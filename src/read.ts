@@ -22,7 +22,9 @@ type csv = string[][];
 // Read posts and assets from `root`.
 export function readPath(root: string): [Post[], Asset[]] {
     let posts = [...readPosts(root).values()];
-    let assets = readAssets(root).map(f => new Asset(f, path.join(root, f)));
+    let assets = readAssets(root).map(
+        f => new Asset(path.relative(path.join(root, 'assets'), f), f)
+    ); // TODO: Make this cleaner?
     return [posts, assets];
 }
 
