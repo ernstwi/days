@@ -18,7 +18,7 @@ suite('cli', function () {
         assertOutput(bin, [], 1, '', help);
     });
     test('undefined command', function () {
-        assertOutput(bin, [], 1, '', help);
+        assertOutput(bin, ['foo'], 1, '', help);
     });
     test('--help', function () {
         assertOutput(bin, ['--help'], 0, help, '');
