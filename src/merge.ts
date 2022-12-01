@@ -1,6 +1,11 @@
 import { Post, Asset } from './struct';
 
 export default function merge(posts: Post[], assets: Asset[]): void {
+    for (let p of posts) {
+        p.read();
+        p.root = '.';
+    }
+
     if (checkCollisions(posts, assets)) return;
 
     for (let p of posts) p.write();
