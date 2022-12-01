@@ -179,7 +179,11 @@ class Post {
     }
 
     read(): void {
-        if (this.fileExists()) this.body = fs.readFileSync(this.path, 'utf8');
+        if (!this.fileExists()) return;
+        let stat = fs.statSync(this.path);
+        this.birthtime = stat.birthtime;
+        this.mtime = stat.mtime;
+        this.body = fs.readFileSync(this.path, 'utf8');
     }
 
     write(): void {
