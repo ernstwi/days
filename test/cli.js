@@ -1,7 +1,7 @@
 // Functional tests: Misc argument parsing and `--help`, `--version`
-let assert = require('assert');
-let cp = require('child_process');
 let path = require('path');
+
+let { assertOutput } = require('./helpers');
 
 let bin = path.join(__dirname, '../build/index.js');
 
@@ -33,10 +33,3 @@ suite('cli', function () {
         assertOutput(bin, ['-v'], 0, version, '');
     });
 });
-
-function assertOutput(cmd, args, status, stdout, stderr) {
-    let out = cp.spawnSync(cmd, args);
-    assert.strictEqual(out.status, status);
-    assert.strictEqual(out.stdout.toString(), stdout);
-    assert.strictEqual(out.stderr.toString(), stderr);
-}
