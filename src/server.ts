@@ -10,7 +10,7 @@ import serveStatic = require('serve-static');
 import './extensions';
 import { Route, router, HandlerFunc } from './router';
 import { Month, Post } from './struct';
-import { content } from './read';
+import { readPostsStructured } from './read';
 import { templateDir, staticDir, assetDir } from './constants';
 
 class Server {
@@ -75,7 +75,7 @@ function startHandler(
     theme: string
 ): HandlerFunc {
     return function (_req, res) {
-        let { years } = content();
+        let { years } = readPostsStructured();
         res.end(
             template({
                 title: title,
@@ -93,7 +93,7 @@ function monthHandler(
 ): HandlerFunc {
     return function (this: Route, req, res) {
         let [year, month] = this.captureGroups(req.url as string);
-        let { years, months } = content();
+        let { years, months } = readPostsStructured();
         let emptyMonth = new Month(year, month);
         res.end(
             template({
@@ -115,7 +115,7 @@ function postHandler(
         let [year, month, day, , hour, min, sec] = this.captureGroups(
             req.url as string
         );
-        let { years, months, posts } = content();
+        let { years, months, posts } = readPostsStructured();
         res.end(
             template({
                 title: title,
@@ -136,8 +136,8 @@ function favoritesHandler(
     theme: string
 ): HandlerFunc {
     return function (this: Route, _req, res) {
-        let { years } = content();
-        let { days } = content(p => p.favorite);
+        let { years } = readPostsStructured();
+        let { days } = readPostsStructured(p => p.favorite);
         res.end(
             template({
                 title: title,
