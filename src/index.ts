@@ -6,10 +6,10 @@ import fs = require('fs');
 
 import './extensions';
 import Server from './server';
-import mergeImessage from './merge/imessage';
-import mergePath from './merge/path';
 import prune from './prune';
 import { Post } from './struct';
+import { readPath, readImessage } from './read';
+import merge from './merge';
 
 const binname = 'days';
 
@@ -184,8 +184,8 @@ function cmd_merge(argv: string[]): void {
         }
     }
     if (pathOrId === '') usage(true);
-    if (imessage) mergeImessage(pathOrId, resolve);
-    else mergePath(pathOrId, resolve);
+    if (imessage) merge(...readImessage(pathOrId));
+    else merge(...readPath(pathOrId));
 }
 
 function cmd_prune(): void {
