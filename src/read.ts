@@ -156,7 +156,7 @@ function readPosts(root = '.', filter?: PostFilter): Map<string, Post> {
 }
 
 // Read assets from `root`.
-function readAssets(root: string) {
+function readAssets(root: string): string[] {
     return readdirRecursive(path.join(root, 'assets'));
 }
 
