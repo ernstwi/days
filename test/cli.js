@@ -8,7 +8,7 @@ let bin = path.join(__dirname, '../build/index.js');
 let help = `Usage:
   days new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
   days server [--port <number>] [--theme <name>]
-  days merge [--resolve] (<path> | --imessage <ID>)
+  days merge (<path> | --imessage <ID>)
   days prune\n`;
 
 let version = `days ${require('../package.json').version}\n`;
