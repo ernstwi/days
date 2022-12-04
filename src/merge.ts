@@ -6,7 +6,8 @@ export default function merge(posts: Post[], assets: Asset[]): void {
         p.root = '.';
     }
 
-    if (checkCollisions(posts, assets)) return;
+    // TODO: Return collision report or empty string instead
+    if (checkCollisions(posts, assets)) process.exit(1);
 
     for (let p of posts) p.write();
     for (let a of assets) a.write();
