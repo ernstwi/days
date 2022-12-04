@@ -121,7 +121,9 @@ class Post {
     body: string;
     birthtime: Date;
     mtime: Date;
-    root: string; // TODO: Set via options in constructor
+    root: string;
+
+    // TODO: Set via options in constructor: root, birthtime, mtime
 
     constructor(allday: boolean);
     constructor(allday: boolean, date: Date);
