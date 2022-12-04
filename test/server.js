@@ -75,10 +75,10 @@ suite('server', function () {
                     .innerText;
             });
 
-            assert(text === 'Hello, world!');
-            assert(
-                fs.readFileSync('content/2020/01/01/12-00-00.md', 'utf8') ===
-                    'Hello, world!\n'
+            assert.strictEqual(text, 'Hello, world!');
+            assert.strictEqual(
+                fs.readFileSync('content/2020/01/01/12-00-00.md', 'utf8'),
+                'Hello, world!\n'
             );
         });
     });
