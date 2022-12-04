@@ -175,6 +175,7 @@ function getOrMake<T extends Identifiable>(map: Map<string, T>, elem: T): T {
 
 // Return all filenames in dir matching filter.
 function filterDir(dir: string, filter: RegExp): string[] {
+    if (!fs.existsSync(dir)) return [];
     return fs.readdirSync(dir).filter(f => filter.test(f));
 }
 
@@ -192,6 +193,7 @@ function sqlite(id: string, file: string): csv {
 // Read a directory recursively and return all files in a flat array.
 function readdirRecursive(root: string): string[] {
     let res = [];
+    if (!fs.existsSync(root)) return [];
     let list = fs.readdirSync(root);
     for (let file of list) {
         // Ignore dotfiles
