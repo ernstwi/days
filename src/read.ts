@@ -34,11 +34,11 @@ export function readImessage(id: string): [Post[], Asset[]] {
     let posts: Map<string, Post> = new Map();
     let assets: Map<string, Asset[]> = new Map();
 
-    sqlite(id, 'time.sql').forEach(([id, time]) => {
         posts.set(id, new Post(false, new Date(Number(time) * 1000)));
+    sqlite(id, 'sql/time.sql').forEach(([id, time]) => {
     });
 
-    sqlite(id, 'text.sql').forEach(([id, text]) => {
+    sqlite(id, 'sql/text.sql').forEach(([id, text]) => {
         // HACK: Remove U+FFFC (object replacement character) which is sometimes
         // mysteriously present
         text = text.replace(/￼/g, '');
@@ -48,7 +48,7 @@ export function readImessage(id: string): [Post[], Asset[]] {
         (posts.get(id) as Post).body = text; // Works because map stores Post by reference
     });
 
-    sqlite(id, 'asset.sql').forEach(([id, file]) => {
+    sqlite(id, 'sql/asset.sql').forEach(([id, file]) => {
         file = file.replace(/^~/, os.homedir()); // Absoulte path of asset
         if (!assets.has(id)) assets.set(id, []);
         (assets.get(id) as Asset[]).push(new Asset(path.basename(file), file));
