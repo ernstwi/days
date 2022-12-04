@@ -34,8 +34,11 @@ export function readImessage(id: string): [Post[], Asset[]] {
     let posts: Map<string, Post> = new Map();
     let assets: Map<string, Asset[]> = new Map();
 
-        posts.set(id, new Post(false, new Date(Number(time) * 1000)));
     sqlite(id, 'sql/time.sql').forEach(([id, time]) => {
+        let date = new Date(Number(time) * 1000);
+        let post = new Post(false, date);
+        post.birthtime = post.mtime = date;
+        posts.set(id, post);
     });
 
     sqlite(id, 'sql/text.sql').forEach(([id, text]) => {
