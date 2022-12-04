@@ -1,33 +1,34 @@
 import { Post, Asset } from './struct';
 
-export default function merge(posts: Post[], assets: Asset[]): void {
+export default function merge(posts: Post[], assets: Asset[]): string {
     for (let p of posts) {
         p.read();
         p.root = '.';
     }
 
-    // TODO: Return collision report or empty string instead
-    if (checkCollisions(posts, assets)) process.exit(1);
+    let collisions = checkCollisions(posts, assets);
+    if (collisions !== '') return collisions;
 
     for (let p of posts) p.write();
     for (let a of assets) a.write();
+    return '';
 }
 
-function checkCollisions(posts: Post[], assets: Asset[]): boolean {
+function checkCollisions(posts: Post[], assets: Asset[]): string {
     let postCollisions = posts.filter(p => p.fileExists());
     let assetCollisions = assets.filter(a => a.fileExists());
 
-    if (postCollisions.length === 0 && assetCollisions.length === 0)
-        return false;
+    if (postCollisions.length === 0 && assetCollisions.length === 0) return '';
 
-    console.error('Collisions detected, merge aborted');
+    let res = [];
+    res.push('Collisions detected, merge aborted');
     if (postCollisions.length > 0) {
-        console.error('Posts:');
-        for (let p of postCollisions) console.error(p.path);
+        res.push('Posts:');
+        for (let p of postCollisions) res.push(p.path);
     }
     if (assetCollisions.length > 0) {
-        console.error('Assets:');
-        for (let a of assetCollisions) console.error(a.path);
+        res.push('Assets:');
+        for (let a of assetCollisions) res.push(a.path);
     }
-    return true;
+    return res.join('\n');
 }

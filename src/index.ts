@@ -7,7 +7,7 @@ import fs = require('fs');
 import './extensions';
 import Server from './server';
 import prune from './prune';
-import { Post } from './struct';
+import { Post, Asset } from './struct';
 import { readPath, readImessage } from './read';
 import merge from './merge';
 
@@ -184,8 +184,15 @@ function cmd_merge(argv: string[]): void {
         }
     }
     if (pathOrId === '') usage(true);
-    if (imessage) merge(...readImessage(pathOrId));
-    else merge(...readPath(pathOrId));
+
+    let content: [Post[], Asset[]] = imessage
+        ? readImessage(pathOrId)
+        : readPath(pathOrId);
+    let collisions = merge(...content);
+    if (collisions !== '') {
+        console.error(collisions);
+        process.exit(1);
+    }
 }
 
 function cmd_prune(): void {
