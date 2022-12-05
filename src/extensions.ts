@@ -14,6 +14,7 @@ declare global {
     }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 Number.prototype.zeropad = function (width) {
     let res = this.toString();
     return res.length >= width
@@ -21,10 +22,12 @@ Number.prototype.zeropad = function (width) {
         : new Array(width - res.length + 1).join('0') + res;
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 Array.prototype.last = function () {
     return this[this.length - 1];
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 String.prototype.lines = function () {
     let res = this.split('\n');
 

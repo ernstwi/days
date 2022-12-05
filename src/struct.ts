@@ -455,7 +455,7 @@ class Asset {
     }
 
     // Return an html tag for referencing Asset in post body
-    get htmlTag() {
+    get htmlTag(): string {
         let extension = path.extname(this.path).substring(1).toLowerCase();
         return this.#pugAsset({
             extension: extension,

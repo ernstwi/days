@@ -1,7 +1,7 @@
 import assert = require('assert');
 import fs = require('fs');
 
-function prune(dir: string) {
+function prune(dir: string): boolean {
     let empty = true;
     fs.readdirSync(dir)
         .filter(file => file !== '.DS_Store')
