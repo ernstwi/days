@@ -6,9 +6,9 @@ let path = require('path');
 
 let puppeteer = require('puppeteer');
 
-let Server = require('../build/server').default;
+let Server = require('../../build/server').default;
 
-let bin = path.join(__dirname, '../build/index.js');
+let bin = path.join(__dirname, '../../build/index.js');
 let tmpDir = path.join(__dirname, 'test_data');
 
 suite('server', function () {

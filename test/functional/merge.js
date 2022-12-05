@@ -6,9 +6,9 @@ let path = require('path');
 
 let dateformat = require('dateformat');
 
-let { assertOutput } = require('./helpers');
+let { assertOutput } = require('../helpers');
 
-let bin = path.join(__dirname, '../build/index.js');
+let bin = path.join(__dirname, '../../build/index.js');
 let tmpDir = path.join(__dirname, 'test_data');
 
 // TODO: Check entire tree, i.e. make sure no other files are added.
@@ -182,7 +182,7 @@ suite('merge', function () {
         suite('no conflict', function () {
             test('should set created and modified date on merged posts', function () {
                 cp.execSync(
-                    `osascript ../send-imessage.applescript "${process.env.DAYS_TEST_IMESSAGE}" "Test message"`
+                    `osascript ../../send-imessage.applescript "${process.env.DAYS_TEST_IMESSAGE}" "Test message"`
                 );
                 cp.execSync(
                     `${bin} merge --imessage "${process.env.DAYS_TEST_IMESSAGE}"`

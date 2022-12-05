@@ -4,7 +4,7 @@ let cp = require('child_process');
 let fs = require('fs');
 let path = require('path');
 
-let bin = path.join(__dirname, '../build/index.js');
+let bin = path.join(__dirname, '../../build/index.js');
 let tmpDir = path.join(__dirname, 'test_data');
 
 suite('new', function () {
