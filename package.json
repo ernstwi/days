@@ -42,7 +42,7 @@
         "typescript": "^4.1.5"
     },
     "scripts": {
-        "prepack": "./prepack",
+        "prepack": "./run-build",
         "start": "build/index.js",
         "test": "./run-tests",
         "format": "prettier --write .",

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-./prepack
+./run-build
 npx mocha --recursive
 if [[ -z "$DAYS_TEST_IMESSAGE" ]]; then
     cat << EOF
