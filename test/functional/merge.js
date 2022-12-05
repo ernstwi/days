@@ -8,7 +8,7 @@ let dateformat = require('dateformat');
 
 let { assertOutput } = require('../helpers');
 
-let bin = path.join(__dirname, '../../build/index.js');
+let bin = path.join(__dirname, '../../build/src/index.js');
 let tmpDir = path.join(__dirname, 'test_data');
 
 // TODO: Check entire tree, i.e. make sure no other files are added.

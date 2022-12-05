@@ -11,6 +11,8 @@ import { Post, Asset } from './struct';
 import { readPath, readImessage } from './read';
 import merge from './merge';
 
+import package_json from '../package.json';
+
 const binname = 'days';
 
 let config = {
@@ -60,7 +62,7 @@ function cmd_help(): void {
 }
 
 function cmd_version(): void {
-    console.log(`${binname} ${require('../package.json').version}`);
+    console.log(`${binname} ${package_json.version}`);
 }
 
 function cmd_new(argv: string[]): void {

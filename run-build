@@ -2,7 +2,10 @@
 
 shopt -s globstar
 rm -rf build
-cp -R src build
+mkdir build
+cp -R src build/src
 rm build/**/*.ts
+cp -R static build/static
+cp -R templates build/templates
 npx tsc
-chmod +x build/index.js
+chmod +x build/src/index.js

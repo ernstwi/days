@@ -6,12 +6,10 @@
     "license": "MIT",
     "repository": "github:ernstwi/days",
     "bin": {
-        "days": "build/index.js"
+        "days": "build/src/index.js"
     },
     "files": [
-        "/build",
-        "/static",
-        "/templates"
+        "/build"
     ],
     "prettier": {
         "tabWidth": 4,
@@ -43,7 +41,7 @@
     },
     "scripts": {
         "prepack": "./run-build",
-        "start": "build/index.js",
+        "start": "build/src/index.js",
         "test": "./run-tests",
         "format": "prettier --write .",
         "lint": "eslint src --ext .ts"

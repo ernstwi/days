@@ -3,7 +3,7 @@ let path = require('path');
 
 let { assertOutput } = require('../helpers');
 
-let bin = path.join(__dirname, '../../build/index.js');
+let bin = path.join(__dirname, '../../build/src/index.js');
 
 let help = `Usage:
   days new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
