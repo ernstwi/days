@@ -1,4 +1,4 @@
-export {};
+export {}; // To mark this as a module
 
 declare global {
     interface Number {

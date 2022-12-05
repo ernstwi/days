@@ -1,11 +1,11 @@
 import http = require('http');
 
-type HandlerFunc = (
+export type HandlerFunc = (
     req: http.IncomingMessage,
     res: http.ServerResponse
 ) => void;
 
-class Route {
+export class Route {
     regexp: RegExp;
     handler: HandlerFunc;
 
@@ -21,7 +21,7 @@ class Route {
     }
 }
 
-function router(routes: Route[]): http.RequestListener {
+export function router(routes: Route[]): http.RequestListener {
     return (req: http.IncomingMessage, res: http.ServerResponse) => {
         for (let r of routes) {
             if (r.regexp.test(req.url as string)) {
@@ -32,5 +32,3 @@ function router(routes: Route[]): http.RequestListener {
         res.end('invalid url');
     };
 }
-
-export { HandlerFunc, Route, router };

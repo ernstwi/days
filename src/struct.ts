@@ -18,7 +18,7 @@ import { markdownOptions } from './constants';
 
 const markdown = markdownIt(markdownOptions);
 
-class Year {
+export class Year {
     private date: PlainDate;
     months: Month[];
 
@@ -48,7 +48,7 @@ class Year {
     }
 }
 
-class Month {
+export class Month {
     private date: PlainDate;
     days: Day[];
 
@@ -77,7 +77,7 @@ class Month {
     }
 }
 
-class Day {
+export class Day {
     private date: PlainDate;
     timedPosts: Post[];
     alldayPost?: Post;
@@ -113,7 +113,7 @@ class Day {
     }
 }
 
-class Post {
+export class Post {
     date: PlainDate;
     displayDate: PlainDate;
     time?: Time;
@@ -283,6 +283,50 @@ class Post {
     }
 }
 
+// Light wrapper around asset files, to mirror file API of Post
+export class Asset {
+    // Path relative to `assets`
+    filename: string;
+
+    // Absolute path somewhere else on the system, used when this Asset is to be merged
+    #altPath?: string;
+
+    #pugAsset: any; // TODO: Pug types
+
+    constructor(filename: string, altPath?: string) {
+        this.filename = filename;
+        this.#altPath = altPath;
+
+        this.#pugAsset = pug.compileFile(`${__dirname}/asset.pug`);
+    }
+
+    fileExists(): boolean {
+        return fs.existsSync(this.path);
+    }
+
+    // Copy from altPath to path
+    write(): void {
+        if (this.#altPath === undefined) return;
+        fs.mkdirSync('assets', { recursive: true });
+        fs.copyFileSync(this.#altPath, this.path, fs.constants.COPYFILE_EXCL);
+    }
+
+    get path(): string {
+        return path.join('assets', this.filename);
+    }
+
+    // Return an html tag for referencing Asset in post body
+    get htmlTag(): string {
+        let extension = path.extname(this.path).substring(1).toLowerCase();
+        return this.#pugAsset({
+            extension: extension,
+            path: this.path
+        });
+    }
+}
+
+// ---- Helpers ----------------------------------------------------------------
+
 // Simple date representation without a time element
 class PlainDate {
     year: string;
@@ -421,47 +465,3 @@ class Time {
         return [this.hour, this.min].join(':');
     }
 }
-
-// Light wrapper around asset files, to mirror file API of Post
-class Asset {
-    // Path relative to `assets`
-    filename: string;
-
-    // Absolute path somewhere else on the system, used when this Asset is to be merged
-    #altPath?: string;
-
-    #pugAsset: any; // TODO: Pug types
-
-    constructor(filename: string, altPath?: string) {
-        this.filename = filename;
-        this.#altPath = altPath;
-
-        this.#pugAsset = pug.compileFile(`${__dirname}/asset.pug`);
-    }
-
-    fileExists(): boolean {
-        return fs.existsSync(this.path);
-    }
-
-    // Copy from altPath to path
-    write(): void {
-        if (this.#altPath === undefined) return;
-        fs.mkdirSync('assets', { recursive: true });
-        fs.copyFileSync(this.#altPath, this.path, fs.constants.COPYFILE_EXCL);
-    }
-
-    get path(): string {
-        return path.join('assets', this.filename);
-    }
-
-    // Return an html tag for referencing Asset in post body
-    get htmlTag(): string {
-        let extension = path.extname(this.path).substring(1).toLowerCase();
-        return this.#pugAsset({
-            extension: extension,
-            path: this.path
-        });
-    }
-}
-
-export { Year, Month, Day, Post, Asset };

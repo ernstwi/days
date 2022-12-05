@@ -13,7 +13,7 @@ import { Month, Post } from './struct';
 import { readPostsStructured } from './read';
 import { templateDir, staticDir, assetDir } from './constants';
 
-class Server {
+export default class Server {
     #server: http.Server;
 
     constructor(title: string, theme: string) {
@@ -205,5 +205,3 @@ function assetHandler(
         server(req, res, () => res.end('File not found'));
     };
 }
-
-export default Server;

@@ -1,7 +1,7 @@
 import assert = require('assert');
 import fs = require('fs');
 
-function prune(dir: string): boolean {
+export default function prune(dir: string): boolean {
     let empty = true;
     fs.readdirSync(dir)
         .filter(file => file !== '.DS_Store')
@@ -21,5 +21,3 @@ function prune(dir: string): boolean {
     }
     return empty;
 }
-
-export default prune;
