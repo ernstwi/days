@@ -6,10 +6,10 @@ let path = require('path');
 
 let dateformat = require('dateformat');
 
+let { assertOutput } = require('./helpers');
+
 let bin = path.join(__dirname, '../build/index.js');
 let tmpDir = path.join(__dirname, 'test_data');
-
-let mergePath = require(path.join(__dirname, '../build/merge/path')).default;
 
 // TODO: Check entire tree, i.e. make sure no other files are added.
 
@@ -69,20 +69,25 @@ suite('merge', function () {
             test('should set created and modified date on merged posts', function () {
                 cp.execSync(`${bin} merge ../source`);
                 let stat = fs.statSync('content/1992/07/15/00-00-00.md');
-                assert(
-                    stat.birthtime.getTime() ===
-                        new Date(1992, 07, 15).getTime()
+                assert.strictEqual(
+                    stat.birthtime.getTime(),
+                    new Date(1992, 07, 15).getTime()
                 );
-                assert(
-                    stat.mtime.getTime() === new Date(1992, 07, 16).getTime()
+                assert.strictEqual(
+                    stat.mtime.getTime(),
+                    new Date(1992, 07, 16).getTime()
                 );
             });
 
             test('no asset dir', function () {
                 cp.execSync(`rm -r ${path.join(tmpDir, 'source', 'assets')}`);
-                assert.doesNotThrow(() => {
-                    mergePath(path.join(tmpDir, 'source'), false);
-                });
+                assertOutput(
+                    bin,
+                    ['merge', path.join(tmpDir, 'source')],
+                    0,
+                    '',
+                    ''
+                );
                 assert(
                     fs.readFileSync(
                         'content/1992/07/15/00-00-00.md',
@@ -93,9 +98,13 @@ suite('merge', function () {
 
             test('no content dir', function () {
                 cp.execSync(`rm -r ${path.join(tmpDir, 'source', 'content')}`);
-                assert.doesNotThrow(() => {
-                    mergePath(path.join(tmpDir, 'source'), false);
-                });
+                assertOutput(
+                    bin,
+                    ['merge', path.join(tmpDir, 'source')],
+                    0,
+                    '',
+                    ''
+                );
                 assert(
                     fs.readFileSync('assets/image.png', 'utf8') ===
                         'image data in source dir\n'
@@ -105,9 +114,13 @@ suite('merge', function () {
             test('no asset or content dir', function () {
                 cp.execSync(`rm -r ${path.join(tmpDir, 'source', 'assets')}`);
                 cp.execSync(`rm -r ${path.join(tmpDir, 'source', 'content')}`);
-                assert.doesNotThrow(() => {
-                    mergePath(path.join(tmpDir, 'source'), false);
-                });
+                assertOutput(
+                    bin,
+                    ['merge', path.join(tmpDir, 'source')],
+                    0,
+                    '',
+                    ''
+                );
             });
         });
 
@@ -116,7 +129,13 @@ suite('merge', function () {
                 cp.execSync(
                     `echo "new content in target dir" > $(${bin} new --no-edit 1992 07 15 00 00 00)`
                 );
-                cp.execSync(`${bin} merge ../source`, { stdio: 'ignore' });
+                assertOutput(
+                    bin,
+                    ['merge', path.join(tmpDir, 'source')],
+                    1,
+                    '',
+                    'Collisions detected, merge aborted\nPosts:\ncontent/1992/07/15/00-00-00.md\n'
+                );
                 assert(
                     fs.readFileSync(
                         'content/1992/07/15/00-00-00.md',
@@ -134,38 +153,18 @@ suite('merge', function () {
                 );
             });
 
-            suite('no --resolve', function () {
-                test('should ignore the colliding merged asset', function () {
-                    cp.execSync(`${bin} merge ../source`, {
-                        stdio: 'ignore'
-                    });
-                    assert(
-                        fs.readFileSync('assets/image.png', 'utf8') ===
-                            'image data in target dir\n'
-                    );
-                });
-            });
-
-            suite('--resolve', function () {
-                test('should rename the colliding merged asset', function () {
-                    cp.execSync(`${bin} merge --resolve ../source`, {
-                        stdio: 'ignore'
-                    });
-                    assert(
-                        fs.readFileSync('assets/image.png', 'utf8') ===
-                            'image data in target dir\n'
-                    );
-                    assert(
-                        fs.readFileSync('assets/image-0.png', 'utf8') ===
-                            'image data in source dir\n'
-                    );
-                    assert(
-                        fs.readFileSync(
-                            'content/1992/07/15/00-00-00.md',
-                            'utf8'
-                        ) === 'a reference to /image-0.png\n'
-                    );
-                });
+            test('should not overwrite an existing asset', function () {
+                assertOutput(
+                    bin,
+                    ['merge', path.join(tmpDir, 'source')],
+                    1,
+                    '',
+                    'Collisions detected, merge aborted\nAssets:\nassets/image.png\n'
+                );
+                assert(
+                    fs.readFileSync('assets/image.png', 'utf8') ===
+                        'image data in target dir\n'
+                );
             });
         });
     });
@@ -195,8 +194,11 @@ suite('merge', function () {
                 sec = sec.substring(0, 2);
                 postDate.setHours(hr, min, sec, 0);
                 let stat = fs.statSync(path.join(dir, post));
-                assert(stat.birthtime.getTime() === postDate.getTime());
-                assert(stat.mtime.getTime() === postDate.getTime());
+                assert.strictEqual(
+                    stat.birthtime.getTime(),
+                    postDate.getTime()
+                );
+                assert.strictEqual(stat.mtime.getTime(), postDate.getTime());
                 let text = fs.readFileSync(path.join(dir, post), 'utf8');
                 assert.strictEqual(text, 'Test message\n');
             });

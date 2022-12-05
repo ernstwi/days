@@ -11,6 +11,7 @@ import path = require('path');
 import fs = require('fs');
 
 import markdownIt = require('markdown-it');
+import pug = require('pug');
 
 import './extensions';
 import { markdownOptions } from './constants';
@@ -117,6 +118,12 @@ class Post {
     displayDate: PlainDate;
     time?: Time;
     favorite: boolean;
+    body: string;
+    birthtime: Date;
+    mtime: Date;
+    root: string;
+
+    // TODO: Set via options in constructor: root, birthtime, mtime
 
     constructor(allday: boolean);
     constructor(allday: boolean, date: Date);
@@ -139,6 +146,9 @@ class Post {
     ) {
         // TODO: Refactor for clarity
         this.favorite = false;
+        this.body = '';
+        this.birthtime = this.mtime = new Date();
+        this.root = '.';
 
         if (typeof x === 'boolean') {
             let allday = x as boolean;
@@ -170,9 +180,32 @@ class Post {
         }
     }
 
-    write(body: string) {
-        fs.mkdirSync(path.dirname(this.filename), { recursive: true });
-        fs.writeFileSync(this.filename, body + '\n');
+    read(): void {
+        if (!this.fileExists()) return;
+        let stat = fs.statSync(this.path);
+        this.birthtime = stat.birthtime;
+        this.mtime = stat.mtime;
+        this.body = fs.readFileSync(this.path, 'utf8');
+    }
+
+    write(): void {
+        // Make directory if it doesn't exist
+        fs.mkdirSync(path.dirname(this.path), { recursive: true });
+
+        // Delete and readd file if it exists. This is a hack so that we can
+        // manipulate `birthtime` using `fs.utimesSync`.
+        if (this.fileExists()) fs.unlinkSync(this.path);
+        fs.writeFileSync(this.path, this.body);
+
+        // Set `birthtime` and `mtime` by making two changes to `mtime`. `atime`
+        // (access time) is set to now.
+        let now = new Date();
+        fs.utimesSync(this.path, now, this.birthtime);
+        fs.utimesSync(this.path, now, this.mtime);
+    }
+
+    fileExists(): boolean {
+        return fs.existsSync(this.path);
     }
 
     get id(): string {
@@ -188,9 +221,10 @@ class Post {
         ].join('-');
     }
 
-    get filename(): string {
+    get path(): string {
         if (this.time === undefined)
             return path.join(
+                this.root,
                 'content',
                 this.date.year,
                 this.date.month,
@@ -198,6 +232,7 @@ class Post {
                 'allday.md'
             );
         return path.join(
+            this.root,
             'content',
             this.date.year,
             this.date.month,
@@ -208,7 +243,7 @@ class Post {
 
     get markdown(): string {
         return fs
-            .readFileSync(this.filename, { encoding: 'utf8' })
+            .readFileSync(this.path, { encoding: 'utf8' })
             .replace(/\n$/, '');
     }
 
@@ -387,4 +422,46 @@ class Time {
     }
 }
 
-export { Year, Month, Day, Post };
+// Light wrapper around asset files, to mirror file API of Post
+class Asset {
+    // Path relative to `assets`
+    filename: string;
+
+    // Absolute path somewhere else on the system, used when this Asset is to be merged
+    #altPath?: string;
+
+    #pugAsset: any; // TODO: Pug types
+
+    constructor(filename: string, altPath?: string) {
+        this.filename = filename;
+        this.#altPath = altPath;
+
+        this.#pugAsset = pug.compileFile(`${__dirname}/asset.pug`);
+    }
+
+    fileExists(): boolean {
+        return fs.existsSync(this.path);
+    }
+
+    // Copy from altPath to path
+    write(): void {
+        if (this.#altPath === undefined) return;
+        fs.mkdirSync('assets', { recursive: true });
+        fs.copyFileSync(this.#altPath, this.path, fs.constants.COPYFILE_EXCL);
+    }
+
+    get path(): string {
+        return path.join('assets', this.filename);
+    }
+
+    // Return an html tag for referencing Asset in post body
+    get htmlTag() {
+        let extension = path.extname(this.path).substring(1).toLowerCase();
+        return this.#pugAsset({
+            extension: extension,
+            path: this.path
+        });
+    }
+}
+
+export { Year, Month, Day, Post, Asset };

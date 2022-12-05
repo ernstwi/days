@@ -6,10 +6,10 @@ import fs = require('fs');
 
 import './extensions';
 import Server from './server';
-import mergeImessage from './merge/imessage';
-import mergePath from './merge/path';
 import prune from './prune';
-import { Post } from './struct';
+import { Post, Asset } from './struct';
+import { readPath, readImessage } from './read';
+import merge from './merge';
 
 const binname = 'days';
 
@@ -112,24 +112,24 @@ function cmd_new(argv: string[]): void {
         }
     }
 
-    if (fs.existsSync(post.filename)) {
+    if (fs.existsSync(post.path)) {
         console.error(
-            `\x1b[31mError\x1b[0m: \x1b[36m${post.filename}\x1b[0m already exists`
+            `\x1b[31mError\x1b[0m: \x1b[36m${post.path}\x1b[0m already exists`
         );
         process.exit(1);
     }
 
-    post.write('');
+    post.write();
 
     if (options.noEdit) {
-        console.log(post.filename);
+        console.log(post.path);
         return;
     }
 
     let editor = process.env.EDITOR;
     if (editor === undefined || editor === '') editor = 'vi';
 
-    cp.spawn(editor, [post.filename], { stdio: 'inherit' }).on(
+    cp.spawn(editor, [post.path], { stdio: 'inherit' }).on(
         'error',
         (err: NodeJS.ErrnoException): void => {
             assert(err.code === 'ENOENT');
@@ -171,14 +171,10 @@ function cmd_server(argv: string[]): void {
 }
 
 function cmd_merge(argv: string[]): void {
-    let resolve = false,
-        imessage = false,
+    let imessage = false,
         pathOrId = '';
     for (let a of argv) {
         switch (a) {
-            case '--resolve':
-                resolve = true;
-                break;
             case '--imessage':
                 imessage = true;
                 break;
@@ -188,8 +184,15 @@ function cmd_merge(argv: string[]): void {
         }
     }
     if (pathOrId === '') usage(true);
-    if (imessage) mergeImessage(pathOrId, resolve);
-    else mergePath(pathOrId, resolve);
+
+    let content: [Post[], Asset[]] = imessage
+        ? readImessage(pathOrId)
+        : readPath(pathOrId);
+    let collisions = merge(...content);
+    if (collisions !== '') {
+        console.error(collisions);
+        process.exit(1);
+    }
 }
 
 function cmd_prune(): void {
@@ -200,7 +203,7 @@ function usage(error: boolean): void {
     let msg = `Usage:
   ${binname} new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
   ${binname} server [--port <number>] [--theme <name>]
-  ${binname} merge [--resolve] (<path> | --imessage <ID>)
+  ${binname} merge (<path> | --imessage <ID>)
   ${binname} prune`;
 
     if (error) {

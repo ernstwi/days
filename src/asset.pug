@@ -3,12 +3,12 @@ case extension
     when 'jpeg'
     when 'jpg'
     when 'png'
-      img(src=`/${filename}`)
+      img(src=`/${path}`)
     when 'amr'
     when 'mp3'
-        audio(src=`/${filename}`)
+        audio(src=`/${path}`)
     when 'mov'
     when 'mp4'
-        video(src=`/${filename}`)
+        video(src=`/${path}`)
     default
         | UNKNOWN FORMAT

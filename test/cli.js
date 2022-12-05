@@ -1,14 +1,14 @@
 // Functional tests: Misc argument parsing and `--help`, `--version`
-let assert = require('assert');
-let cp = require('child_process');
 let path = require('path');
+
+let { assertOutput } = require('./helpers');
 
 let bin = path.join(__dirname, '../build/index.js');
 
 let help = `Usage:
   days new [--no-edit] [--allday] [<year> <month> <day> [<hour> [<minute> [<second>]]]]
   days server [--port <number>] [--theme <name>]
-  days merge [--resolve] (<path> | --imessage <ID>)
+  days merge (<path> | --imessage <ID>)
   days prune\n`;
 
 let version = `days ${require('../package.json').version}\n`;
@@ -18,7 +18,7 @@ suite('cli', function () {
         assertOutput(bin, [], 1, '', help);
     });
     test('undefined command', function () {
-        assertOutput(bin, [], 1, '', help);
+        assertOutput(bin, ['foo'], 1, '', help);
     });
     test('--help', function () {
         assertOutput(bin, ['--help'], 0, help, '');
@@ -33,10 +33,3 @@ suite('cli', function () {
         assertOutput(bin, ['-v'], 0, version, '');
     });
 });
-
-function assertOutput(cmd, args, status, stdout, stderr) {
-    let out = cp.spawnSync(cmd, args);
-    assert.strictEqual(out.status, status);
-    assert.strictEqual(out.stdout.toString(), stdout);
-    assert.strictEqual(out.stderr.toString(), stderr);
-}
