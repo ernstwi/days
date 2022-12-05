@@ -41,7 +41,6 @@
     },
     "scripts": {
         "prepack": "./run-build",
-        "start": "build/src/index.js",
         "test": "./run-tests",
         "format": "prettier --write .",
         "lint": "eslint src --ext .ts"
