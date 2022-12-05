@@ -29,19 +29,19 @@ export function readPath(root: string): [Post[], Asset[]] {
 }
 
 // Read posts and assets from iMessage.
-export function readImessage(id: string): [Post[], Asset[]] {
+export function readImessage(user: string): [Post[], Asset[]] {
     // Collect data from Messages database
     let posts: Map<string, Post> = new Map();
     let assets: Map<string, Asset[]> = new Map();
 
-    sqlite(id, 'sql/time.sql').forEach(([id, time]) => {
+    for (let [id, time] of sqlite(user, 'sql/time.sql')) {
         let date = new Date(Number(time) * 1000);
         let post = new Post(false, date);
         post.birthtime = post.mtime = date;
         posts.set(id, post);
-    });
+    }
 
-    sqlite(id, 'sql/text.sql').forEach(([id, text]) => {
+    for (let [id, text] of sqlite(user, 'sql/text.sql')) {
         // HACK: Remove U+FFFC (object replacement character) which is sometimes
         // mysteriously present
         text = text.replace(/￼/g, '');
@@ -49,13 +49,13 @@ export function readImessage(id: string): [Post[], Asset[]] {
         text += '\n';
 
         (posts.get(id) as Post).body = text; // Works because map stores Post by reference
-    });
+    }
 
-    sqlite(id, 'sql/asset.sql').forEach(([id, file]) => {
+    for (let [id, file] of sqlite(user, 'sql/asset.sql')) {
         file = file.replace(/^~/, os.homedir()); // Absoulte path of asset
         if (!assets.has(id)) assets.set(id, []);
         (assets.get(id) as Asset[]).push(new Asset(path.basename(file), file));
-    });
+    }
 
     // Add assets to head of post text
     for (let [id, post] of posts) {
