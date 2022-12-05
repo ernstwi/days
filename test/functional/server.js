@@ -22,8 +22,6 @@ suite('server', function () {
 
         browser = await puppeteer.launch();
         page = await browser.pages().then(pages => pages[0]);
-        cp.execSync(`${bin} new --no-edit 2020 01 01 12 00 00`);
-        cp.execSync(`${bin} new --no-edit 2020 01 11 01 00 00`);
         server = new Server('days', 'fruchtig');
         await server.listen(3004);
     });
@@ -32,6 +30,15 @@ suite('server', function () {
         await browser.close();
         await server.close();
         cp.execSync(`rm -r ${tmpDir}`);
+    });
+
+    setup(async function () {
+        cp.execSync(`${bin} new --no-edit 2020 01 01 12 00 00`);
+        cp.execSync(`${bin} new --no-edit 2020 01 11 01 00 00`);
+    });
+
+    teardown(async function () {
+        cp.execSync(`rm -rf content`);
     });
 
     suite('start page', function () {
@@ -59,6 +66,13 @@ suite('server', function () {
             );
             assert.strictEqual(links.length, 1);
             assert.strictEqual(links[0], '<a href="/2020/01">jan</a>');
+        });
+
+        test('no content or assets dir', async function () {
+            cp.execSync(`rm -r content`);
+
+            let res = await page.goto('http://localhost:3004');
+            assert(res.ok());
         });
     });
 
