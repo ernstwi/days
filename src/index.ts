@@ -106,7 +106,8 @@ function cmd_new(argv: string[]): void {
         return;
     } else {
         let [year, month, day, hour, min, sec] = options.date;
-        if (hour === undefined) post = new Post(year, month, day);
+        if (hour === undefined || options.allday)
+            post = new Post(year, month, day);
         else {
             if (min === undefined) min = '00';
             if (sec === undefined) sec = '00';
