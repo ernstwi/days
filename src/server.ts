@@ -60,6 +60,8 @@ export default class Server {
         this.#server = http.createServer(router(routes));
     }
 
+    // TODO: What type should this be? events.once resolves to an array of
+    // arguments emitted to the event. But `listening` on http.server has no arguments.
     listen(port: number): Promise<any[]> {
         return events.once(this.#server.listen(port, 'localhost'), 'listening');
     }
